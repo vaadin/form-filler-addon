@@ -2,18 +2,24 @@ package org.vaadin.addons.ai.formfiller;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.timepicker.TimePicker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +44,7 @@ public class ComponentUtils {
      *                               described in a map
      * @param componentsTypesJSONMap the components' value types
      */
-    public record ComponentsMapping(Map<String, Object> componentsJSONMap, Map<String, String> componentsTypesJSONMap) {
+    public record ComponentsMapping(List<ComponentInfo> components, Map<String, Object> componentsJSONMap, Map<String, String> componentsTypesJSONMap) {
     }
 
     /**
@@ -62,7 +68,7 @@ public class ComponentUtils {
     public static ComponentsMapping createMapping(Component component) {
         List<ComponentInfo> componentInfoList = new ArrayList<>();
         findChildComponents(component, componentInfoList);
-        ComponentsMapping mapping = new ComponentsMapping(buildHierarchy(componentInfoList), buildTypes(componentInfoList));
+        ComponentsMapping mapping = new ComponentsMapping(componentInfoList, buildHierarchy(componentInfoList), buildTypes(componentInfoList));
         return mapping;
     }
 
@@ -135,6 +141,10 @@ public class ComponentUtils {
                 } else if ((componentInfo.component instanceof NumberField)) {
                     inputFieldMap.put(componentInfo.id, "Number");
                 }
+                else if ((componentInfo.component instanceof ComboBox<?>)) {
+//                    ComboBox<?> comboBox = (ComboBox<?>) componentInfo.component
+                    inputFieldMap.put(componentInfo.id, "String");
+                }
                 else if (componentInfo.component instanceof Grid.Column<?>) {
                     // Nothing to do as columns are managed in the Grid case
                 } else if (componentInfo.component instanceof Grid<?>) {
@@ -162,4 +172,130 @@ public class ComponentUtils {
                 component.getChildren().flatMap(ComponentUtils::getAllChildren));
     }
 
+
+    /**
+     * Fills the component(s) of the target component using the map
+     * with components and values.
+     *
+     * @param mapComponentValues Transformed AI module response to a map with components
+     *                           and values.
+     */
+    public static void fillComponents(List<ComponentInfo> components, Map<String, Object> mapComponentValues) {
+
+        for (ComponentInfo componentInfo : components) {
+            if (componentInfo.component.getId().orElse(null) == null) {
+                logger.warn("Component has no id so it will be skipped: {}", componentInfo.component);
+                continue;
+            }
+            String id = componentInfo.component.getId().orElse(null);
+            try {
+                if (id != null) {
+                    Object responseValue = mapComponentValues.get(id);
+                    if (responseValue == null) {
+                        logger.warn("No response value found for id: {}", id);
+                        return;
+                    }
+
+                    if (componentInfo.component instanceof Grid) {
+                        try {
+                            List<Map<String, Object>> items = (List<Map<String, Object>>) responseValue;
+                            Grid<?> grid = (Grid<?>) componentInfo.component;
+                            Class<?> beanType = grid.getBeanType();
+                            fillGridWithWildcards(grid, items, beanType);
+                        } catch (Exception e) {
+                            logger.error("Error while updating grid with wildcards", e.getMessage());
+                        }
+                    } else if (componentInfo.component instanceof TextField) {
+                        TextField textField = (TextField) componentInfo.component;
+                        textField.setValue(responseValue.toString());
+                    } else if (componentInfo.component instanceof TextArea) {
+                        TextArea textArea = (TextArea) componentInfo.component;
+                        textArea.setValue(responseValue.toString());
+                    } else if (componentInfo.component instanceof NumberField) {
+                        NumberField numberField = (NumberField) componentInfo.component;
+                        numberField.setValue(Double.valueOf(responseValue.toString()));
+                    } else if (componentInfo.component instanceof ComboBox) {
+                        ComboBox comboBox = (ComboBox) componentInfo.component;
+                        comboBox.setValue(responseValue);
+                    } else if (componentInfo.component instanceof MultiSelectComboBox) {
+                        MultiSelectComboBox multiSelectComboBox = (MultiSelectComboBox) componentInfo.component;
+                        multiSelectComboBox.setValue(responseValue);
+                    } else if (componentInfo.component instanceof Checkbox) {
+                        Checkbox checkbox = (Checkbox) componentInfo.component;
+                        checkbox.setValue((Boolean) responseValue);
+                    } else if (componentInfo.component instanceof RadioButtonGroup<?>) {
+                        RadioButtonGroup radioButtonGroup = (RadioButtonGroup) componentInfo.component;
+                        radioButtonGroup.setValue(responseValue);
+                    } else if (componentInfo.component instanceof DatePicker) {
+                        DatePicker datePicker = (DatePicker) componentInfo.component;
+                        datePicker.setValue(LocalDate.parse(responseValue.toString()));
+                    } else if (componentInfo.component instanceof TimePicker) {
+                        TimePicker timePicker = (TimePicker) componentInfo.component;
+                        timePicker.setValue(LocalTime.parse(responseValue.toString()));
+                    } else if (componentInfo.component instanceof Grid.Column<?>) {
+                        // Nothing to do as it is managed in Grid
+                    }
+
+                }
+            } catch (Exception e) {
+                logger.error("Error while updating component with id: {}", id, e);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> void fillGridWithWildcards(Grid<T> grid, List<Map<String, Object>> items, Class<?> beanType) {
+        fillGrid((Grid<T>) grid, items, (Class<T>) beanType);
+    }
+
+    private static <T> void fillGrid(Grid<T> grid, List<Map<String, Object>> items, Class<T> itemClass) {
+        if (items == null) {
+            logger.warn("Items list is null. Skipping the update for the grid.");
+            return;
+        }
+
+        List<T> gridItems = items.stream().map(itemMap -> {
+            T item;
+            try {
+                item = itemClass.getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                throw new IllegalStateException("Failed to create a new instance of the item class", e);
+            }
+
+            for (Map.Entry<String, Object> entry : itemMap.entrySet()) {
+                String propName = entry.getKey();
+                Object propValue = entry.getValue();
+                Grid.Column<T> column = grid.getColumnByKey(propName);
+                if (column != null && column.getEditorComponent() != null) {
+                    column.getEditorComponent().getElement().setProperty("value", propValue.toString());
+                }
+
+                try {
+
+                    Field field = itemClass.getDeclaredField(propName);
+                    field.setAccessible(true);
+                    if (field.getType().equals(LocalDate.class))
+                        field.set(item, LocalDate.parse(propValue.toString()));
+                    else if (field.getType().equals(LocalTime.class))
+                        field.set(item, LocalTime.parse(propValue.toString()));
+                    else if (field.getType().equals(Double.class))
+                        field.set(item, Double.valueOf(propValue.toString()));
+                    else if (field.getType().equals(Integer.class))
+                        field.set(item, Integer.valueOf(propValue.toString()));
+                    else if (field.getType().equals(Long.class))
+                        field.set(item, Long.valueOf(propValue.toString()));
+                    else if (field.getType().equals(Boolean.class))
+                        field.set(item, Boolean.valueOf(propValue.toString()));
+                    else
+                    field.set(item, propValue);
+
+                } catch (NoSuchFieldException | IllegalAccessException | IllegalArgumentException e) {
+                    logger.error("Failed to set field value for '{}': {}", propName, e.getMessage());
+                }
+            }
+            return item;
+        }).collect(Collectors.toList());
+
+        grid.setItems(gridItems);
+    }
 }

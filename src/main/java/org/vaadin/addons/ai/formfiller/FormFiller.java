@@ -106,6 +106,7 @@ public class FormFiller {
         prompt = llmService.getPromptTemplate(input, mapping.componentsJSONMap(), mapping.componentsTypesJSONMap(), componentInstructions, contextInstructions);
 
         String aiResponse = llmService.getGeneratedResponse(prompt);
+        ComponentUtils.fillComponents(mapping.components(), promptJsonToMapHierarchyValues(aiResponse));
 
         logger.debug("Generated Prompt: {}", prompt);
         logger.debug("Generated Components Hierarchy JSON: {}", mapping.componentsJSONMap());
@@ -126,7 +127,13 @@ public class FormFiller {
         Gson gson = new Gson();
         Type type = new TypeToken<Map<String, Object>>() {
         }.getType();
-        Map<String, Object> contentMap = gson.fromJson(response.trim(), type);
+        Map<String, Object> contentMap = new HashMap<>();
+        try {
+            contentMap = gson.fromJson(response.trim(), type);
+        }
+        catch (Exception e) {
+            logger.error("Error parsing AI response to JSON Object: {}", e.getMessage());
+        }
         return contentMap;
     }
 

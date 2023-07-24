@@ -43,11 +43,11 @@ public class AddonView extends Div {
         customerOrdersForm.add(emailField);
 
         DatePicker dateCreationField = new DatePicker("Creation Date");
-        dateCreationField.setValue(LocalDate.now());
         dateCreationField.setId("creationDate");
         customerOrdersForm.add(dateCreationField);
 
         ComboBox<String> orderEntity = new ComboBox<>("Order Entity");
+        orderEntity.setId("orderEntity");
         orderEntity.setItems("Person", "Company");
         customerOrdersForm.add(orderEntity);
 
@@ -65,7 +65,7 @@ public class AddonView extends Div {
         orderGrid.addColumn(Order::getItemName).setHeader("Item Name").setKey("itemName").setId("itemName");
         orderGrid.addColumn(Order::getOrderDate).setHeader("Order Date").setKey("orderDate").setId("orderDate");
         orderGrid.addColumn(Order::getOrderStatus).setHeader("Order Status").setKey("orderStatus").setId("orderStatus");
-        orderGrid.addColumn(Order::getOrderTotal).setHeader("Order Total").setKey("orderTotal").setId("orderTotal");
+        orderGrid.addColumn(Order::getOrderTotal).setHeader("Order Cost").setKey("orderCost").setId("orderCost");
         orderGrid.setId("orders");
 
         customerOrdersForm.add(orderGrid);
@@ -110,6 +110,7 @@ public class AddonView extends Div {
                 fieldsInstructions.put(nameField, "Format this field in Uppercase");
                 fieldsInstructions.put(orderGrid.getColumnByKey("orderDate"), "Format this field as a date with format yyyy/MM/dd");
                 fieldsInstructions.put(orderGrid.getColumnByKey("orderId"), "Format this field as a string");
+                fieldsInstructions.put(orderEntity, "To field this field select one of these options \"Person\" or \"Company\" according to the entity who is generating the order.");
                 fieldsInstructions.put(emailField, "Format this field as a correct email");
 
                 FormFiller formFiller = new FormFiller(customerOrdersForm, fieldsInstructions);

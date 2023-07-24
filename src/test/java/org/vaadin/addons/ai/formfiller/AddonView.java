@@ -1,5 +1,6 @@
 package org.vaadin.addons.ai.formfiller;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -105,11 +106,11 @@ public class AddonView extends Div {
             debugResponse.setValue("");
             String input = debugInput.getValue();
             if (input != null && !input.isEmpty()) {
-                HashMap<String, String> fieldsInstructions = new HashMap<>();
-                fieldsInstructions.put("name", "Format this field in Uppercase");
-                fieldsInstructions.put("dateOrdered", "Format this field as a date with format yyyy/MM/dd");
-                fieldsInstructions.put("orderNumber", "Format this field as a string");
-                fieldsInstructions.put("email", "Format this field as a correct email");
+                HashMap<Component, String> fieldsInstructions = new HashMap<>();
+                fieldsInstructions.put(nameField, "Format this field in Uppercase");
+                fieldsInstructions.put(orderGrid.getColumnByKey("orderDate"), "Format this field as a date with format yyyy/MM/dd");
+                fieldsInstructions.put(orderGrid.getColumnByKey("orderId"), "Format this field as a string");
+                fieldsInstructions.put(emailField, "Format this field as a correct email");
 
                 FormFiller formFiller = new FormFiller(customerOrdersForm, fieldsInstructions);
                 FormFillerResult result = formFiller.fill(input);

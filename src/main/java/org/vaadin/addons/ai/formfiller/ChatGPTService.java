@@ -44,7 +44,7 @@ public class ChatGPTService extends OpenAiService implements LLMService {
     }
 
     @Override
-    public String getPromptTemplate(String input, Map<String, Object> objectMap, Map<String, String> typesMap,  HashMap<String, String> componentInstructions, ArrayList<String> contextInstructions ) {
+    public String getPromptTemplate(String input, Map<String, Object> objectMap, Map<String, String> typesMap,  HashMap<Component, String> componentInstructions, ArrayList<String> contextInstructions ) {
         String gptRequest = String.format(
                 "Based on the user input: '%s', " +
                         "generate a JSON object according to these instructions: " +
@@ -56,8 +56,8 @@ public class ChatGPTService extends OpenAiService implements LLMService {
             for (Map.Entry<String, String> entry : typesMap.entrySet()) {
                 gptRequest += " " + entry.getKey() + ": Format this field as " + entry.getValue() + ".";
             }
-            for (Map.Entry<String, String> entry : componentInstructions.entrySet()) {
-                gptRequest += " " + entry.getKey() + ": " + entry.getValue() + ".";
+            for (Map.Entry<Component, String> entry : componentInstructions.entrySet()) {
+                gptRequest += " " + entry.getKey().getId() + ": " + entry.getValue() + ".";
             }
         }
         return gptRequest;

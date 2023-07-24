@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public interface LLMService {
 
-    public String getPromptTemplate(String input, Map<String, Object> objectMap, Map<String, String> typesMap, HashMap<String, String> componentInstructions, ArrayList<String> contextInstructions);
+    public String getPromptTemplate(String input, Map<String, Object> objectMap, Map<String, String> typesMap, HashMap<Component, String> componentInstructions, ArrayList<String> contextInstructions);
 
     public String getGeneratedResponse(String prompt);
 

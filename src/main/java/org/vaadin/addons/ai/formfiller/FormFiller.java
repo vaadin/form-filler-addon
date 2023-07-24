@@ -1,11 +1,15 @@
 package org.vaadin.addons.ai.formfiller;
 
+import com.googlecode.gentyref.TypeToken;
+import com.nimbusds.jose.shaded.gson.Gson;
 import com.vaadin.flow.component.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * FormFiller component that using AI ChatGPT fills automatically
@@ -39,7 +43,7 @@ public class FormFiller {
      */
     private Component target;
 
-    private HashMap<String, String> componentInstructions = new HashMap<>();
+    private HashMap<Component, String> componentInstructions = new HashMap<>();
 
     private ArrayList<String> contextInstructions = new ArrayList<>();
 
@@ -67,18 +71,18 @@ public class FormFiller {
      *                            input source in general.
      * @param llmService the AI module service to use. By default, this service would use OpenAI ChatGPT.
      */
-    public FormFiller(Component target, HashMap<String, String> componentInstructions, ArrayList<String> contextInstructions, LLMService llmService) {
+    public FormFiller(Component target, HashMap<Component, String> componentInstructions, ArrayList<String> contextInstructions, LLMService llmService) {
         this.llmService = llmService;
         this.target = target;
         this.componentInstructions = componentInstructions;
         this.contextInstructions = contextInstructions;
     }
 
-    public FormFiller(Component target, HashMap<String, String> componentInstructions, ArrayList<String> contextInstructions) {
+    public FormFiller(Component target, HashMap<Component, String> componentInstructions, ArrayList<String> contextInstructions) {
         this(target, componentInstructions, contextInstructions, new ChatGPTService());
     }
 
-    public FormFiller(Component target, HashMap<String, String> componentInstructions) {
+    public FormFiller(Component target, HashMap<Component, String> componentInstructions) {
         this(target, componentInstructions, new ArrayList<>(), new ChatGPTService());
     }
 
@@ -106,12 +110,27 @@ public class FormFiller {
         logger.debug("Generated Prompt: {}", prompt);
         logger.debug("Generated Components Hierarchy JSON: {}", mapping.componentsJSONMap());
         logger.debug("Generated Components Types JSON: {}", mapping.componentsTypesJSONMap());
-        logger.debug("AI response: " + aiResponse);
+        logger.debug("AI response: " + aiResponse.trim());
 
         return new FormFillerResult(prompt, aiResponse);
     }
 
-    public HashMap<String, String> getComponentInstructions() {
+    /**
+     * Transforms the response of the AI module (should be a valid JSON)
+     * to a map with the hierarchy of the components and its values.
+     *
+     * @param response response prompt from the AI module
+     * @return Map with components and values
+     */
+    private Map<String, Object> promptJsonToMapHierarchyValues(String response) {
+        Gson gson = new Gson();
+        Type type = new TypeToken<Map<String, Object>>() {
+        }.getType();
+        Map<String, Object> contentMap = gson.fromJson(response.trim(), type);
+        return contentMap;
+    }
+
+    public HashMap<Component, String> getComponentInstructions() {
         return componentInstructions;
     }
 

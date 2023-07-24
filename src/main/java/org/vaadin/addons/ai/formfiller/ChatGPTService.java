@@ -3,8 +3,12 @@ package org.vaadin.addons.ai.formfiller;
 import com.theokanning.openai.completion.CompletionRequest;
 import com.theokanning.openai.completion.CompletionResult;
 import com.theokanning.openai.service.OpenAiService;
+import com.vaadin.flow.component.Component;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChatGPTService extends OpenAiService implements LLMService {
 
@@ -40,8 +44,23 @@ public class ChatGPTService extends OpenAiService implements LLMService {
     }
 
     @Override
-    public String getPromptTemplate() {
-        return null;
+    public String getPromptTemplate(String input, Map<String, Object> objectMap, Map<String, String> typesMap,  HashMap<String, String> componentInstructions, ArrayList<String> contextInstructions ) {
+        String gptRequest = String.format(
+                "Based on the user input: '%s', " +
+                        "generate a JSON object according to these instructions: " +
+                        "Fill out N/A in the JSON value if the user did not specify a value. " +
+                        "Return the result as a JSON object in this format: '%s'."
+                , input, objectMap);
+        if (!componentInstructions.isEmpty() || !typesMap.isEmpty()) {
+            gptRequest += "Some Additional instructions about some of the fields to be filled: ";
+            for (Map.Entry<String, String> entry : typesMap.entrySet()) {
+                gptRequest += " " + entry.getKey() + ": Format this field as " + entry.getValue() + ".";
+            }
+            for (Map.Entry<String, String> entry : componentInstructions.entrySet()) {
+                gptRequest += " " + entry.getKey() + ": " + entry.getValue() + ".";
+            }
+        }
+        return gptRequest;
     }
 
     @Override

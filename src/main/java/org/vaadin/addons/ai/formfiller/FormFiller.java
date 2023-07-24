@@ -6,12 +6,27 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * FormFiller component that using AI ChatGPT fills automatically
  * from a natural language input text a component or group of
- * components (layout).
+ * components (layout).<br>
+ * Components supported:
+ * <ul>
+ *     <li>TextField</li>
+ *     <li>NumberField</li>
+ *     <li>DatePicker</li>
+ *     <li>DateTimePicker</li>
+ *
+ *     <li>TextArea</li>
+ *     <li>Checkbox (WIP)</li>
+ *     <li>RadioButtonGroup (WIP)</li>
+ *
+ *     <li>ComboBox (WIP)</li>
+ *     <li>ListBox (WIP)</li>
+ *     <li>MultiSelectListBox (WIP)</li>
+ *
+ *     <li>Grid</li>
  *
  * @author Vaadin Ltd.
  */
@@ -24,7 +39,7 @@ public class FormFiller {
      */
     private Component target;
 
-    private HashMap<Component, String> componentInstructions = new HashMap<>();
+    private HashMap<String, String> componentInstructions = new HashMap<>();
 
     private ArrayList<String> contextInstructions = new ArrayList<>();
 
@@ -52,18 +67,18 @@ public class FormFiller {
      *                            input source in general.
      * @param llmService the AI module service to use. By default, this service would use OpenAI ChatGPT.
      */
-    public FormFiller(Component target, HashMap<Component, String> componentInstructions, ArrayList<String> contextInstructions, LLMService llmService) {
+    public FormFiller(Component target, HashMap<String, String> componentInstructions, ArrayList<String> contextInstructions, LLMService llmService) {
         this.llmService = llmService;
         this.target = target;
         this.componentInstructions = componentInstructions;
         this.contextInstructions = contextInstructions;
     }
 
-    public FormFiller(Component target, HashMap<Component, String> componentInstructions, ArrayList<String> contextInstructions) {
+    public FormFiller(Component target, HashMap<String, String> componentInstructions, ArrayList<String> contextInstructions) {
         this(target, componentInstructions, contextInstructions, new ChatGPTService());
     }
 
-    public FormFiller(Component target, HashMap<Component, String> componentInstructions) {
+    public FormFiller(Component target, HashMap<String, String> componentInstructions) {
         this(target, componentInstructions, new ArrayList<>(), new ChatGPTService());
     }
 
@@ -83,15 +98,20 @@ public class FormFiller {
      */
     public FormFillerResult fill(String input) {
         String prompt = "";
-        String response = "";
         mapping = ComponentUtils.createMapping(target);
+        prompt = llmService.getPromptTemplate(input, mapping.componentsJSONMap(), mapping.componentsTypesJSONMap(), componentInstructions, contextInstructions);
+
+        String aiResponse = llmService.getGeneratedResponse(prompt);
+
+        logger.debug("Generated Prompt: {}", prompt);
         logger.debug("Generated Components Hierarchy JSON: {}", mapping.componentsJSONMap());
         logger.debug("Generated Components Types JSON: {}", mapping.componentsTypesJSONMap());
-        logger.debug("AI response: " + response);
-        return new FormFillerResult(prompt, response);
+        logger.debug("AI response: " + aiResponse);
+
+        return new FormFillerResult(prompt, aiResponse);
     }
 
-    public HashMap<Component, String> getComponentInstructions() {
+    public HashMap<String, String> getComponentInstructions() {
         return componentInstructions;
     }
 

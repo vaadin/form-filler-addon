@@ -3,8 +3,12 @@ package org.vaadin.addons.ai.formfiller;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
+import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,53 +30,67 @@ import java.util.stream.Stream;
 public class ComponentUtils {
     private static final Logger logger = LoggerFactory.getLogger(ComponentUtils.class);
 
+    /**
+     * Record with information of the hierarchy of the components to be filled and
+     * the value types of each one of them.
+     *
+     * @param componentsJSONMap      the components' hierarchy where parent and children are
+     *                               described in a map
+     * @param componentsTypesJSONMap the components' value types
+     */
     public record ComponentsMapping(Map<String, Object> componentsJSONMap, Map<String, String> componentsTypesJSONMap) {
     }
 
-    public static ComponentsMapping createMapping(Component component) {
-        List<FormFillerComponentInfo> componentInfoList = new ArrayList<>();
-        findChildComponents(component, componentInfoList);
-        ComponentsMapping mapping = new ComponentsMapping(buildJsonFromComponentInfoList(componentInfoList), buildTypesJsonFromComponentInfoList(componentInfoList));
+    /**
+     * Record with information of a component to be filled.
+     *
+     * @param id        the component id
+     * @param type      the component type
+     * @param component the component
+     */
+    public record ComponentInfo(String id, String type, Component component) {
+    }
 
+    /**
+     * Creates the mapped structures with the information required to generate the
+     * prompt and fill the components after the response. This includes the hierarchy
+     * of components and the value types of each component.
+     *
+     * @param component the component target (can be a component or a container of components)
+     * @return the mapped structures with the information
+     */
+    public static ComponentsMapping createMapping(Component component) {
+        List<ComponentInfo> componentInfoList = new ArrayList<>();
+        findChildComponents(component, componentInfoList);
+        ComponentsMapping mapping = new ComponentsMapping(buildHierarchy(componentInfoList), buildTypes(componentInfoList));
         return mapping;
     }
 
-    private static void findChildComponents(Component component, List<FormFillerComponentInfo> componentInfoList) {
+    private static void findChildComponents(Component component, List<ComponentInfo> componentInfoList) {
         component.getChildren().forEach(childComponent -> {
             String componentType = childComponent.getClass().getSimpleName();
             String id = childComponent.getId().orElse(null);
 
             if (id != null) {
-                FormFillerComponentInfo info = new FormFillerComponentInfo(id, componentType, childComponent);
+                ComponentInfo info = new ComponentInfo(id, componentType, childComponent);
                 componentInfoList.add(info);
-
-                if (isContainedInCustomForm(childComponent)) {
-                    // Handle the custom form case by finding child components inside the custom
-                    // form.
-                    findChildComponents(childComponent, info.getChildren());
-                } else {
-                    findChildComponents(childComponent, componentInfoList);
-                }
-            } else {
-                findChildComponents(childComponent, componentInfoList);
             }
+            findChildComponents(childComponent, componentInfoList);
         });
     }
 
-    private static Map<String, Object> buildJsonFromComponentInfoList(List<FormFillerComponentInfo> componentInfoList) {
+    private static Map<String, Object> buildHierarchy(List<ComponentInfo> componentInfoList) {
         Map<String, Object> json = new HashMap<>();
-        for (FormFillerComponentInfo componentInfo : componentInfoList) {
-            if (componentInfo.getType().equalsIgnoreCase("Column"))
+        for (ComponentInfo componentInfo : componentInfoList) {
+            if (componentInfo.type.equalsIgnoreCase("Column"))
                 continue;
-            String id = componentInfo.getId();
+            String id = componentInfo.id;
             if (id != null && !id.isEmpty()) {
-                if (isContainedInCustomForm(componentInfo.getComponent())) {
-                    json.put(id, buildJsonFromComponentInfoList(componentInfo.getChildren()));
-                } else if (componentInfo.getComponent() instanceof Grid
-                        || componentInfo.getComponent() instanceof MultiSelectListBox) {
+                if (componentInfo.component instanceof Grid
+                        || componentInfo.component instanceof MultiSelectListBox) {
                     HashMap<String, Object> columns = new HashMap<>();
-                    if (componentInfo.getComponent() instanceof Grid) {
-                        Grid<?> grid = (Grid<?>) componentInfo.getComponent();
+                    if (componentInfo.component instanceof Grid) {
+                        Grid<?> grid = (Grid<?>) componentInfo.component;
                         grid.getColumns().forEach(c -> columns.put(c.getId().get(), ""));
                         ArrayList<HashMap<String, Object>> listColumns = new ArrayList<>();
                         listColumns.add(columns);
@@ -88,49 +106,45 @@ public class ComponentUtils {
         return json;
     }
 
-    private static boolean isContainedInCustomForm(Component component) {
-        if (component == null) {
-            return false;
-        }
-
-        String className = component.getClass().getSimpleName();
-        if (className.endsWith("Form")) {
-            return true;
-        }
-
-        List<Component> children = component.getChildren().collect(Collectors.toList());
-        if (children.isEmpty()) {
-            return false;
-        }
-
-        boolean hasFormField = false;
-        for (Component child : children) {
-            if (child instanceof TextField || child instanceof ComboBox || child instanceof Grid) {
-                hasFormField = true;
-                break;
-            }
-        }
-
-        return hasFormField;
-    }
-
-    private static Map<String, String> buildTypesJsonFromComponentInfoList(List<FormFillerComponentInfo> componentInfoList) {
+    /**
+     * Get all the components expected types to ask the LLM model.
+     * It is important to notice that the type description should be
+     * understandable by the LLM, we are not talking about any specific
+     * coding language type or class. This type helps the LLM to format
+     * the value inside the response JSON.
+     *
+     * TODO: Research about custom class values like for ComboBox. Is it
+     * better to ask always for String or is it better to ask for the specific
+     * custom class if it has a meaningful name?
+     *
+     * @param componentInfoList a list of components
+     * @return the list of expected types.
+     */
+    private static Map<String, String> buildTypes(List<ComponentInfo> componentInfoList) {
         Map<String, String> inputFieldMap = new HashMap<>();
-        for (FormFillerComponentInfo componentInfo : componentInfoList) {
+        for (ComponentInfo componentInfo : componentInfoList) {
             try {
-                if (componentInfo.getComponent() instanceof HasValue<?, ?>) {
-                    HasValue inspectedComponent = (HasValue) componentInfo.getComponent();
-                    inputFieldMap.put(componentInfo.getId(), inspectedComponent.getValue().getClass().getSimpleName());
-                } else if (componentInfo.getComponent() instanceof Grid.Column<?>) {
+                if ((componentInfo.component instanceof TextField)
+                        || (componentInfo.component instanceof TextArea)
+                        || (componentInfo.component instanceof TextArea)) {
+                    inputFieldMap.put(componentInfo.id, "String");
+                } else if ((componentInfo.component instanceof DatePicker)) {
+                    inputFieldMap.put(componentInfo.id, "Date");
+                } else if ((componentInfo.component instanceof DateTimePicker)) {
+                    inputFieldMap.put(componentInfo.id, "Date and Time");
+                } else if ((componentInfo.component instanceof NumberField)) {
+                    inputFieldMap.put(componentInfo.id, "Number");
+                }
+                else if (componentInfo.component instanceof Grid.Column<?>) {
                     // Nothing to do as columns are managed in the Grid case
-                } else if (componentInfo.getComponent() instanceof Grid<?>) {
-                    Grid inspectedComponent = (Grid) componentInfo.getComponent();
+                } else if (componentInfo.component instanceof Grid<?>) {
+                    Grid inspectedComponent = (Grid) componentInfo.component;
                     for (Field f : inspectedComponent.getBeanType().getDeclaredFields()) {
                         inputFieldMap.put(f.getName(), f.getType().getSimpleName());
                     }
                 }
             } catch (Exception e) {
-                logger.error("Error while inferring type of component"+ "Component: " + componentInfo.getId() + " - " + componentInfo.getComponent().getClass().getSimpleName());
+                logger.error("Error while inferring type of component" + "Component: " + componentInfo.id + " - " + componentInfo.component.getClass().getSimpleName());
             }
         }
         return inputFieldMap;
@@ -147,4 +161,5 @@ public class ComponentUtils {
                 Stream.of(component),
                 component.getChildren().flatMap(ComponentUtils::getAllChildren));
     }
+
 }

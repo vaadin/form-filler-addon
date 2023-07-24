@@ -15,12 +15,13 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 
 @Route("")
 public class AddonView extends Div {
 
     FormLayout customerOrdersForm;
-    
+
     public AddonView() {
         customerOrdersForm = new FormLayout();
 
@@ -104,8 +105,15 @@ public class AddonView extends Div {
             debugResponse.setValue("");
             String input = debugInput.getValue();
             if (input != null && !input.isEmpty()) {
-                FormFiller formFiller = new FormFiller(customerOrdersForm);
+                HashMap<String, String> fieldsInstructions = new HashMap<>();
+                fieldsInstructions.put("name", "Format this field in Uppercase");
+                fieldsInstructions.put("dateOrdered", "Format this field as a date with format yyyy/MM/dd");
+                fieldsInstructions.put("orderNumber", "Format this field as a string");
+                fieldsInstructions.put("email", "Format this field as a correct email");
+
+                FormFiller formFiller = new FormFiller(customerOrdersForm, fieldsInstructions);
                 FormFillerResult result = formFiller.fill(input);
+                debugPrompt.setValue(result.getRequest());
                 debugJsonTarget.setValue(String.format("%s",formFiller.getMapping().componentsJSONMap()));
                 debugTypesTarget.setValue(String.format("%s",formFiller.getMapping().componentsTypesJSONMap()));
                 debugResponse.setValue(result.getResponse());

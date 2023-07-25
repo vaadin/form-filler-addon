@@ -140,11 +140,11 @@ public class ComponentUtils {
                 } else if ((componentInfo.component instanceof NumberField)) {
                     inputFieldMap.put(componentInfo.id, "Number");
                 } else if ((componentInfo.component instanceof DatePicker)) {
-                    inputFieldMap.put(componentInfo.id, "Date");
+                    inputFieldMap.put(componentInfo.id, "a date using format 'yyyy-MM-dd'");
                 } else if ((componentInfo.component instanceof TimePicker)) {
-                    inputFieldMap.put(componentInfo.id, "Time");
+                    inputFieldMap.put(componentInfo.id, "a time using format 'HH:mm:ss'");
                 } else if ((componentInfo.component instanceof DateTimePicker)) {
-                    inputFieldMap.put(componentInfo.id, "Date and Time using standard ISO_LOCAL_DATE_TIME");
+                    inputFieldMap.put(componentInfo.id, "a date and time using format 'yyyy-MM-ddTHH:mm:ss'");
                 } else if ((componentInfo.component instanceof ComboBox<?>)) {
                     inputFieldMap.put(componentInfo.id, "String");
                 } else if (componentInfo.component instanceof MultiSelectComboBox) {

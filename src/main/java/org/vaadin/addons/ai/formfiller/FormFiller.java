@@ -21,7 +21,7 @@ import java.util.Map;
  *     <li>NumberField</li>
  *     <li>DatePicker</li>
  *     <li>TimePicker (WIP)</li>
- *     <li>DateTimePicker (WIP)</li>
+ *     <li>DateTimePicker</li>
  *
  *     <li>TextArea</li>
  *     <li>Checkbox</li>

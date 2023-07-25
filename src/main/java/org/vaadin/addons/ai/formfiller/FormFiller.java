@@ -25,10 +25,11 @@ import java.util.Map;
  *
  *     <li>TextArea</li>
  *     <li>Checkbox</li>
- *     <li>CheckboxGroup (WIP)</li>
+ *     <li>CheckboxGroup</li>
  *     <li>RadioButtonGroup</li>
  *
  *     <li>ComboBox</li>
+ *     <li>MultiSelectComboBox (WIP)</li>
  *     <li>ListBox (WIP)</li>
  *     <li>MultiSelectListBox (WIP)</li>
  *

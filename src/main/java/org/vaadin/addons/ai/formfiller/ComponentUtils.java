@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -151,7 +152,7 @@ public class ComponentUtils {
                 } else if ((componentInfo.component instanceof Checkbox)) {
                     inputFieldMap.put(componentInfo.id, "Boolean");
                 } else if ((componentInfo.component instanceof CheckboxGroup<?>)) {
-                    inputFieldMap.put(componentInfo.id, "String");
+                    inputFieldMap.put(componentInfo.id, "Set of Strings");
                 } else if ((componentInfo.component instanceof RadioButtonGroup<?>)) {
                     inputFieldMap.put(componentInfo.id, "String");
                 } else if (componentInfo.component instanceof Grid.Column<?>) {
@@ -242,8 +243,14 @@ public class ComponentUtils {
                         Checkbox checkbox = (Checkbox) componentInfo.component;
                         checkbox.setValue((Boolean) responseValue);
                     }  else if (componentInfo.component instanceof CheckboxGroup<?>) {
-                        CheckboxGroup<?> checkboxgroup = (CheckboxGroup<?>) componentInfo.component;
-                        checkboxgroup.setValue((Set) responseValue);
+                        CheckboxGroup<String> checkboxgroup = (CheckboxGroup<String>) componentInfo.component;
+                        try {
+                            ArrayList<String> list = (ArrayList<String>) responseValue;
+                            Set<String> set = new HashSet<String>(list);
+                            checkboxgroup.setValue(set);
+                        } catch (Exception e) {
+                            logger.error("Error while updating checkboxgroup with id: {}", id, e);
+                        }
                     } else if (componentInfo.component instanceof RadioButtonGroup<?>) {
                         RadioButtonGroup radioButtonGroup = (RadioButtonGroup) componentInfo.component;
                         radioButtonGroup.setValue(responseValue.toString());

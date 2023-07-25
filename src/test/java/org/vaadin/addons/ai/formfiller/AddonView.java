@@ -4,6 +4,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
@@ -77,6 +78,11 @@ public class AddonView extends Div {
         isFinnishCustomer.setId("isFinnishCustomer");
         customerOrdersForm.add(isFinnishCustomer);
 
+        CheckboxGroup<String> typeService = new CheckboxGroup<>("Type of Service");
+        typeService.setItems("Software", "Hardware", "Consultancy");
+        typeService.setId("typeService");
+        customerOrdersForm.add(typeService);
+
         Grid<Order> orderGrid = new Grid<>(Order.class);
         orderGrid.removeAllColumns();
         orderGrid.addColumn(Order::getOrderId).setHeader("Order Id").setKey("orderId").setId("orderId");
@@ -131,6 +137,7 @@ public class AddonView extends Div {
                 fieldsInstructions.put(orderEntity, "To fill this field select one of these options \"Person\" or \"Company\" according to the entity who is generating the order.");
                 fieldsInstructions.put(paymentMethod, "To fill this field select one of these options \"Credit Card\" or \"Cash\" or \"Paypal\" according to the payment method used.");
                 fieldsInstructions.put(emailField, "Format this field as a correct email");
+                fieldsInstructions.put(typeService, "To fill this field select none, one or more of these options \"Software\", \"Hardware\", \"Consultancy\" according to the items type included in the order.");
 
                 FormFiller formFiller = new FormFiller(customerOrdersForm, fieldsInstructions);
                 FormFillerResult result = formFiller.fill(input);

@@ -143,7 +143,7 @@ public class ComponentUtils {
                 } else if ((componentInfo.component instanceof TimePicker)) {
                     inputFieldMap.put(componentInfo.id, "Time");
                 } else if ((componentInfo.component instanceof DateTimePicker)) {
-                    inputFieldMap.put(componentInfo.id, "Date and Time");
+                    inputFieldMap.put(componentInfo.id, "Date and Time using standard ISO_LOCAL_DATE_TIME");
                 } else if ((componentInfo.component instanceof ComboBox<?>)) {
                     inputFieldMap.put(componentInfo.id, "String");
                 } else if (componentInfo.component instanceof MultiSelectComboBox) {

@@ -6,6 +6,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
@@ -46,9 +47,13 @@ public class AddonView extends Div {
         emailField.setId("email");
         customerOrdersForm.add(emailField);
 
-        DatePicker dateCreationField = new DatePicker("Creation Date");
+        DateTimePicker dateCreationField = new DateTimePicker("Creation Date");
         dateCreationField.setId("creationDate");
         customerOrdersForm.add(dateCreationField);
+
+        DatePicker dueDateField = new DatePicker("Due Date");
+        dueDateField.setId("dueDate");
+        customerOrdersForm.add(dueDateField);
 
         ComboBox<String> orderEntity = new ComboBox<>("Order Entity");
         orderEntity.setId("orderEntity");
@@ -123,8 +128,8 @@ public class AddonView extends Div {
                 fieldsInstructions.put(nameField, "Format this field in Uppercase");
                 fieldsInstructions.put(orderGrid.getColumnByKey("orderDate"), "Format this field as a date with format yyyy/MM/dd");
                 fieldsInstructions.put(orderGrid.getColumnByKey("orderId"), "Format this field as a string");
-                fieldsInstructions.put(orderEntity, "To field this field select one of these options \"Person\" or \"Company\" according to the entity who is generating the order.");
-                fieldsInstructions.put(paymentMethod, "To field this field select one of these options \"Credit Card\" or \"Cash\" or \"Paypal\" according to the payment method used.");
+                fieldsInstructions.put(orderEntity, "To fill this field select one of these options \"Person\" or \"Company\" according to the entity who is generating the order.");
+                fieldsInstructions.put(paymentMethod, "To fill this field select one of these options \"Credit Card\" or \"Cash\" or \"Paypal\" according to the payment method used.");
                 fieldsInstructions.put(emailField, "Format this field as a correct email");
 
                 FormFiller formFiller = new FormFiller(customerOrdersForm, fieldsInstructions);

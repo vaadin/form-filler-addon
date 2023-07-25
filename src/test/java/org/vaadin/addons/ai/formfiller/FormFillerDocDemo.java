@@ -21,14 +21,16 @@ import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.FileBuffer;
 import com.vaadin.flow.router.Route;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 
-@Route("")
-public class FormFillerTextDemo extends Div {
+@Route("doc")
+public class FormFillerDocDemo extends Div {
 
     FormLayout customerOrdersForm;
 
-    public FormFillerTextDemo() {
+    public FormFillerDocDemo() {
         customerOrdersForm = new FormLayout();
 
         TextField nameField = new TextField("Name");
@@ -103,6 +105,7 @@ public class FormFillerTextDemo extends Div {
         TextArea debugInput = new TextArea("Debug Input Source");
         debugInput.setWidthFull();
         debugInput.setHeight("600px");
+        debugInput.setEnabled(false);
 
         TextArea debugJsonTarget = new TextArea("Debug JSON target");
         debugJsonTarget.setWidthFull();
@@ -121,31 +124,6 @@ public class FormFillerTextDemo extends Div {
         debugResponse.setHeight("600px");
 
         dataLayout.add(debugInput, debugJsonTarget, debugTypesTarget, debugPrompt, debugResponse);
-        Button fillButton = new Button("Fill Form From Input Text");
-        fillButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        fillButton.addClickListener(event -> {
-            debugJsonTarget.setValue("");
-            debugTypesTarget.setValue("");
-            debugResponse.setValue("");
-            String input = debugInput.getValue();
-            if (input != null && !input.isEmpty()) {
-                HashMap<Component, String> fieldsInstructions = new HashMap<>();
-                fieldsInstructions.put(nameField, "Format this field in Uppercase");
-                fieldsInstructions.put(orderGrid.getColumnByKey("orderDate"), "Format this field as a date with format yyyy/MM/dd");
-                fieldsInstructions.put(orderGrid.getColumnByKey("orderId"), "Format this field as a string");
-                fieldsInstructions.put(orderEntity, "To fill this field select one of these options \"Person\" or \"Company\" according to the entity who is generating the order.");
-                fieldsInstructions.put(paymentMethod, "To fill this field select one of these options \"Credit Card\" or \"Cash\" or \"Paypal\" according to the payment method used.");
-                fieldsInstructions.put(emailField, "Format this field as a correct email");
-                fieldsInstructions.put(typeService, "To fill this field select none, one or more of these options \"Software\", \"Hardware\", \"Consultancy\" according to the items type included in the order.");
-
-                FormFiller formFiller = new FormFiller(customerOrdersForm, fieldsInstructions);
-                FormFillerResult result = formFiller.fill(input);
-                debugPrompt.setValue(result.getRequest());
-                debugJsonTarget.setValue(String.format("%s",formFiller.getMapping().componentsJSONMap()));
-                debugTypesTarget.setValue(String.format("%s",formFiller.getMapping().componentsTypesJSONMap()));
-                debugResponse.setValue(result.getResponse());
-            }
-        });
 
         Upload pdfDocument = new Upload();
         FileBuffer fileBuffer = new FileBuffer();
@@ -155,25 +133,33 @@ public class FormFillerTextDemo extends Div {
         fillDocumentButton.setEnabled(false);
         fillDocumentButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         fillDocumentButton.addClickListener(event -> {
-//            debugJsonTarget.setValue("");
-//            debugTypesTarget.setValue("");
-//            debugResponse.setValue("");
-//            String input = debugInput.getValue();
-//            if (input != null && !input.isEmpty()) {
-//                HashMap<Component, String> fieldsInstructions = new HashMap<>();
-//                fieldsInstructions.put(nameField, "Format this field in Uppercase");
-//                fieldsInstructions.put(orderGrid.getColumnByKey("orderDate"), "Format this field as a date with format yyyy/MM/dd");
-//                fieldsInstructions.put(orderGrid.getColumnByKey("orderId"), "Format this field as a string");
-//                fieldsInstructions.put(orderEntity, "To field this field select one of these options \"Person\" or \"Company\" according to the entity who is generating the order.");
-//                fieldsInstructions.put(emailField, "Format this field as a correct email");
-//
-//                FormFiller formFiller = new FormFiller(customerOrdersForm, fieldsInstructions);
-//                FormFillerResult result = formFiller.fill(input);
-//                debugPrompt.setValue(result.getRequest());
-//                debugJsonTarget.setValue(String.format("%s",formFiller.getMapping().componentsJSONMap()));
-//                debugTypesTarget.setValue(String.format("%s",formFiller.getMapping().componentsTypesJSONMap()));
-//                debugResponse.setValue(result.getResponse());
-//            }
+            try {
+
+                debugJsonTarget.setValue("");
+                debugTypesTarget.setValue("");
+                debugResponse.setValue("");
+                String input = OCRUtils.getOCRText(new FileInputStream(fileBuffer.getFileData().getFile().getAbsolutePath()));
+                debugInput.setValue(input);
+                if (input != null && !input.isEmpty()) {
+                    HashMap<Component, String> fieldsInstructions = new HashMap<>();
+                    fieldsInstructions.put(nameField, "Format this field in Uppercase");
+                    fieldsInstructions.put(orderGrid.getColumnByKey("orderDate"), "Format this field as a date with format yyyy/MM/dd");
+                    fieldsInstructions.put(orderGrid.getColumnByKey("orderId"), "Format this field as a string");
+                    fieldsInstructions.put(orderEntity, "To fill this field select one of these options \"Person\" or \"Company\" according to the entity who is generating the order.");
+                    fieldsInstructions.put(paymentMethod, "To fill this field select one of these options \"Credit Card\" or \"Cash\" or \"Paypal\" according to the payment method used.");
+                    fieldsInstructions.put(emailField, "Format this field as a correct email");
+                    fieldsInstructions.put(typeService, "To fill this field select none, one or more of these options \"Software\", \"Hardware\", \"Consultancy\" according to the items type included in the order.");
+
+                    FormFiller formFiller = new FormFiller(customerOrdersForm, fieldsInstructions);
+                    FormFillerResult result = formFiller.fill(input);
+                    debugPrompt.setValue(result.getRequest());
+                    debugJsonTarget.setValue(String.format("%s", formFiller.getMapping().componentsJSONMap()));
+                    debugTypesTarget.setValue(String.format("%s", formFiller.getMapping().componentsTypesJSONMap()));
+                    debugResponse.setValue(result.getResponse());
+                }
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
+            }
         });
 
         pdfDocument.addStartedListener(e ->
@@ -186,7 +172,7 @@ public class FormFillerTextDemo extends Div {
 
         HorizontalLayout documentLayout = new HorizontalLayout(fillDocumentButton, pdfDocument);
 
-        debugLayout.add(fillButton, documentLayout, dataLayout);
+        debugLayout.add(documentLayout, dataLayout);
         add(debugLayout);
 
     }

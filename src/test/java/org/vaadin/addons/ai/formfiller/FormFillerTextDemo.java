@@ -21,15 +21,14 @@ import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.FileBuffer;
 import com.vaadin.flow.router.Route;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 
 @Route("")
-public class AddonView extends Div {
+public class FormFillerTextDemo extends Div {
 
     FormLayout customerOrdersForm;
 
-    public AddonView() {
+    public FormFillerTextDemo() {
         customerOrdersForm = new FormLayout();
 
         TextField nameField = new TextField("Name");
@@ -148,46 +147,7 @@ public class AddonView extends Div {
             }
         });
 
-        Upload pdfDocument = new Upload();
-        FileBuffer fileBuffer = new FileBuffer();
-        pdfDocument.setReceiver(fileBuffer);
-
-        Button fillDocumentButton = new Button("Fill Form From Document");
-        fillDocumentButton.setEnabled(false);
-        fillDocumentButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        fillDocumentButton.addClickListener(event -> {
-//            debugJsonTarget.setValue("");
-//            debugTypesTarget.setValue("");
-//            debugResponse.setValue("");
-//            String input = debugInput.getValue();
-//            if (input != null && !input.isEmpty()) {
-//                HashMap<Component, String> fieldsInstructions = new HashMap<>();
-//                fieldsInstructions.put(nameField, "Format this field in Uppercase");
-//                fieldsInstructions.put(orderGrid.getColumnByKey("orderDate"), "Format this field as a date with format yyyy/MM/dd");
-//                fieldsInstructions.put(orderGrid.getColumnByKey("orderId"), "Format this field as a string");
-//                fieldsInstructions.put(orderEntity, "To field this field select one of these options \"Person\" or \"Company\" according to the entity who is generating the order.");
-//                fieldsInstructions.put(emailField, "Format this field as a correct email");
-//
-//                FormFiller formFiller = new FormFiller(customerOrdersForm, fieldsInstructions);
-//                FormFillerResult result = formFiller.fill(input);
-//                debugPrompt.setValue(result.getRequest());
-//                debugJsonTarget.setValue(String.format("%s",formFiller.getMapping().componentsJSONMap()));
-//                debugTypesTarget.setValue(String.format("%s",formFiller.getMapping().componentsTypesJSONMap()));
-//                debugResponse.setValue(result.getResponse());
-//            }
-        });
-
-        pdfDocument.addStartedListener(e ->
-                fillDocumentButton.setEnabled(false));
-
-        pdfDocument.addFinishedListener(e -> {
-            String documentPath = fileBuffer.getFileData().getFile().getAbsolutePath();
-            fillDocumentButton.setEnabled(true);
-        });
-
-        HorizontalLayout documentLayout = new HorizontalLayout(fillDocumentButton, pdfDocument);
-
-        debugLayout.add(fillButton, documentLayout, dataLayout);
+        debugLayout.add(fillButton, dataLayout);
         add(debugLayout);
 
     }

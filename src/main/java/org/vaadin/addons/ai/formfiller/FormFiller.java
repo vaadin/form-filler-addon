@@ -20,17 +20,20 @@ import java.util.Map;
  *     <li>TextField</li>
  *     <li>NumberField</li>
  *     <li>DatePicker</li>
- *     <li>DateTimePicker</li>
+ *     <li>TimePicker (WIP)</li>
+ *     <li>DateTimePicker (WIP)</li>
  *
  *     <li>TextArea</li>
- *     <li>Checkbox (WIP)</li>
- *     <li>RadioButtonGroup (WIP)</li>
+ *     <li>Checkbox</li>
+ *     <li>CheckboxGroup (WIP)</li>
+ *     <li>RadioButtonGroup</li>
  *
- *     <li>ComboBox (WIP)</li>
+ *     <li>ComboBox</li>
  *     <li>ListBox (WIP)</li>
  *     <li>MultiSelectListBox (WIP)</li>
  *
  *     <li>Grid</li>
+ * </ul>
  *
  * @author Vaadin Ltd.
  */

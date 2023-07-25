@@ -3,6 +3,7 @@ package org.vaadin.addons.ai.formfiller;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -19,11 +20,13 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -131,21 +134,27 @@ public class ComponentUtils {
         for (ComponentInfo componentInfo : componentInfoList) {
             try {
                 if ((componentInfo.component instanceof TextField)
-                        || (componentInfo.component instanceof TextArea)
                         || (componentInfo.component instanceof TextArea)) {
                     inputFieldMap.put(componentInfo.id, "String");
-                } else if ((componentInfo.component instanceof DatePicker)) {
-                    inputFieldMap.put(componentInfo.id, "Date");
-                } else if ((componentInfo.component instanceof DateTimePicker)) {
-                    inputFieldMap.put(componentInfo.id, "Date and Time");
                 } else if ((componentInfo.component instanceof NumberField)) {
                     inputFieldMap.put(componentInfo.id, "Number");
-                }
-                else if ((componentInfo.component instanceof ComboBox<?>)) {
-//                    ComboBox<?> comboBox = (ComboBox<?>) componentInfo.component
+                } else if ((componentInfo.component instanceof DatePicker)) {
+                    inputFieldMap.put(componentInfo.id, "Date");
+                } else if ((componentInfo.component instanceof TimePicker)) {
+                    inputFieldMap.put(componentInfo.id, "Time");
+                } else if ((componentInfo.component instanceof DateTimePicker)) {
+                    inputFieldMap.put(componentInfo.id, "Date and Time");
+                } else if ((componentInfo.component instanceof ComboBox<?>)) {
                     inputFieldMap.put(componentInfo.id, "String");
-                }
-                else if (componentInfo.component instanceof Grid.Column<?>) {
+                } else if (componentInfo.component instanceof MultiSelectComboBox) {
+                    inputFieldMap.put(componentInfo.id, "String");
+                } else if ((componentInfo.component instanceof Checkbox)) {
+                    inputFieldMap.put(componentInfo.id, "Boolean");
+                } else if ((componentInfo.component instanceof CheckboxGroup<?>)) {
+                    inputFieldMap.put(componentInfo.id, "String");
+                } else if ((componentInfo.component instanceof RadioButtonGroup<?>)) {
+                    inputFieldMap.put(componentInfo.id, "String");
+                } else if (componentInfo.component instanceof Grid.Column<?>) {
                     // Nothing to do as columns are managed in the Grid case
                 } else if (componentInfo.component instanceof Grid<?>) {
                     Grid inspectedComponent = (Grid) componentInfo.component;
@@ -193,7 +202,7 @@ public class ComponentUtils {
                     Object responseValue = mapComponentValues.get(id);
                     if (responseValue == null) {
                         logger.warn("No response value found for id: {}", id);
-                        return;
+                        continue;
                     }
 
                     if (componentInfo.component instanceof Grid) {
@@ -214,6 +223,15 @@ public class ComponentUtils {
                     } else if (componentInfo.component instanceof NumberField) {
                         NumberField numberField = (NumberField) componentInfo.component;
                         numberField.setValue(Double.valueOf(responseValue.toString()));
+                    } else if (componentInfo.component instanceof DatePicker) {
+                        DatePicker datePicker = (DatePicker) componentInfo.component;
+                        datePicker.setValue(LocalDate.parse(responseValue.toString()));
+                    } else if (componentInfo.component instanceof TimePicker) {
+                        TimePicker timePicker = (TimePicker) componentInfo.component;
+                        timePicker.setValue(LocalTime.parse(responseValue.toString()));
+                    } else if (componentInfo.component instanceof DateTimePicker) {
+                        DateTimePicker datetimePicker = (DateTimePicker) componentInfo.component;
+                        datetimePicker.setValue(LocalDateTime.parse(responseValue.toString()));
                     } else if (componentInfo.component instanceof ComboBox) {
                         ComboBox comboBox = (ComboBox) componentInfo.component;
                         comboBox.setValue(responseValue);
@@ -223,15 +241,12 @@ public class ComponentUtils {
                     } else if (componentInfo.component instanceof Checkbox) {
                         Checkbox checkbox = (Checkbox) componentInfo.component;
                         checkbox.setValue((Boolean) responseValue);
+                    }  else if (componentInfo.component instanceof CheckboxGroup<?>) {
+                        CheckboxGroup<?> checkboxgroup = (CheckboxGroup<?>) componentInfo.component;
+                        checkboxgroup.setValue((Set) responseValue);
                     } else if (componentInfo.component instanceof RadioButtonGroup<?>) {
                         RadioButtonGroup radioButtonGroup = (RadioButtonGroup) componentInfo.component;
-                        radioButtonGroup.setValue(responseValue);
-                    } else if (componentInfo.component instanceof DatePicker) {
-                        DatePicker datePicker = (DatePicker) componentInfo.component;
-                        datePicker.setValue(LocalDate.parse(responseValue.toString()));
-                    } else if (componentInfo.component instanceof TimePicker) {
-                        TimePicker timePicker = (TimePicker) componentInfo.component;
-                        timePicker.setValue(LocalTime.parse(responseValue.toString()));
+                        radioButtonGroup.setValue(responseValue.toString());
                     } else if (componentInfo.component instanceof Grid.Column<?>) {
                         // Nothing to do as it is managed in Grid
                     }

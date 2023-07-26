@@ -22,6 +22,8 @@ import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -160,7 +162,18 @@ public class ComponentUtils {
                 } else if (componentInfo.component instanceof Grid<?>) {
                     Grid inspectedComponent = (Grid) componentInfo.component;
                     for (Field f : inspectedComponent.getBeanType().getDeclaredFields()) {
-                        inputFieldMap.put(f.getName(), f.getType().getSimpleName());
+                        if (f.getType().getSimpleName().equalsIgnoreCase("Date") || f.getType().getSimpleName().equalsIgnoreCase("LocalDate"))
+                        inputFieldMap.put(f.getName(), "a date using format 'yyyy-MM-dd'");
+                        else if (f.getType().getSimpleName().equalsIgnoreCase("Time") || f.getType().getSimpleName().equalsIgnoreCase("LocalTime"))
+                            inputFieldMap.put(f.getName(), "a time using format 'HH:mm:ss'");
+                        else if (f.getType().getSimpleName().equalsIgnoreCase("DateTime") || f.getType().getSimpleName().equalsIgnoreCase("LocalDateTime"))
+                            inputFieldMap.put(f.getName(), "a date and time using format 'yyyy-MM-ddTHH:mm:ss'");
+                        else if (f.getType().getSimpleName().equalsIgnoreCase("Boolean"))
+                            inputFieldMap.put(f.getName(), "Boolean");
+                        else if (f.getType().getSimpleName().equalsIgnoreCase("Integer") || f.getType().getSimpleName().equalsIgnoreCase("Long"))
+                            inputFieldMap.put(f.getName(), "Number");
+                        else
+                            inputFieldMap.put(f.getName(), "String");
                     }
                 }
             } catch (Exception e) {
@@ -297,9 +310,9 @@ public class ComponentUtils {
                     Field field = itemClass.getDeclaredField(propName);
                     field.setAccessible(true);
                     if (field.getType().equals(LocalDate.class))
-                        field.set(item, LocalDate.parse(propValue.toString()));
+                        field.set(item, LocalDate.parse(propValue.toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
                     else if (field.getType().equals(LocalTime.class))
-                        field.set(item, LocalTime.parse(propValue.toString()));
+                        field.set(item, LocalTime.parse(propValue.toString(), DateTimeFormatter.ofPattern("HH:mm:ss")));
                     else if (field.getType().equals(Double.class))
                         field.set(item, Double.valueOf(propValue.toString()));
                     else if (field.getType().equals(Integer.class))

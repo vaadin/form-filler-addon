@@ -48,7 +48,7 @@ public class ChatGPTService extends OpenAiService implements LLMService {
         String gptRequest = String.format(
                 "Based on the user input: '%s', " +
                         "generate a JSON object according to these instructions: " +
-                        "Fill out N/A in the JSON value if the user did not specify a value. " +
+                        "Fill out only one value per field. " +
                         "Return the result as a JSON object in this format: '%s'."
                 , input, objectMap);
         if (!componentInstructions.isEmpty() || !typesMap.isEmpty()) {

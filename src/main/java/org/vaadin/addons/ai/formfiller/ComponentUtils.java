@@ -139,9 +139,9 @@ public class ComponentUtils {
             try {
                 if ((componentInfo.component instanceof TextField)
                         || (componentInfo.component instanceof TextArea)) {
-                    inputFieldMap.put(componentInfo.id, "String");
+                    inputFieldMap.put(componentInfo.id, "a String");
                 } else if ((componentInfo.component instanceof NumberField)) {
-                    inputFieldMap.put(componentInfo.id, "Number");
+                    inputFieldMap.put(componentInfo.id, "a Number");
                 } else if ((componentInfo.component instanceof DatePicker)) {
                     inputFieldMap.put(componentInfo.id, "a date using format 'yyyy-MM-dd'");
                 } else if ((componentInfo.component instanceof TimePicker)) {
@@ -151,19 +151,19 @@ public class ComponentUtils {
                 } else if ((componentInfo.component instanceof ComboBox<?>)) {
                     StringJoiner joiner = new StringJoiner("\" OR \"");
                     ((ComboBox<String>) componentInfo.component).getListDataView().getItems().forEach(joiner::add);
-                    inputFieldMap.put(componentInfo.id, "To fill this field select one of these options \"" + joiner.toString()+"\"");
+                    inputFieldMap.put(componentInfo.id, "a String from one of these options \"" + joiner.toString()+"\"");
                 } else if (componentInfo.component instanceof MultiSelectComboBox) {
-                    inputFieldMap.put(componentInfo.id, "String");
+                    inputFieldMap.put(componentInfo.id, "a String");
                 } else if ((componentInfo.component instanceof Checkbox)) {
-                    inputFieldMap.put(componentInfo.id, "Boolean");
+                    inputFieldMap.put(componentInfo.id, "a Boolean");
                 } else if ((componentInfo.component instanceof CheckboxGroup<?>)) {
                     StringJoiner joiner = new StringJoiner("\", \"");
                     ((CheckboxGroup<String>) componentInfo.component).getListDataView().getItems().forEach(joiner::add);
-                    inputFieldMap.put(componentInfo.id, "To fill this field create a Set of Strings selecting none, one or more of these options  \"" + joiner.toString()+"\"");
+                    inputFieldMap.put(componentInfo.id, "a Set of Strings selecting none, one or more of these options  \"" + joiner.toString()+"\"");
                 } else if ((componentInfo.component instanceof RadioButtonGroup<?>)) {
                     StringJoiner joiner = new StringJoiner("\" OR \"");
                     ((RadioButtonGroup<String>) componentInfo.component).getListDataView().getItems().forEach(joiner::add);
-                    inputFieldMap.put(componentInfo.id, "To fill this field select one of these options \"" + joiner.toString()+"\"");
+                    inputFieldMap.put(componentInfo.id, "a String from one of these options \"" + joiner.toString()+"\"");
                 } else if (componentInfo.component instanceof Grid.Column<?>) {
                     // Nothing to do as columns are managed in the Grid case
                 } else if (componentInfo.component instanceof Grid<?>) {
@@ -176,12 +176,12 @@ public class ComponentUtils {
                         else if (f.getType().getSimpleName().equalsIgnoreCase("DateTime") || f.getType().getSimpleName().equalsIgnoreCase("LocalDateTime"))
                             inputFieldMap.put(f.getName(), "a date and time using format 'yyyy-MM-ddTHH:mm:ss'");
                         else if (f.getType().getSimpleName().equalsIgnoreCase("Boolean"))
-                            inputFieldMap.put(f.getName(), "Boolean");
+                            inputFieldMap.put(f.getName(), "a Boolean");
                         else if (f.getType().getSimpleName().equalsIgnoreCase("Integer") || f.getType().getSimpleName().equalsIgnoreCase("Long")
                                 || f.getType().getSimpleName().equalsIgnoreCase("Double")|| f.getType().getSimpleName().equalsIgnoreCase("Float"))
-                            inputFieldMap.put(f.getName(), "Number");
+                            inputFieldMap.put(f.getName(), "a Number");
                         else
-                            inputFieldMap.put(f.getName(), "String");
+                            inputFieldMap.put(f.getName(), "a String");
                     }
                 }
             } catch (Exception e) {

@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -148,15 +149,21 @@ public class ComponentUtils {
                 } else if ((componentInfo.component instanceof DateTimePicker)) {
                     inputFieldMap.put(componentInfo.id, "a date and time using format 'yyyy-MM-ddTHH:mm:ss'");
                 } else if ((componentInfo.component instanceof ComboBox<?>)) {
-                    inputFieldMap.put(componentInfo.id, "String");
+                    StringJoiner joiner = new StringJoiner("\" OR \"");
+                    ((ComboBox<String>) componentInfo.component).getListDataView().getItems().forEach(joiner::add);
+                    inputFieldMap.put(componentInfo.id, "To fill this field select one of these options \"" + joiner.toString()+"\"");
                 } else if (componentInfo.component instanceof MultiSelectComboBox) {
                     inputFieldMap.put(componentInfo.id, "String");
                 } else if ((componentInfo.component instanceof Checkbox)) {
                     inputFieldMap.put(componentInfo.id, "Boolean");
                 } else if ((componentInfo.component instanceof CheckboxGroup<?>)) {
-                    inputFieldMap.put(componentInfo.id, "Set of Strings");
+                    StringJoiner joiner = new StringJoiner("\", \"");
+                    ((CheckboxGroup<String>) componentInfo.component).getListDataView().getItems().forEach(joiner::add);
+                    inputFieldMap.put(componentInfo.id, "To fill this field create a Set of Strings selecting none, one or more of these options  \"" + joiner.toString()+"\"");
                 } else if ((componentInfo.component instanceof RadioButtonGroup<?>)) {
-                    inputFieldMap.put(componentInfo.id, "String");
+                    StringJoiner joiner = new StringJoiner("\" OR \"");
+                    ((RadioButtonGroup<String>) componentInfo.component).getListDataView().getItems().forEach(joiner::add);
+                    inputFieldMap.put(componentInfo.id, "To fill this field select one of these options \"" + joiner.toString()+"\"");
                 } else if (componentInfo.component instanceof Grid.Column<?>) {
                     // Nothing to do as columns are managed in the Grid case
                 } else if (componentInfo.component instanceof Grid<?>) {
@@ -170,7 +177,8 @@ public class ComponentUtils {
                             inputFieldMap.put(f.getName(), "a date and time using format 'yyyy-MM-ddTHH:mm:ss'");
                         else if (f.getType().getSimpleName().equalsIgnoreCase("Boolean"))
                             inputFieldMap.put(f.getName(), "Boolean");
-                        else if (f.getType().getSimpleName().equalsIgnoreCase("Integer") || f.getType().getSimpleName().equalsIgnoreCase("Long"))
+                        else if (f.getType().getSimpleName().equalsIgnoreCase("Integer") || f.getType().getSimpleName().equalsIgnoreCase("Long")
+                                || f.getType().getSimpleName().equalsIgnoreCase("Double")|| f.getType().getSimpleName().equalsIgnoreCase("Float"))
                             inputFieldMap.put(f.getName(), "Number");
                         else
                             inputFieldMap.put(f.getName(), "String");
@@ -313,12 +321,16 @@ public class ComponentUtils {
                         field.set(item, LocalDate.parse(propValue.toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
                     else if (field.getType().equals(LocalTime.class))
                         field.set(item, LocalTime.parse(propValue.toString(), DateTimeFormatter.ofPattern("HH:mm:ss")));
+                    else if (field.getType().equals(LocalDateTime.class))
+                        field.set(item, LocalDateTime.parse(propValue.toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
                     else if (field.getType().equals(Double.class))
                         field.set(item, Double.valueOf(propValue.toString()));
                     else if (field.getType().equals(Integer.class))
                         field.set(item, Integer.valueOf(propValue.toString()));
                     else if (field.getType().equals(Long.class))
                         field.set(item, Long.valueOf(propValue.toString()));
+                    else if (field.getType().equals(Float.class))
+                        field.set(item, Float.valueOf(propValue.toString()));
                     else if (field.getType().equals(Boolean.class))
                         field.set(item, Boolean.valueOf(propValue.toString()));
                     else

@@ -281,7 +281,7 @@ public class ComponentUtils {
 
                 }
             } catch (Exception e) {
-                logger.error("Error while updating component with id: {}", id, e);
+                logger.error("Error while updating component with id: {} Cause: {}", id, e.getMessage());
             }
         }
     }
@@ -336,7 +336,7 @@ public class ComponentUtils {
                     else
                     field.set(item, propValue);
 
-                } catch (NoSuchFieldException | IllegalAccessException | IllegalArgumentException e) {
+                } catch (Exception e) {
                     logger.error("Failed to set field value for '{}': {}", propName, e.getMessage());
                 }
             }

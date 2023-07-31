@@ -1,4 +1,4 @@
-package org.vaadin.addons.ai.formfiller;
+package org.vaadin.addons.ai.formfiller.services;
 
 import com.vaadin.flow.component.Component;
 

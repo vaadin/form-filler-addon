@@ -1,4 +1,4 @@
-package org.vaadin.addons.ai.formfiller;
+package org.vaadin.addons.ai.formfiller.views;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
@@ -20,6 +20,10 @@ import com.vaadin.flow.component.upload.receivers.FileBuffer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.InputStreamFactory;
 import com.vaadin.flow.server.StreamResource;
+import org.vaadin.addons.ai.formfiller.FormFiller;
+import org.vaadin.addons.ai.formfiller.FormFillerResult;
+import org.vaadin.addons.ai.formfiller.data.ReceiptItem;
+import org.vaadin.addons.ai.formfiller.utils.OCRUtils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

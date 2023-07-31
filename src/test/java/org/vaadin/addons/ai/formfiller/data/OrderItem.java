@@ -1,8 +1,8 @@
-package org.vaadin.addons.ai.formfiller;
+package org.vaadin.addons.ai.formfiller.data;
 
 import java.time.LocalDate;
 
-public class Order {
+public class OrderItem {
     private String orderId;
     private String itemName;
     private String entity;

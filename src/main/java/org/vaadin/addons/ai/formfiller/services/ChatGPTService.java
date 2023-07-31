@@ -1,9 +1,10 @@
-package org.vaadin.addons.ai.formfiller;
+package org.vaadin.addons.ai.formfiller.services;
 
 import com.theokanning.openai.completion.CompletionRequest;
 import com.theokanning.openai.completion.CompletionResult;
 import com.theokanning.openai.service.OpenAiService;
 import com.vaadin.flow.component.Component;
+import org.vaadin.addons.ai.formfiller.utils.KeysUtils;
 
 import java.time.Duration;
 import java.util.ArrayList;

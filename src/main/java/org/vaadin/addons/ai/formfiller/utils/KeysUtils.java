@@ -1,4 +1,4 @@
-package org.vaadin.addons.ai.formfiller;
+package org.vaadin.addons.ai.formfiller.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

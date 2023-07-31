@@ -1,4 +1,4 @@
-package org.vaadin.addons.ai.formfiller;
+package org.vaadin.addons.ai.formfiller.views;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -11,15 +11,15 @@ import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.FileBuffer;
 import com.vaadin.flow.router.Route;
+import org.vaadin.addons.ai.formfiller.FormFiller;
+import org.vaadin.addons.ai.formfiller.FormFillerResult;
+import org.vaadin.addons.ai.formfiller.data.OrderItem;
 
 import java.util.HashMap;
 
@@ -82,13 +82,13 @@ public class FormFillerTextDemo extends Div {
         typeService.setId("typeService");
         customerOrdersForm.add(typeService);
 
-        Grid<Order> orderGrid = new Grid<>(Order.class);
+        Grid<OrderItem> orderGrid = new Grid<>(OrderItem.class);
         orderGrid.removeAllColumns();
-        orderGrid.addColumn(Order::getOrderId).setHeader("Order Id").setKey("orderId").setId("orderId");
-        orderGrid.addColumn(Order::getItemName).setHeader("Item Name").setKey("itemName").setId("itemName");
-        orderGrid.addColumn(Order::getOrderDate).setHeader("Order Date").setKey("orderDate").setId("orderDate");
-        orderGrid.addColumn(Order::getOrderStatus).setHeader("Order Status").setKey("orderStatus").setId("orderStatus");
-        orderGrid.addColumn(Order::getOrderTotal).setHeader("Order Cost").setKey("orderCost").setId("orderCost");
+        orderGrid.addColumn(OrderItem::getOrderId).setHeader("Order Id").setKey("orderId").setId("orderId");
+        orderGrid.addColumn(OrderItem::getItemName).setHeader("Item Name").setKey("itemName").setId("itemName");
+        orderGrid.addColumn(OrderItem::getOrderDate).setHeader("Order Date").setKey("orderDate").setId("orderDate");
+        orderGrid.addColumn(OrderItem::getOrderStatus).setHeader("Order Status").setKey("orderStatus").setId("orderStatus");
+        orderGrid.addColumn(OrderItem::getOrderTotal).setHeader("Order Cost").setKey("orderCost").setId("orderCost");
         orderGrid.setId("orders");
 
         customerOrdersForm.add(orderGrid);

@@ -1,0 +1,16 @@
+Order sent by the customer Andrew Jackson on '2023-04-05 12:13:00'
+Address: 1234 Elm Street, Springfield, USA 
+Phone Number: 555-1234 
+Email: 'andrewjackson#gmial.com 
+Due Date: 2023-05-05
+
+This order contains the products for the project 'Form filler AI Addon' that is part of the new development of Vaadin AI kit. 
+
+Items list:
+Item Number     Items   Type    Cost    Date    Status
+1001    2 Smartphones   Hardware    $1000   '2023-01-10' Delivered
+1002    1 Laptop    Hardware    $1500   '2023-02-15'    In Transit
+1003    5 Wireless Headphones   Hardware    $500    '2023-03-20'    Cancelled
+1004    1 Headphones    Hardware    $999    '2023-01-01'    In Transit
+
+Payment Method: Credit Card

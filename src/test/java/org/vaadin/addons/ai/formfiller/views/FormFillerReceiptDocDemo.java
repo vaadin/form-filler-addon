@@ -4,11 +4,14 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
@@ -37,8 +40,15 @@ public class FormFillerReceiptDocDemo extends Div {
     FormLayout receiptForm;
 
     Image preview = new Image();
+    Upload pdfDocument = new Upload();
+    Notification imageNotification = new Notification("Please select a file to upload or a predefined image");
+    FileBuffer fileBuffer = new FileBuffer();
 
     public FormFillerReceiptDocDemo() {
+        imageNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        imageNotification.setDuration(2000);
+        imageNotification.setPosition(Notification.Position.MIDDLE);
+
         receiptForm = new FormLayout();
 
         TextField nameField = new TextField("Store Name");
@@ -125,20 +135,49 @@ public class FormFillerReceiptDocDemo extends Div {
 
         dataLayout.add(debugInput, debugJsonTarget, debugTypesTarget, debugPrompt, debugResponse);
 
-        Upload pdfDocument = new Upload();
-        FileBuffer fileBuffer = new FileBuffer();
         pdfDocument.setReceiver(fileBuffer);
 
+        ComboBox<String> images = new ComboBox<>("Select Image");
+        images.setItems("Load my receipt...", "Receipt1", "Receipt2", "Receipt3", "Receipt4", "Receipt5", "Receipt6", "Receipt7", "Receipt8");
+        images.setValue("Load my receipt...");
+        images.setAllowCustomValue(false);
+        images.addValueChangeListener(e -> {
+            if (e.getValue().equalsIgnoreCase("Load my receipt...")) {
+                pdfDocument.setVisible(true);
+                preview.setSrc("");
+                pdfDocument.clearFileList();
+                fileBuffer = new FileBuffer();
+                pdfDocument.setReceiver(fileBuffer);
+            } else {
+                pdfDocument.setVisible(false);
+                StreamResource imageResource = new StreamResource(e.getValue()+".png",
+                        () -> getClass().getResourceAsStream("/receipts/"+e.getValue()+".png"));
+                preview.setSrc(imageResource);
+            }
+        });
+
+
         Button fillDocumentButton = new Button("Fill Form From Document");
-        fillDocumentButton.setEnabled(false);
         fillDocumentButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         fillDocumentButton.addClickListener(event -> {
+            if (images.getValue().equalsIgnoreCase("Load my receipt..."))
+            {
+                if (fileBuffer.getFileData() == null) {
+                    imageNotification.open();
+                    return;
+                }
+            }
             try {
-
+                FileInputStream fileInputStream = null;
+                if (images.getValue().equalsIgnoreCase("Load my receipt...")) {
+                    fileInputStream = new FileInputStream(fileBuffer.getFileData().getFile().getAbsolutePath());
+                } else {
+                    fileInputStream = new FileInputStream(getClass().getResource("/receipts/"+images.getValue()+".png").getFile());
+                }
                 debugJsonTarget.setValue("");
                 debugTypesTarget.setValue("");
                 debugResponse.setValue("");
-                String input = OCRUtils.getOCRText(new FileInputStream(fileBuffer.getFileData().getFile().getAbsolutePath()));
+                String input = OCRUtils.getOCRText(fileInputStream);
                 debugInput.setValue(input);
                 if (input != null && !input.isEmpty()) {
                     HashMap<Component, String> fieldsInstructions = new HashMap<>();
@@ -156,6 +195,7 @@ public class FormFillerReceiptDocDemo extends Div {
             }
         });
 
+        pdfDocument.setVisible(false);
         pdfDocument.addStartedListener(e ->
                 fillDocumentButton.setEnabled(false));
 
@@ -175,8 +215,8 @@ public class FormFillerReceiptDocDemo extends Div {
             }));
         });
 
-        HorizontalLayout documentLayout = new HorizontalLayout(fillDocumentButton, pdfDocument, preview);
-
+        HorizontalLayout imagesLayout = new HorizontalLayout(images, pdfDocument, preview);
+        VerticalLayout documentLayout = new VerticalLayout(fillDocumentButton, imagesLayout);
         debugLayout.add(documentLayout, dataLayout);
         add(debugLayout);
 
@@ -184,7 +224,7 @@ public class FormFillerReceiptDocDemo extends Div {
 
     private void clearForm() {
         receiptForm.getChildren().forEach(component -> {
-            if (component instanceof HasValue<?,?>) {
+            if (component instanceof HasValue<?, ?>) {
                 ((HasValue) component).clear();
             } else if (component instanceof Grid) {
                 ((Grid) component).setItems(new ArrayList<>());

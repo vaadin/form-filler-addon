@@ -149,8 +149,11 @@ public class FormFillerTextDemo extends Div {
 
         extraInstructionsTool.setComponents(ComponentUtils.getComponentInfo(formLayout));
         extraInstructionsTool.setVisible(false);
+        extraInstructionsTool.setExtraInstructions(nameField, "Format this field in Uppercase");
+        extraInstructionsTool.setExtraInstructions(emailField, "Format this field as a correct email");
+
         Button extraInstructionsButton = new Button("Show/Hide extra instructions");
-        extraInstructionsButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
+        extraInstructionsButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
         extraInstructionsButton.addClickListener(e -> {
             extraInstructionsTool.setVisible(!extraInstructionsTool.isVisible());
         });

@@ -10,7 +10,8 @@ import java.util.List;
 public class ExtraInstructionsTool extends VerticalLayout {
 
     HashMap<Component, TextField> extraInstructions = new HashMap<>();
-    public ExtraInstructionsTool(){
+
+    public ExtraInstructionsTool() {
         super();
         setWidthFull();
     }
@@ -26,6 +27,12 @@ public class ExtraInstructionsTool extends VerticalLayout {
             textField.setWidthFull();
             extraInstructions.put(component.component(), textField);
             add(textField);
+        }
+    }
+
+    public void setExtraInstructions(Component component, String extraInstruction) {
+        if (extraInstructions.containsKey(component)) {
+            extraInstructions.get(component).setValue(extraInstruction);
         }
     }
 

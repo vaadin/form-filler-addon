@@ -26,7 +26,9 @@ import com.vaadin.flow.server.StreamResource;
 import org.vaadin.addons.ai.formfiller.FormFiller;
 import org.vaadin.addons.ai.formfiller.FormFillerResult;
 import org.vaadin.addons.ai.formfiller.data.ReceiptItem;
+import org.vaadin.addons.ai.formfiller.utils.ComponentUtils;
 import org.vaadin.addons.ai.formfiller.utils.DebugTool;
+import org.vaadin.addons.ai.formfiller.utils.ExtraInstructionsTool;
 import org.vaadin.addons.ai.formfiller.utils.OCRUtils;
 
 import java.io.FileInputStream;
@@ -44,6 +46,8 @@ public class FormFillerReceiptDocDemo extends Div {
     Upload imageFile = new Upload();
     Notification imageNotification = new Notification("Please select a file to upload or a predefined image");
     FileBuffer fileBuffer = new FileBuffer();
+
+    ExtraInstructionsTool extraInstructionsTool = new ExtraInstructionsTool();
 
     public FormFillerReceiptDocDemo() {
         imageNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
@@ -159,8 +163,11 @@ public class FormFillerReceiptDocDemo extends Div {
                 debugTool.getDebugInput().setValue(input);
                 if (input != null && !input.isEmpty()) {
                     HashMap<Component, String> fieldsInstructions = new HashMap<>();
-                    fieldsInstructions.put(nameField, "This is the name of the store");
-                    fieldsInstructions.put(receiptGrid.getColumnByKey("itemCost"), "This is the cost or price of the item");
+                    for (Component c : extraInstructionsTool.getExtraInstructions().keySet()) {
+                        if (extraInstructionsTool.getExtraInstructions().get(c).getValue() != null && !extraInstructionsTool.getExtraInstructions().get(c).getValue().isEmpty())
+                            fieldsInstructions.put(c, extraInstructionsTool.getExtraInstructions().get(c).getValue());
+                    }
+
                     FormFiller formFiller = new FormFiller(receiptForm, fieldsInstructions);
                     FormFillerResult result = formFiller.fill(input);
                     debugTool.getDebugPrompt().setValue(result.getRequest());
@@ -193,8 +200,19 @@ public class FormFillerReceiptDocDemo extends Div {
             }));
         });
 
+        extraInstructionsTool.setComponents(ComponentUtils.getComponentInfo(receiptForm));
+        extraInstructionsTool.setVisible(false);
+        extraInstructionsTool.setExtraInstructions(nameField, "This is the name of the store");
+        extraInstructionsTool.setExtraInstructions(receiptGrid.getColumnByKey("itemCost"), "This is the cost or price of the item");
+
+        Button extraInstructionsButton = new Button("Show/Hide extra instructions");
+        extraInstructionsButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        extraInstructionsButton.addClickListener(e -> {
+            extraInstructionsTool.setVisible(!extraInstructionsTool.isVisible());
+        });
+
         HorizontalLayout imagesLayout = new HorizontalLayout(images, imageFile, preview);
-        VerticalLayout documentLayout = new VerticalLayout(fillDocumentButton, imagesLayout);
+        VerticalLayout documentLayout = new VerticalLayout(fillDocumentButton, extraInstructionsButton, extraInstructionsTool, imagesLayout);
         debugLayout.add(documentLayout, debugTool);
         add(debugLayout);
 

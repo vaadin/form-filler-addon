@@ -29,7 +29,9 @@ import com.vaadin.flow.server.StreamResource;
 import org.vaadin.addons.ai.formfiller.FormFiller;
 import org.vaadin.addons.ai.formfiller.FormFillerResult;
 import org.vaadin.addons.ai.formfiller.data.OrderItem;
+import org.vaadin.addons.ai.formfiller.utils.ComponentUtils;
 import org.vaadin.addons.ai.formfiller.utils.DebugTool;
+import org.vaadin.addons.ai.formfiller.utils.ExtraInstructionsTool;
 import org.vaadin.addons.ai.formfiller.utils.OCRUtils;
 
 import java.io.FileInputStream;
@@ -47,6 +49,8 @@ public class FormFillerInvoiceDocDemo extends Div {
     Upload imageFile = new Upload();
     Notification imageNotification = new Notification("Please select a file to upload or a predefined image");
     FileBuffer fileBuffer = new FileBuffer();
+
+    ExtraInstructionsTool extraInstructionsTool = new ExtraInstructionsTool();
 
     public FormFillerInvoiceDocDemo() {
         imageNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
@@ -177,8 +181,11 @@ public class FormFillerInvoiceDocDemo extends Div {
                 debugTool.getDebugInput().setValue(input);
                 if (input != null && !input.isEmpty()) {
                     HashMap<Component, String> fieldsInstructions = new HashMap<>();
-                    fieldsInstructions.put(nameField, "Format this field in Uppercase");
-                    fieldsInstructions.put(emailField, "Format this field as a correct email");
+                    for (Component c : extraInstructionsTool.getExtraInstructions().keySet()) {
+                        if (extraInstructionsTool.getExtraInstructions().get(c).getValue() != null && !extraInstructionsTool.getExtraInstructions().get(c).getValue().isEmpty())
+                            fieldsInstructions.put(c, extraInstructionsTool.getExtraInstructions().get(c).getValue());
+                    }
+
                     FormFiller formFiller = new FormFiller(invoiceForm, fieldsInstructions);
                     FormFillerResult result = formFiller.fill(input);
                     debugTool.getDebugPrompt().setValue(result.getRequest());
@@ -211,8 +218,16 @@ public class FormFillerInvoiceDocDemo extends Div {
             }));
         });
 
+        extraInstructionsTool.setComponents(ComponentUtils.getComponentInfo(invoiceForm));
+        extraInstructionsTool.setVisible(false);
+        Button extraInstructionsButton = new Button("Show/Hide extra instructions");
+        extraInstructionsButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        extraInstructionsButton.addClickListener(e -> {
+            extraInstructionsTool.setVisible(!extraInstructionsTool.isVisible());
+        });
+
         HorizontalLayout imagesLayout = new HorizontalLayout(images, imageFile, preview);
-        VerticalLayout documentLayout = new VerticalLayout(fillDocumentButton, imagesLayout);
+        VerticalLayout documentLayout = new VerticalLayout(fillDocumentButton,  extraInstructionsButton, extraInstructionsTool, imagesLayout);
         debugLayout.add(documentLayout, debugTool);
         add(debugLayout);
 

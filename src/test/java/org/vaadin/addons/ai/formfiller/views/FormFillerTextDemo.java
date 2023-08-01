@@ -21,7 +21,9 @@ import com.vaadin.flow.router.Route;
 import org.vaadin.addons.ai.formfiller.FormFiller;
 import org.vaadin.addons.ai.formfiller.FormFillerResult;
 import org.vaadin.addons.ai.formfiller.data.OrderItem;
+import org.vaadin.addons.ai.formfiller.utils.ComponentUtils;
 import org.vaadin.addons.ai.formfiller.utils.DebugTool;
+import org.vaadin.addons.ai.formfiller.utils.ExtraInstructionsTool;
 
 import java.util.HashMap;
 
@@ -29,6 +31,8 @@ import java.util.HashMap;
 public class FormFillerTextDemo extends Div {
 
     FormLayout formLayout;
+
+    ExtraInstructionsTool extraInstructionsTool = new ExtraInstructionsTool();
 
     public FormFillerTextDemo() {
         formLayout = new FormLayout();
@@ -128,28 +132,37 @@ public class FormFillerTextDemo extends Div {
             String input = debugTool.getDebugInput().getValue();
             if (input != null && !input.isEmpty()) {
                 HashMap<Component, String> fieldsInstructions = new HashMap<>();
-                fieldsInstructions.put(nameField, "Format this field in Uppercase");
-                fieldsInstructions.put(orderGrid.getColumnByKey("orderDate"), "Format this field as a date with format yyyy/MM/dd");
-                fieldsInstructions.put(orderGrid.getColumnByKey("orderId"), "Format this field as a string");
-                fieldsInstructions.put(emailField, "Format this field as a correct email");
+
+                for (Component c : extraInstructionsTool.getExtraInstructions().keySet()) {
+                    if (extraInstructionsTool.getExtraInstructions().get(c).getValue() != null && !extraInstructionsTool.getExtraInstructions().get(c).getValue().isEmpty())
+                        fieldsInstructions.put(c, extraInstructionsTool.getExtraInstructions().get(c).getValue());
+                }
 
                 FormFiller formFiller = new FormFiller(formLayout, fieldsInstructions);
                 FormFillerResult result = formFiller.fill(input);
                 debugTool.getDebugPrompt().setValue(result.getRequest());
-                debugTool.getDebugJsonTarget().setValue(String.format("%s",formFiller.getMapping().componentsJSONMap()));
-                debugTool.getDebugTypesTarget().setValue(String.format("%s",formFiller.getMapping().componentsTypesJSONMap()));
+                debugTool.getDebugJsonTarget().setValue(String.format("%s", formFiller.getMapping().componentsJSONMap()));
+                debugTool.getDebugTypesTarget().setValue(String.format("%s", formFiller.getMapping().componentsTypesJSONMap()));
                 debugTool.getDebugResponse().setValue(result.getResponse());
             }
         });
 
+        extraInstructionsTool.setComponents(ComponentUtils.getComponentInfo(formLayout));
+        extraInstructionsTool.setVisible(false);
+        Button extraInstructionsButton = new Button("Show/Hide extra instructions");
+        extraInstructionsButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
+        extraInstructionsButton.addClickListener(e -> {
+            extraInstructionsTool.setVisible(!extraInstructionsTool.isVisible());
+        });
+
         HorizontalLayout imagesLayout = new HorizontalLayout(texts);
-        VerticalLayout documentLayout = new VerticalLayout(fillButton, imagesLayout);
+        VerticalLayout documentLayout = new VerticalLayout(fillButton, extraInstructionsButton, extraInstructionsTool, imagesLayout);
         debugLayout.add(documentLayout, debugTool);
         add(debugLayout);
 
     }
 
-    public HashMap<String,String> getExampleTexts () {
+    public HashMap<String, String> getExampleTexts() {
         HashMap<String, String> texts = new HashMap<>();
         texts.put("Text1", "Order sent by the customer Andrew Jackson on '2023-04-05 12:13:00'\n" +
                 "Address: Ruukinkatu 2-4, FI-20540 Turku, Finland \n" +
@@ -183,7 +196,7 @@ public class FormFillerTextDemo extends Div {
                 "1003    5 Wireless Headphones   Hardware    $500    '2023-03-20'    Cancelled\n" +
                 "1004    1 Headphones    Hardware    $999    '2023-01-01'    In Transit\n" +
                 "\n" +
-                "Payment Method: Credit Card" );
+                "Payment Method: Credit Card");
         texts.put("Text3", "This is an invoice of an order for the project 'Vaadin AI Form Filler'" +
                 " providing some hardware and sent by the customer Andrew Jackson who lives at " +
                 "Ruukinkatu 2-4, FI-20540 Turku (Finland) and can be reached at phone number 555-1234 " +
@@ -194,7 +207,7 @@ public class FormFillerTextDemo extends Div {
                 "number 1003 consists of five items of wireless headphones for a total of $500 placed " +
                 "on 2023 March the 20th with a status of cancelled; number 1004 is for 'Headphones' " +
                 "with a cost of $999 and placed on '2023-01-01' with status In transit. The invoice " +
-                "was paid using a Paypal account." );
+                "was paid using a Paypal account.");
         return texts;
     }
 }

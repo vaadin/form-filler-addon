@@ -77,6 +77,11 @@ public class ComponentUtils {
         return mapping;
     }
 
+    public static List<ComponentInfo> getComponentInfo(Component component) {
+        List<ComponentInfo> componentInfoList = new ArrayList<>();
+        findChildComponents(component, componentInfoList);
+        return componentInfoList;
+    }
     private static void findChildComponents(Component component, List<ComponentInfo> componentInfoList) {
         component.getChildren().forEach(childComponent -> {
             String componentType = childComponent.getClass().getSimpleName();

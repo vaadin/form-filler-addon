@@ -11,6 +11,7 @@ import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.NumberField;
@@ -27,61 +28,61 @@ import java.util.HashMap;
 @Route("")
 public class FormFillerTextDemo extends Div {
 
-    FormLayout customerOrdersForm;
+    FormLayout formLayout;
 
     public FormFillerTextDemo() {
-        customerOrdersForm = new FormLayout();
+        formLayout = new FormLayout();
 
         TextField nameField = new TextField("Name");
         nameField.setId("name");
-        customerOrdersForm.add(nameField);
+        formLayout.add(nameField);
 
         TextField addressField = new TextField("Address");
         addressField.setId("address");
-        customerOrdersForm.add(addressField);
+        formLayout.add(addressField);
 
         TextField phoneField = new TextField("Phone");
         phoneField.setId("phone");
-        customerOrdersForm.add(phoneField);
+        formLayout.add(phoneField);
 
         TextField emailField = new TextField("Email");
         emailField.setId("email");
-        customerOrdersForm.add(emailField);
+        formLayout.add(emailField);
 
         DateTimePicker dateCreationField = new DateTimePicker("Creation Date");
         dateCreationField.setId("creationDate");
-        customerOrdersForm.add(dateCreationField);
+        formLayout.add(dateCreationField);
 
         DatePicker dueDateField = new DatePicker("Due Date");
         dueDateField.setId("dueDate");
-        customerOrdersForm.add(dueDateField);
+        formLayout.add(dueDateField);
 
         ComboBox<String> orderEntity = new ComboBox<>("Order Entity");
         orderEntity.setId("orderEntity");
         orderEntity.setItems("Person", "Company");
-        customerOrdersForm.add(orderEntity);
+        formLayout.add(orderEntity);
 
         NumberField orderTotal = new NumberField("Order Total");
         orderTotal.setId("orderTotal");
-        customerOrdersForm.add(orderTotal);
+        formLayout.add(orderTotal);
 
         TextArea orderDescription = new TextArea("Order Description");
         orderDescription.setId("orderDescription");
-        customerOrdersForm.add(orderDescription);
+        formLayout.add(orderDescription);
 
         RadioButtonGroup<String> paymentMethod = new RadioButtonGroup<>("Payment Method");
         paymentMethod.setItems("Credit Card", "Cash", "Paypal");
         paymentMethod.setId("paymentMethod");
-        customerOrdersForm.add(paymentMethod);
+        formLayout.add(paymentMethod);
 
         Checkbox isFinnishCustomer = new Checkbox("Is Finnish Customer");
         isFinnishCustomer.setId("isFinnishCustomer");
-        customerOrdersForm.add(isFinnishCustomer);
+        formLayout.add(isFinnishCustomer);
 
         CheckboxGroup<String> typeService = new CheckboxGroup<>("Type of Service");
         typeService.setItems("Software", "Hardware", "Consultancy");
         typeService.setId("typeService");
-        customerOrdersForm.add(typeService);
+        formLayout.add(typeService);
 
         Grid<OrderItem> orderGrid = new Grid<>(OrderItem.class);
         orderGrid.removeAllColumns();
@@ -92,43 +93,108 @@ public class FormFillerTextDemo extends Div {
         orderGrid.addColumn(OrderItem::getOrderTotal).setHeader("Order Cost").setKey("orderCost").setId("orderCost");
         orderGrid.setId("orders");
 
-        customerOrdersForm.add(orderGrid);
+        formLayout.add(orderGrid);
 
-        add(customerOrdersForm);
+        formLayout.setResponsiveSteps(
+                // Use one column by default
+                new FormLayout.ResponsiveStep("0", 1),
+                // Use two columns, if layout's width exceeds 500px
+                new FormLayout.ResponsiveStep("500px", 2));
+        // Stretch the username field over 2 columns
+        formLayout.setColspan(orderGrid, 2);
+
+        add(formLayout);
 
         VerticalLayout debugLayout = new VerticalLayout();
         debugLayout.setWidthFull();
 
-        DebugTool dataLayout = new DebugTool();
+        DebugTool debugTool = new DebugTool();
+
+        ComboBox<String> texts = new ComboBox<>("Select a text or just type your own <br>in the debug Input Source field");
+        texts.setItems("Text1", "Text2");
+        texts.setValue("Text1");
+        texts.setAllowCustomValue(false);
+        debugTool.getDebugInput().setValue(getExampleTexts().get("Text1"));
+        texts.addValueChangeListener(e -> {
+            debugTool.getDebugInput().setValue(getExampleTexts().get(texts.getValue()));
+        });
 
         Button fillButton = new Button("Fill Form From Input Text");
         fillButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         fillButton.addClickListener(event -> {
-            dataLayout.getDebugJsonTarget().setValue("");
-            dataLayout.getDebugTypesTarget().setValue("");
-            dataLayout.getDebugResponse().setValue("");
-            String input = dataLayout.getDebugInput().getValue();
+            debugTool.getDebugJsonTarget().setValue("");
+            debugTool.getDebugTypesTarget().setValue("");
+            debugTool.getDebugResponse().setValue("");
+            String input = debugTool.getDebugInput().getValue();
             if (input != null && !input.isEmpty()) {
                 HashMap<Component, String> fieldsInstructions = new HashMap<>();
                 fieldsInstructions.put(nameField, "Format this field in Uppercase");
                 fieldsInstructions.put(orderGrid.getColumnByKey("orderDate"), "Format this field as a date with format yyyy/MM/dd");
                 fieldsInstructions.put(orderGrid.getColumnByKey("orderId"), "Format this field as a string");
-//                fieldsInstructions.put(orderEntity, "To fill this field select one of these options \"Person\" or \"Company\" according to the entity who is generating the order");
-//                fieldsInstructions.put(paymentMethod, "To fill this field select one of these options \"Credit Card\" or \"Cash\" or \"Paypal\" according to the payment method used");
                 fieldsInstructions.put(emailField, "Format this field as a correct email");
-//                fieldsInstructions.put(typeService, "To fill this field select none, one or more of these options \"Software\", \"Hardware\", \"Consultancy\" according to the items type included in the order");
 
-                FormFiller formFiller = new FormFiller(customerOrdersForm, fieldsInstructions);
+                FormFiller formFiller = new FormFiller(formLayout, fieldsInstructions);
                 FormFillerResult result = formFiller.fill(input);
-                dataLayout.getDebugPrompt().setValue(result.getRequest());
-                dataLayout.getDebugJsonTarget().setValue(String.format("%s",formFiller.getMapping().componentsJSONMap()));
-                dataLayout.getDebugTypesTarget().setValue(String.format("%s",formFiller.getMapping().componentsTypesJSONMap()));
-                dataLayout.getDebugResponse().setValue(result.getResponse());
+                debugTool.getDebugPrompt().setValue(result.getRequest());
+                debugTool.getDebugJsonTarget().setValue(String.format("%s",formFiller.getMapping().componentsJSONMap()));
+                debugTool.getDebugTypesTarget().setValue(String.format("%s",formFiller.getMapping().componentsTypesJSONMap()));
+                debugTool.getDebugResponse().setValue(result.getResponse());
             }
         });
 
-        debugLayout.add(fillButton, dataLayout);
+        HorizontalLayout imagesLayout = new HorizontalLayout(texts);
+        VerticalLayout documentLayout = new VerticalLayout(fillButton, imagesLayout);
+        debugLayout.add(documentLayout, debugTool);
         add(debugLayout);
 
+    }
+
+    public HashMap<String,String> getExampleTexts () {
+        HashMap<String, String> texts = new HashMap<>();
+        texts.put("Text1", "Order sent by the customer Andrew Jackson on '2023-04-05 12:13:00'\n" +
+                "Address: Ruukinkatu 2-4, FI-20540 Turku, Finland \n" +
+                "Phone Number: 555-1234 \n" +
+                "Email: 'andrewjackson@gmail.com \n" +
+                "Due Date: 2023-05-05\n" +
+                "\n" +
+                "This order contains the products for the project 'Form filler AI Addon' that is part of the new development of Vaadin AI kit. \n" +
+                "\n" +
+                "Items list:\n" +
+                "Item Number     Items   Type    Cost    Date    Status\n" +
+                "1001    2 Smartphones   Hardware    $1000   '2023-01-10' Delivered\n" +
+                "1002    1 Laptop    Hardware    $1500   '2023-02-15'    In Transit\n" +
+                "1003    5 Wireless Headphones   Hardware    $500    '2023-03-20'    Cancelled\n" +
+                "1004    1 Headphones    Hardware    $999    '2023-01-01'    In Transit\n" +
+                "1005    1 Windows License    Software    $1500    '2023-02-01'    Delivered\n" +
+                "\n" +
+                "Payment Method: Cash\n");
+        texts.put("Text2", "Order sent by the customer Andrew Jackson on '2023-04-05 12:13:00'\n" +
+                "Address: 1234 Elm Street, Springfield, USA \n" +
+                "Phone Number: 555-1234 \n" +
+                "Email: 'andrewjackson#gmail.com \n" +
+                "Due Date: 2023-05-05\n" +
+                "\n" +
+                "This order contains the products for the project 'Form filler AI Addon' that is part of the new development of Vaadin AI kit. \n" +
+                "\n" +
+                "Items list:\n" +
+                "Item Number     Items   Type    Cost    Date    Status\n" +
+                "1001    2 Smartphones   Hardware    $1000   '2023-01-10' Delivered\n" +
+                "1002    1 Laptop    Hardware    $1500   '2023-02-15'    In Transit\n" +
+                "1003    5 Wireless Headphones   Hardware    $500    '2023-03-20'    Cancelled\n" +
+                "1004    1 Headphones    Hardware    $999    '2023-01-01'    In Transit\n" +
+                "\n" +
+                "Payment Method: Credit Card" );
+        texts.put("Text3", "This is an invoice of an order for the project 'Vaadin AI Form Filler'" +
+                " providing some hardware and sent by the customer Andrew Jackson who lives at " +
+                "Ruukinkatu 2-4, FI-20540 Turku (Finland) and can be reached at phone number 555-1234 " +
+                "and at email 'andrewjackson@gmail.com. Andrew has placed five items: number 1001 " +
+                "contains two items of smartphone for a total of $1,000 placed on 2023 January " +
+                "the 10th with a status of deliberate; number 1002 includes one item of laptop " +
+                "with a total of $1,500 placed on 2023 February the 15th with a status of in transit; " +
+                "number 1003 consists of five items of wireless headphones for a total of $500 placed " +
+                "on 2023 March the 20th with a status of cancelled; number 1004 is for 'Headphones' " +
+                "with a cost of $999 and placed on '2023-01-01' with status In transit. The invoice " +
+                "was paid using a Paypal account." );
+        return texts;
     }
 }

@@ -38,8 +38,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-@Route("doc")
-public class FormFillerDocDemo extends Div {
+@Route("invoice")
+public class FormFillerInvoiceDocDemo extends Div {
 
     FormLayout invoiceForm;
 
@@ -48,7 +48,7 @@ public class FormFillerDocDemo extends Div {
     Notification imageNotification = new Notification("Please select a file to upload or a predefined image");
     FileBuffer fileBuffer = new FileBuffer();
 
-    public FormFillerDocDemo() {
+    public FormFillerInvoiceDocDemo() {
         imageNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
         imageNotification.setDuration(2000);
         imageNotification.setPosition(Notification.Position.MIDDLE);
@@ -116,6 +116,14 @@ public class FormFillerDocDemo extends Div {
         orderGrid.setId("orders");
 
         invoiceForm.add(orderGrid);
+
+        invoiceForm.setResponsiveSteps(
+                // Use one column by default
+                new FormLayout.ResponsiveStep("0", 1),
+                // Use two columns, if layout's width exceeds 500px
+                new FormLayout.ResponsiveStep("500px", 2));
+        // Stretch the username field over 2 columns
+        invoiceForm.setColspan(orderGrid, 2);
 
         add(invoiceForm);
 

@@ -41,7 +41,7 @@ public class FormFillerReceiptDocDemo extends Div {
     FormLayout receiptForm;
 
     Image preview = new Image();
-    Upload pdfDocument = new Upload();
+    Upload imageFile = new Upload();
     Notification imageNotification = new Notification("Please select a file to upload or a predefined image");
     FileBuffer fileBuffer = new FileBuffer();
 
@@ -111,9 +111,9 @@ public class FormFillerReceiptDocDemo extends Div {
         VerticalLayout debugLayout = new VerticalLayout();
         debugLayout.setWidthFull();
 
-        DebugTool dataLayout = new DebugTool();
+        DebugTool debugTool = new DebugTool();
 
-        pdfDocument.setReceiver(fileBuffer);
+        imageFile.setReceiver(fileBuffer);
 
         ComboBox<String> images = new ComboBox<>("Select Image");
         images.setItems("Load my receipt...", "Receipt1", "Receipt2", "Receipt3", "Receipt4", "Receipt5", "Receipt6", "Receipt7", "Receipt8");
@@ -121,13 +121,13 @@ public class FormFillerReceiptDocDemo extends Div {
         images.setAllowCustomValue(false);
         images.addValueChangeListener(e -> {
             if (e.getValue().equalsIgnoreCase("Load my receipt...")) {
-                pdfDocument.setVisible(true);
+                imageFile.setVisible(true);
                 preview.setSrc("");
-                pdfDocument.clearFileList();
+                imageFile.clearFileList();
                 fileBuffer = new FileBuffer();
-                pdfDocument.setReceiver(fileBuffer);
+                imageFile.setReceiver(fileBuffer);
             } else {
-                pdfDocument.setVisible(false);
+                imageFile.setVisible(false);
                 StreamResource imageResource = new StreamResource(e.getValue()+".png",
                         () -> getClass().getResourceAsStream("/receipts/"+e.getValue()+".png"));
                 preview.setSrc(imageResource);
@@ -152,32 +152,32 @@ public class FormFillerReceiptDocDemo extends Div {
                 } else {
                     fileInputStream = new FileInputStream(getClass().getResource("/receipts/"+images.getValue()+".png").getFile());
                 }
-                dataLayout.getDebugJsonTarget().setValue("");
-                dataLayout.getDebugTypesTarget().setValue("");
-                dataLayout.getDebugResponse().setValue("");
+                debugTool.getDebugJsonTarget().setValue("");
+                debugTool.getDebugTypesTarget().setValue("");
+                debugTool.getDebugResponse().setValue("");
                 String input = OCRUtils.getOCRText(fileInputStream);
-                dataLayout.getDebugInput().setValue(input);
+                debugTool.getDebugInput().setValue(input);
                 if (input != null && !input.isEmpty()) {
                     HashMap<Component, String> fieldsInstructions = new HashMap<>();
                     fieldsInstructions.put(nameField, "This is the name of the store");
                     fieldsInstructions.put(receiptGrid.getColumnByKey("itemCost"), "This is the cost or price of the item");
                     FormFiller formFiller = new FormFiller(receiptForm, fieldsInstructions);
                     FormFillerResult result = formFiller.fill(input);
-                    dataLayout.getDebugPrompt().setValue(result.getRequest());
-                    dataLayout.getDebugJsonTarget().setValue(String.format("%s", formFiller.getMapping().componentsJSONMap()));
-                    dataLayout.getDebugTypesTarget().setValue(String.format("%s", formFiller.getMapping().componentsTypesJSONMap()));
-                    dataLayout.getDebugResponse().setValue(result.getResponse());
+                    debugTool.getDebugPrompt().setValue(result.getRequest());
+                    debugTool.getDebugJsonTarget().setValue(String.format("%s", formFiller.getMapping().componentsJSONMap()));
+                    debugTool.getDebugTypesTarget().setValue(String.format("%s", formFiller.getMapping().componentsTypesJSONMap()));
+                    debugTool.getDebugResponse().setValue(result.getResponse());
                 }
             } catch (FileNotFoundException ex) {
                 ex.printStackTrace();
             }
         });
 
-        pdfDocument.setVisible(false);
-        pdfDocument.addStartedListener(e ->
+        imageFile.setVisible(false);
+        imageFile.addStartedListener(e ->
                 fillDocumentButton.setEnabled(false));
 
-        pdfDocument.addFinishedListener(e -> {
+        imageFile.addFinishedListener(e -> {
             String documentPath = fileBuffer.getFileData().getFile().getAbsolutePath();
             fillDocumentButton.setEnabled(true);
             preview.setSrc(new StreamResource("img.png", new InputStreamFactory() {
@@ -193,9 +193,9 @@ public class FormFillerReceiptDocDemo extends Div {
             }));
         });
 
-        HorizontalLayout imagesLayout = new HorizontalLayout(images, pdfDocument, preview);
+        HorizontalLayout imagesLayout = new HorizontalLayout(images, imageFile, preview);
         VerticalLayout documentLayout = new VerticalLayout(fillDocumentButton, imagesLayout);
-        debugLayout.add(documentLayout, dataLayout);
+        debugLayout.add(documentLayout, debugTool);
         add(debugLayout);
 
     }

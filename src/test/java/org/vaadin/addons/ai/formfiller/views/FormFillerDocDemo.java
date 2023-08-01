@@ -1,6 +1,7 @@
 package org.vaadin.addons.ai.formfiller.views;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -11,6 +12,9 @@ import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
@@ -20,6 +24,8 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.FileBuffer;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.InputStreamFactory;
+import com.vaadin.flow.server.StreamResource;
 import org.vaadin.addons.ai.formfiller.FormFiller;
 import org.vaadin.addons.ai.formfiller.FormFillerResult;
 import org.vaadin.addons.ai.formfiller.data.OrderItem;
@@ -28,66 +34,77 @@ import org.vaadin.addons.ai.formfiller.utils.OCRUtils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @Route("doc")
 public class FormFillerDocDemo extends Div {
 
-    FormLayout customerOrdersForm;
+    FormLayout invoiceForm;
+
+    Image preview = new Image();
+    Upload imageFile = new Upload();
+    Notification imageNotification = new Notification("Please select a file to upload or a predefined image");
+    FileBuffer fileBuffer = new FileBuffer();
 
     public FormFillerDocDemo() {
-        customerOrdersForm = new FormLayout();
+        imageNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        imageNotification.setDuration(2000);
+        imageNotification.setPosition(Notification.Position.MIDDLE);
+
+        invoiceForm = new FormLayout();
 
         TextField nameField = new TextField("Name");
         nameField.setId("name");
-        customerOrdersForm.add(nameField);
+        invoiceForm.add(nameField);
 
         TextField addressField = new TextField("Address");
         addressField.setId("address");
-        customerOrdersForm.add(addressField);
+        invoiceForm.add(addressField);
 
         TextField phoneField = new TextField("Phone");
         phoneField.setId("phone");
-        customerOrdersForm.add(phoneField);
+        invoiceForm.add(phoneField);
 
         TextField emailField = new TextField("Email");
         emailField.setId("email");
-        customerOrdersForm.add(emailField);
+        invoiceForm.add(emailField);
 
         DateTimePicker dateCreationField = new DateTimePicker("Creation Date");
         dateCreationField.setId("creationDate");
-        customerOrdersForm.add(dateCreationField);
+        invoiceForm.add(dateCreationField);
 
         DatePicker dueDateField = new DatePicker("Due Date");
         dueDateField.setId("dueDate");
-        customerOrdersForm.add(dueDateField);
+        invoiceForm.add(dueDateField);
 
         ComboBox<String> orderEntity = new ComboBox<>("Order Entity");
         orderEntity.setId("orderEntity");
         orderEntity.setItems("Person", "Company");
-        customerOrdersForm.add(orderEntity);
+        invoiceForm.add(orderEntity);
 
         NumberField orderTotal = new NumberField("Order Total");
         orderTotal.setId("orderTotal");
-        customerOrdersForm.add(orderTotal);
+        invoiceForm.add(orderTotal);
 
         TextArea orderDescription = new TextArea("Order Description");
         orderDescription.setId("orderDescription");
-        customerOrdersForm.add(orderDescription);
+        invoiceForm.add(orderDescription);
 
         RadioButtonGroup<String> paymentMethod = new RadioButtonGroup<>("Payment Method");
         paymentMethod.setItems("Credit Card", "Cash", "Paypal");
         paymentMethod.setId("paymentMethod");
-        customerOrdersForm.add(paymentMethod);
+        invoiceForm.add(paymentMethod);
 
         Checkbox isFinnishCustomer = new Checkbox("Is Finnish Customer");
         isFinnishCustomer.setId("isFinnishCustomer");
-        customerOrdersForm.add(isFinnishCustomer);
+        invoiceForm.add(isFinnishCustomer);
 
         CheckboxGroup<String> typeService = new CheckboxGroup<>("Type of Service");
         typeService.setItems("Software", "Hardware", "Consultancy");
         typeService.setId("typeService");
-        customerOrdersForm.add(typeService);
+        invoiceForm.add(typeService);
 
         Grid<OrderItem> orderGrid = new Grid<>(OrderItem.class);
         orderGrid.removeAllColumns();
@@ -98,59 +115,108 @@ public class FormFillerDocDemo extends Div {
         orderGrid.addColumn(OrderItem::getOrderTotal).setHeader("Order Cost").setKey("orderCost").setId("orderCost");
         orderGrid.setId("orders");
 
-        customerOrdersForm.add(orderGrid);
+        invoiceForm.add(orderGrid);
 
-        add(customerOrdersForm);
+        add(invoiceForm);
 
         VerticalLayout debugLayout = new VerticalLayout();
         debugLayout.setWidthFull();
 
-        DebugTool dataLayout = new DebugTool();
+        DebugTool debugTool = new DebugTool();
 
-        Upload pdfDocument = new Upload();
-        FileBuffer fileBuffer = new FileBuffer();
-        pdfDocument.setReceiver(fileBuffer);
+        imageFile.setReceiver(fileBuffer);
+
+        ComboBox<String> images = new ComboBox<>("Select Image");
+        images.setItems("Load my invoice...", "Invoice1", "Invoice2", "Invoice3", "Invoice4", "Invoice5");
+        images.setValue("Load my invoice...");
+        images.setAllowCustomValue(false);
+        images.addValueChangeListener(e -> {
+            if (e.getValue().equalsIgnoreCase("Load my invoice...")) {
+                imageFile.setVisible(true);
+                preview.setSrc("");
+                imageFile.clearFileList();
+                fileBuffer = new FileBuffer();
+                imageFile.setReceiver(fileBuffer);
+            } else {
+                imageFile.setVisible(false);
+                StreamResource imageResource = new StreamResource(e.getValue()+".png",
+                        () -> getClass().getResourceAsStream("/invoices/"+e.getValue()+".png"));
+                preview.setSrc(imageResource);
+            }
+        });
 
         Button fillDocumentButton = new Button("Fill Form From Document");
-        fillDocumentButton.setEnabled(false);
         fillDocumentButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         fillDocumentButton.addClickListener(event -> {
+            if (images.getValue().equalsIgnoreCase("Load my invoice..."))
+            {
+                if (fileBuffer.getFileData() == null) {
+                    imageNotification.open();
+                    return;
+                }
+            }
             try {
-
-                dataLayout.getDebugJsonTarget().setValue("");
-                dataLayout.getDebugTypesTarget().setValue("");
-                dataLayout.getDebugResponse().setValue("");
-                String input = OCRUtils.getOCRText(new FileInputStream(fileBuffer.getFileData().getFile().getAbsolutePath()));
-                dataLayout.getDebugInput().setValue(input);
+                FileInputStream fileInputStream = null;
+                if (images.getValue().equalsIgnoreCase("Load my invoice...")) {
+                    fileInputStream = new FileInputStream(fileBuffer.getFileData().getFile().getAbsolutePath());
+                } else {
+                    fileInputStream = new FileInputStream(getClass().getResource("/invoices/"+images.getValue()+".png").getFile());
+                }
+                debugTool.getDebugJsonTarget().setValue("");
+                debugTool.getDebugTypesTarget().setValue("");
+                debugTool.getDebugResponse().setValue("");
+                String input = OCRUtils.getOCRText(fileInputStream);
+                debugTool.getDebugInput().setValue(input);
                 if (input != null && !input.isEmpty()) {
                     HashMap<Component, String> fieldsInstructions = new HashMap<>();
                     fieldsInstructions.put(nameField, "Format this field in Uppercase");
                     fieldsInstructions.put(emailField, "Format this field as a correct email");
-
-                    FormFiller formFiller = new FormFiller(customerOrdersForm, fieldsInstructions);
+                    FormFiller formFiller = new FormFiller(invoiceForm, fieldsInstructions);
                     FormFillerResult result = formFiller.fill(input);
-                    dataLayout.getDebugPrompt().setValue(result.getRequest());
-                    dataLayout.getDebugJsonTarget().setValue(String.format("%s", formFiller.getMapping().componentsJSONMap()));
-                    dataLayout.getDebugTypesTarget().setValue(String.format("%s", formFiller.getMapping().componentsTypesJSONMap()));
-                    dataLayout.getDebugResponse().setValue(result.getResponse());
+                    debugTool.getDebugPrompt().setValue(result.getRequest());
+                    debugTool.getDebugJsonTarget().setValue(String.format("%s", formFiller.getMapping().componentsJSONMap()));
+                    debugTool.getDebugTypesTarget().setValue(String.format("%s", formFiller.getMapping().componentsTypesJSONMap()));
+                    debugTool.getDebugResponse().setValue(result.getResponse());
                 }
             } catch (FileNotFoundException ex) {
                 ex.printStackTrace();
             }
         });
 
-        pdfDocument.addStartedListener(e ->
+        imageFile.setVisible(false);
+        imageFile.addStartedListener(e ->
                 fillDocumentButton.setEnabled(false));
 
-        pdfDocument.addFinishedListener(e -> {
+        imageFile.addFinishedListener(e -> {
             String documentPath = fileBuffer.getFileData().getFile().getAbsolutePath();
             fillDocumentButton.setEnabled(true);
+            preview.setSrc(new StreamResource("img.png", new InputStreamFactory() {
+                @Override
+                public InputStream createInputStream() {
+                    try {
+                        return new FileInputStream(fileBuffer.getFileData().getFile());
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+            }));
         });
 
-        HorizontalLayout documentLayout = new HorizontalLayout(fillDocumentButton, pdfDocument);
-
-        debugLayout.add(documentLayout, dataLayout);
+        HorizontalLayout imagesLayout = new HorizontalLayout(images, imageFile, preview);
+        VerticalLayout documentLayout = new VerticalLayout(fillDocumentButton, imagesLayout);
+        debugLayout.add(documentLayout, debugTool);
         add(debugLayout);
 
+    }
+
+    private void clearForm() {
+        invoiceForm.getChildren().forEach(component -> {
+            if (component instanceof HasValue<?, ?>) {
+                ((HasValue) component).clear();
+            } else if (component instanceof Grid) {
+                ((Grid) component).setItems(new ArrayList<>());
+            }
+        });
     }
 }

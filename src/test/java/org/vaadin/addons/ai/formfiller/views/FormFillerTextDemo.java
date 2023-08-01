@@ -20,6 +20,7 @@ import com.vaadin.flow.router.Route;
 import org.vaadin.addons.ai.formfiller.FormFiller;
 import org.vaadin.addons.ai.formfiller.FormFillerResult;
 import org.vaadin.addons.ai.formfiller.data.OrderItem;
+import org.vaadin.addons.ai.formfiller.utils.DebugTool;
 
 import java.util.HashMap;
 
@@ -97,37 +98,16 @@ public class FormFillerTextDemo extends Div {
 
         VerticalLayout debugLayout = new VerticalLayout();
         debugLayout.setWidthFull();
-        FormLayout dataLayout = new FormLayout();
-        dataLayout.setWidthFull();
 
-        TextArea debugInput = new TextArea("Debug Input Source");
-        debugInput.setWidthFull();
-        debugInput.setHeight("600px");
+        DebugTool dataLayout = new DebugTool();
 
-        TextArea debugJsonTarget = new TextArea("Debug JSON target");
-        debugJsonTarget.setWidthFull();
-        debugJsonTarget.setHeight("600px");
-
-        TextArea debugTypesTarget = new TextArea("Debug Type target");
-        debugTypesTarget.setWidthFull();
-        debugTypesTarget.setHeight("600px");
-
-        TextArea debugPrompt = new TextArea("Debug Prompt");
-        debugPrompt.setWidthFull();
-        debugPrompt.setHeight("600px");
-
-        TextArea debugResponse = new TextArea("Debug Response");
-        debugResponse.setWidthFull();
-        debugResponse.setHeight("600px");
-
-        dataLayout.add(debugInput, debugJsonTarget, debugTypesTarget, debugPrompt, debugResponse);
         Button fillButton = new Button("Fill Form From Input Text");
         fillButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         fillButton.addClickListener(event -> {
-            debugJsonTarget.setValue("");
-            debugTypesTarget.setValue("");
-            debugResponse.setValue("");
-            String input = debugInput.getValue();
+            dataLayout.getDebugJsonTarget().setValue("");
+            dataLayout.getDebugTypesTarget().setValue("");
+            dataLayout.getDebugResponse().setValue("");
+            String input = dataLayout.getDebugInput().getValue();
             if (input != null && !input.isEmpty()) {
                 HashMap<Component, String> fieldsInstructions = new HashMap<>();
                 fieldsInstructions.put(nameField, "Format this field in Uppercase");
@@ -140,10 +120,10 @@ public class FormFillerTextDemo extends Div {
 
                 FormFiller formFiller = new FormFiller(customerOrdersForm, fieldsInstructions);
                 FormFillerResult result = formFiller.fill(input);
-                debugPrompt.setValue(result.getRequest());
-                debugJsonTarget.setValue(String.format("%s",formFiller.getMapping().componentsJSONMap()));
-                debugTypesTarget.setValue(String.format("%s",formFiller.getMapping().componentsTypesJSONMap()));
-                debugResponse.setValue(result.getResponse());
+                dataLayout.getDebugPrompt().setValue(result.getRequest());
+                dataLayout.getDebugJsonTarget().setValue(String.format("%s",formFiller.getMapping().componentsJSONMap()));
+                dataLayout.getDebugTypesTarget().setValue(String.format("%s",formFiller.getMapping().componentsTypesJSONMap()));
+                dataLayout.getDebugResponse().setValue(result.getResponse());
             }
         });
 

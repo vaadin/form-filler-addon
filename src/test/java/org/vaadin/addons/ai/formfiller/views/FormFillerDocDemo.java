@@ -23,6 +23,7 @@ import com.vaadin.flow.router.Route;
 import org.vaadin.addons.ai.formfiller.FormFiller;
 import org.vaadin.addons.ai.formfiller.FormFillerResult;
 import org.vaadin.addons.ai.formfiller.data.OrderItem;
+import org.vaadin.addons.ai.formfiller.utils.DebugTool;
 import org.vaadin.addons.ai.formfiller.utils.OCRUtils;
 
 import java.io.FileInputStream;
@@ -103,31 +104,8 @@ public class FormFillerDocDemo extends Div {
 
         VerticalLayout debugLayout = new VerticalLayout();
         debugLayout.setWidthFull();
-        FormLayout dataLayout = new FormLayout();
-        dataLayout.setWidthFull();
 
-        TextArea debugInput = new TextArea("Debug Input Source");
-        debugInput.setWidthFull();
-        debugInput.setHeight("600px");
-        debugInput.setEnabled(false);
-
-        TextArea debugJsonTarget = new TextArea("Debug JSON target");
-        debugJsonTarget.setWidthFull();
-        debugJsonTarget.setHeight("600px");
-
-        TextArea debugTypesTarget = new TextArea("Debug Type target");
-        debugTypesTarget.setWidthFull();
-        debugTypesTarget.setHeight("600px");
-
-        TextArea debugPrompt = new TextArea("Debug Prompt");
-        debugPrompt.setWidthFull();
-        debugPrompt.setHeight("600px");
-
-        TextArea debugResponse = new TextArea("Debug Response");
-        debugResponse.setWidthFull();
-        debugResponse.setHeight("600px");
-
-        dataLayout.add(debugInput, debugJsonTarget, debugTypesTarget, debugPrompt, debugResponse);
+        DebugTool dataLayout = new DebugTool();
 
         Upload pdfDocument = new Upload();
         FileBuffer fileBuffer = new FileBuffer();
@@ -139,11 +117,11 @@ public class FormFillerDocDemo extends Div {
         fillDocumentButton.addClickListener(event -> {
             try {
 
-                debugJsonTarget.setValue("");
-                debugTypesTarget.setValue("");
-                debugResponse.setValue("");
+                dataLayout.getDebugJsonTarget().setValue("");
+                dataLayout.getDebugTypesTarget().setValue("");
+                dataLayout.getDebugResponse().setValue("");
                 String input = OCRUtils.getOCRText(new FileInputStream(fileBuffer.getFileData().getFile().getAbsolutePath()));
-                debugInput.setValue(input);
+                dataLayout.getDebugInput().setValue(input);
                 if (input != null && !input.isEmpty()) {
                     HashMap<Component, String> fieldsInstructions = new HashMap<>();
                     fieldsInstructions.put(nameField, "Format this field in Uppercase");
@@ -151,10 +129,10 @@ public class FormFillerDocDemo extends Div {
 
                     FormFiller formFiller = new FormFiller(customerOrdersForm, fieldsInstructions);
                     FormFillerResult result = formFiller.fill(input);
-                    debugPrompt.setValue(result.getRequest());
-                    debugJsonTarget.setValue(String.format("%s", formFiller.getMapping().componentsJSONMap()));
-                    debugTypesTarget.setValue(String.format("%s", formFiller.getMapping().componentsTypesJSONMap()));
-                    debugResponse.setValue(result.getResponse());
+                    dataLayout.getDebugPrompt().setValue(result.getRequest());
+                    dataLayout.getDebugJsonTarget().setValue(String.format("%s", formFiller.getMapping().componentsJSONMap()));
+                    dataLayout.getDebugTypesTarget().setValue(String.format("%s", formFiller.getMapping().componentsTypesJSONMap()));
+                    dataLayout.getDebugResponse().setValue(result.getResponse());
                 }
             } catch (FileNotFoundException ex) {
                 ex.printStackTrace();

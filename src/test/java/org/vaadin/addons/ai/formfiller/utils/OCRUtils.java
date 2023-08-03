@@ -65,7 +65,7 @@ public class OCRUtils {
             String payload = "{"
                     + "\"requests\":[{"
                     + "\"image\":{\"content\":\"" + base64Image + "\"},"
-                    + "\"features\":[{\"type\":\"TEXT_DETECTION\"}]"
+                    + "\"features\":[{\"type\":\"DOCUMENT_TEXT_DETECTION\"}]"
                     + "}]"
                     + "}";
 
@@ -82,12 +82,15 @@ public class OCRUtils {
             reader.close();
 
             // Process the response
-//            System.out.println("#########################");
-//            System.out.println("RAW JSON RESPONSE:");
-//            System.out.println("#########################");
-//            System.out.println(response.toString());
+            System.out.println("#########################");
+            System.out.println("RAW JSON RESPONSE:");
+            System.out.println("#########################");
+            System.out.println(response.toString());
 
             JsonParser jsonParser = new JsonParser();
+
+            GoogleVisionLineSegmentationParser googleVisionLineSegmentationParser = new GoogleVisionLineSegmentationParser();
+            googleVisionLineSegmentationParser.initLineSegmentation(null);
             JsonObject responseJson = jsonParser.parse(response.toString()).getAsJsonObject();
 
 // Extract the 'text' field from the JSON response

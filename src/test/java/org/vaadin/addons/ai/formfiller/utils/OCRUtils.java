@@ -1,5 +1,7 @@
 package org.vaadin.addons.ai.formfiller.utils;
 
+import com.google.cloud.vision.v1.AnnotateImageResponse;
+import com.google.gson.Gson;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,12 +90,15 @@ public class OCRUtils {
             System.out.println(response.toString());
 
             JsonParser jsonParser = new JsonParser();
-
-            GoogleVisionLineSegmentationParser googleVisionLineSegmentationParser = new GoogleVisionLineSegmentationParser();
-            googleVisionLineSegmentationParser.initLineSegmentation(null);
             JsonObject responseJson = jsonParser.parse(response.toString()).getAsJsonObject();
 
-// Extract the 'text' field from the JSON response
+            JsonObject properJsonObject = responseJson.get("responses").getAsJsonArray().get(0).getAsJsonObject();
+            AnnotateImageResponse annotateImageResponse  = new Gson().fromJson(properJsonObject, AnnotateImageResponse.class);
+            GoogleVisionLineSegmentationParser googleVisionLineSegmentationParser = new GoogleVisionLineSegmentationParser();
+            googleVisionLineSegmentationParser.initLineSegmentation(annotateImageResponse);
+
+
+            // Extract the 'text' field from the JSON response
             JsonArray responsesArray = responseJson.getAsJsonArray("responses");
             JsonObject firstResponse = responsesArray.get(0).getAsJsonObject();
             JsonObject fullTextAnnotation = firstResponse.getAsJsonObject("fullTextAnnotation");

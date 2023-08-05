@@ -5,6 +5,9 @@ import com.nimbusds.jose.shaded.gson.Gson;
 import com.vaadin.flow.component.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vaadin.addons.ai.formfiller.services.ChatGPTService;
+import org.vaadin.addons.ai.formfiller.services.LLMService;
+import org.vaadin.addons.ai.formfiller.utils.ComponentUtils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

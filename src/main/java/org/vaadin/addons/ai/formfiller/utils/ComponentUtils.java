@@ -1,7 +1,6 @@
-package org.vaadin.addons.ai.formfiller;
+package org.vaadin.addons.ai.formfiller.utils;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -23,7 +22,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -79,6 +77,11 @@ public class ComponentUtils {
         return mapping;
     }
 
+    public static List<ComponentInfo> getComponentInfo(Component component) {
+        List<ComponentInfo> componentInfoList = new ArrayList<>();
+        findChildComponents(component, componentInfoList);
+        return componentInfoList;
+    }
     private static void findChildComponents(Component component, List<ComponentInfo> componentInfoList) {
         component.getChildren().forEach(childComponent -> {
             String componentType = childComponent.getClass().getSimpleName();

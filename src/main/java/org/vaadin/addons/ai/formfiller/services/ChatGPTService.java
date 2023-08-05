@@ -1,9 +1,10 @@
-package org.vaadin.addons.ai.formfiller;
+package org.vaadin.addons.ai.formfiller.services;
 
 import com.theokanning.openai.completion.CompletionRequest;
 import com.theokanning.openai.completion.CompletionResult;
 import com.theokanning.openai.service.OpenAiService;
 import com.vaadin.flow.component.Component;
+import org.vaadin.addons.ai.formfiller.utils.KeysUtils;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -49,8 +50,8 @@ public class ChatGPTService extends OpenAiService implements LLMService {
                 "Based on the user input: '%s', " +
                         "generate a JSON object according to these instructions: " +
                         "Never include duplicate keys, in case of duplicate keys just keep the first occurrence in the response. " +
-                        "Fill out \"N/A\" in the JSON value if the user did not specify a value. " +
-                        "Return the result as a JSON object in this format: '%s'."
+                        "Fill out null value in the JSON value if the user did not specify a value. " +
+                        "Return the result as a JSON object in this format: '%s'. Perform any modification in the response to assure a valid JSON object."
                 , input, objectMap);
         if (!componentInstructions.isEmpty() || !typesMap.isEmpty()) {
             gptRequest += "Some Additional instructions about some of the fields to be filled: ";
@@ -60,6 +61,12 @@ public class ChatGPTService extends OpenAiService implements LLMService {
             for (Map.Entry<Component, String> entry : componentInstructions.entrySet()) {
                 if (entry.getKey().getId().isPresent())
                     gptRequest += " " + entry.getKey().getId().get() + ": " + entry.getValue() + ".";
+            }
+        }
+        if (!contextInstructions.isEmpty()) {
+            gptRequest += "Some Additional instructions about the context and desired output response: ";
+            for (String contextInstruction : contextInstructions) {
+                gptRequest += " " + contextInstruction + ".";
             }
         }
         return gptRequest;

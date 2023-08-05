@@ -1,16 +1,13 @@
-# Vaadin Add-on example project
+# FormFiller Add-on project
 
-An empty project for creating a Vaadin add-on. You should start from this project if your add-on's components are based on the existing Vaadin classes or doesn't use 3rd party JavaScript modules.
+The Form Filler Addon is an experimental feature that provides an easy way for Flow users to create forms filled automatically from natural language input sources using GPT technologies. 
 
-## Add-on architecture
-![server-side-addon](https://user-images.githubusercontent.com/991105/211870086-75544597-847d-4d21-82fa-341411753558.svg)
+## Add-on structure
+The addon includes the FormFiller addon and some demos to check its capabilities. 
 
-## Alternative add-on templates
+## Demos
 
-If you wish to build and publish an add-on or extension in [Vaadin Directory](https://vaadin.com/directory), Vaadin provides the following three template projects:
- 1. **(this repo)** [vaadin/addon-template](https://github.com/vaadin/addon-template): Create a composite component. This Java-only template is the easiest when extending Vaadin Java components.
- 2. [vaadin/client-server-addon-template](https://github.com/vaadin/client-server-addon-template): Build a standalone, client-server TypeScript-Java component. This template provides you with a [Lit-based](https://github.com/lit/lit/) example to start with.
- 3. [vaadin/npm-addon-template](https://github.com/vaadin/npm-addon-template): Wrap a web component from [npmjs.com](https://npmjs.com/) as a Vaadin Java component.
+Demos explanation
 
 
 ## Development instructions

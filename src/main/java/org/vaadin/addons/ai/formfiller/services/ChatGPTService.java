@@ -63,6 +63,12 @@ public class ChatGPTService extends OpenAiService implements LLMService {
                     gptRequest += " " + entry.getKey().getId().get() + ": " + entry.getValue() + ".";
             }
         }
+        if (!contextInstructions.isEmpty()) {
+            gptRequest += "Some Additional instructions about the context and desired output response: ";
+            for (String contextInstruction : contextInstructions) {
+                gptRequest += " " + contextInstruction + ".";
+            }
+        }
         return gptRequest;
     }
 

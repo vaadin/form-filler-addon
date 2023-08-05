@@ -185,8 +185,13 @@ public class FormFillerInvoiceDocDemo extends Div {
                         if (extraInstructionsTool.getExtraInstructions().get(c).getValue() != null && !extraInstructionsTool.getExtraInstructions().get(c).getValue().isEmpty())
                             fieldsInstructions.put(c, extraInstructionsTool.getExtraInstructions().get(c).getValue());
                     }
+                    ArrayList<String> contextInformation = new ArrayList<>();
+                    for (TextField c : extraInstructionsTool.getContextInstructions()) {
+                        if (!c.getValue().isEmpty())
+                            contextInformation.add(c.getValue());
+                    }
 
-                    FormFiller formFiller = new FormFiller(invoiceForm, fieldsInstructions);
+                    FormFiller formFiller = new FormFiller(invoiceForm, fieldsInstructions, contextInformation);
                     FormFillerResult result = formFiller.fill(input);
                     debugTool.getDebugPrompt().setValue(result.getRequest());
                     debugTool.getDebugJsonTarget().setValue(String.format("%s", formFiller.getMapping().componentsJSONMap()));

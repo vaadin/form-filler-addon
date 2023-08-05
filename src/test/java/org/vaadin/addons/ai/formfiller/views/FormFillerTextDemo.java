@@ -25,6 +25,7 @@ import org.vaadin.addons.ai.formfiller.utils.ComponentUtils;
 import org.vaadin.addons.ai.formfiller.utils.DebugTool;
 import org.vaadin.addons.ai.formfiller.utils.ExtraInstructionsTool;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @Route("")
@@ -137,8 +138,12 @@ public class FormFillerTextDemo extends Div {
                     if (extraInstructionsTool.getExtraInstructions().get(c).getValue() != null && !extraInstructionsTool.getExtraInstructions().get(c).getValue().isEmpty())
                         fieldsInstructions.put(c, extraInstructionsTool.getExtraInstructions().get(c).getValue());
                 }
-
-                FormFiller formFiller = new FormFiller(formLayout, fieldsInstructions);
+                ArrayList<String> contextInformation = new ArrayList<>();
+                for (TextField c : extraInstructionsTool.getContextInstructions()) {
+                    if (!c.getValue().isEmpty())
+                        contextInformation.add(c.getValue());
+                }
+                FormFiller formFiller = new FormFiller(formLayout, fieldsInstructions, contextInformation);
                 FormFillerResult result = formFiller.fill(input);
                 debugTool.getDebugPrompt().setValue(result.getRequest());
                 debugTool.getDebugJsonTarget().setValue(String.format("%s", formFiller.getMapping().componentsJSONMap()));
@@ -151,6 +156,7 @@ public class FormFillerTextDemo extends Div {
         extraInstructionsTool.setVisible(false);
         extraInstructionsTool.setExtraInstructions(nameField, "Format this field in Uppercase");
         extraInstructionsTool.setExtraInstructions(emailField, "Format this field as a correct email");
+        extraInstructionsTool.setContextInstructions(0,"Translate item names to Spanish");
 
         Button extraInstructionsButton = new Button("Show/Hide extra instructions");
         extraInstructionsButton.addThemeVariants(ButtonVariant.LUMO_ERROR);

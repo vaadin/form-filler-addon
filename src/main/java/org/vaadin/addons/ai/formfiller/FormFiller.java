@@ -5,6 +5,7 @@ import com.nimbusds.jose.shaded.gson.Gson;
 import com.vaadin.flow.component.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vaadin.addons.ai.formfiller.services.ChatGPTChatCompletionService;
 import org.vaadin.addons.ai.formfiller.services.ChatGPTService;
 import org.vaadin.addons.ai.formfiller.services.LLMService;
 import org.vaadin.addons.ai.formfiller.utils.ComponentUtils;
@@ -94,7 +95,7 @@ public class FormFiller {
     }
 
     public FormFiller(Component target, ArrayList<String> contextInstructions) {
-        this(target, new HashMap<>(), contextInstructions, new ChatGPTService());
+        this(target, new HashMap<>(), contextInstructions, new ChatGPTChatCompletionService());
     }
 
     public FormFiller(Component target) {

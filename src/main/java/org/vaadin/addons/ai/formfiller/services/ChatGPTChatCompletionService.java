@@ -1,10 +1,11 @@
-package org.vaadin.addons.ai.formfiller;
+package org.vaadin.addons.ai.formfiller.services;
 
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.service.OpenAiService;
 import com.vaadin.flow.component.Component;
+import org.vaadin.addons.ai.formfiller.utils.KeysUtils;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -16,11 +17,11 @@ public class ChatGPTChatCompletionService extends OpenAiService implements LLMSe
     /**
      * ID of the model to use.
      */
-    private String MODEL = "gpt-3.5-turbo";
+    private String MODEL = "gpt-3.5-turbo-16k";
     /**
      * The maximum number of tokens to generate in the completion.
      */
-    private Integer MAX_TOKENS = 3000;
+    private Integer MAX_TOKENS = 12000;
 
     /**
      * What sampling temperature to use, between 0 and 2.

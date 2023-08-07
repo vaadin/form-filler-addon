@@ -139,6 +139,8 @@ public class FormFillerInvoiceDocDemo extends Div {
         imageFile.setReceiver(fileBuffer);
 
         ComboBox<String> images = new ComboBox<>("Select Image");
+        // check the resource folder for the images
+
         images.setItems("Load my invoice...", "Invoice1", "Invoice2", "Invoice3", "Invoice4", "Invoice5", "Invoice_HU_1");
         images.setValue("Load my invoice...");
         images.setAllowCustomValue(false);

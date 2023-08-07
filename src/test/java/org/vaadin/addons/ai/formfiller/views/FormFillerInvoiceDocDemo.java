@@ -193,7 +193,7 @@ public class FormFillerInvoiceDocDemo extends Div {
 
                     FormFiller formFiller = new FormFiller(invoiceForm, fieldsInstructions, contextInformation);
                     FormFillerResult result = formFiller.fill(input);
-                    debugTool.getDebugPrompt().setValue(result.getRequest());
+                    debugTool.getDebugPrompt().setValue(result.getRequest() + '\n');
                     debugTool.getDebugJsonTarget().setValue(String.format("%s", formFiller.getMapping().componentsJSONMap()));
                     debugTool.getDebugTypesTarget().setValue(String.format("%s", formFiller.getMapping().componentsTypesJSONMap()));
                     debugTool.getDebugResponse().setValue(result.getResponse());
@@ -225,6 +225,7 @@ public class FormFillerInvoiceDocDemo extends Div {
 
         extraInstructionsTool.setComponents(ComponentUtils.getComponentInfo(invoiceForm));
         extraInstructionsTool.setVisible(false);
+        extraInstructionsTool.setContextInstructions(0,  "Translate all values from the user input to English");
         Button extraInstructionsButton = new Button("Show/Hide extra instructions");
         extraInstructionsButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
         extraInstructionsButton.addClickListener(e -> {

@@ -64,7 +64,7 @@ public class ChatGPTService extends OpenAiService implements LLMService {
             }
         }
         if (!contextInstructions.isEmpty()) {
-            gptRequest += "Some Additional instructions about the context and desired output response: ";
+            gptRequest += "Additional instructions about the context and desired JSON output response: ";
             for (String contextInstruction : contextInstructions) {
                 gptRequest += " " + contextInstruction + ".";
             }

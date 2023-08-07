@@ -6,7 +6,6 @@ import com.vaadin.flow.component.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.addons.ai.formfiller.services.ChatGPTChatCompletionService;
-import org.vaadin.addons.ai.formfiller.services.ChatGPTService;
 import org.vaadin.addons.ai.formfiller.services.LLMService;
 import org.vaadin.addons.ai.formfiller.utils.ComponentUtils;
 
@@ -87,11 +86,11 @@ public class FormFiller {
     }
 
     public FormFiller(Component target, HashMap<Component, String> componentInstructions, ArrayList<String> contextInstructions) {
-        this(target, componentInstructions, contextInstructions, new ChatGPTService());
+        this(target, componentInstructions, contextInstructions, new ChatGPTChatCompletionService());
     }
 
     public FormFiller(Component target, HashMap<Component, String> componentInstructions) {
-        this(target, componentInstructions, new ArrayList<>(), new ChatGPTService());
+        this(target, componentInstructions, new ArrayList<>(), new ChatGPTChatCompletionService());
     }
 
     public FormFiller(Component target, ArrayList<String> contextInstructions) {
@@ -99,7 +98,7 @@ public class FormFiller {
     }
 
     public FormFiller(Component target) {
-        this(target, new HashMap<>(), new ArrayList<>(), new ChatGPTService());
+        this(target, new HashMap<>(), new ArrayList<>(), new ChatGPTChatCompletionService());
     }
 
     /**

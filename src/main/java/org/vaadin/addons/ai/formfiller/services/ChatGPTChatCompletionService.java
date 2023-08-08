@@ -47,20 +47,26 @@ public class ChatGPTChatCompletionService extends OpenAiService implements LLMSe
     @Override
     public String getPromptTemplate(String input, Map<String, Object> objectMap, Map<String, String> typesMap, HashMap<Component, String> componentInstructions, ArrayList<String> contextInstructions) {
         String gptRequest = String.format(
-                "Based on the user input: '%s', " +
+                "Based on the user input: \n \"%s\", " +
                         "generate a JSON object according to these instructions: " +
                         "Never include duplicate keys, in case of duplicate keys just keep the first occurrence in the response. " +
                         "Fill out \"N/A\" in the JSON value if the user did not specify a value. " +
                         "Return the result as a JSON object in this format: '%s'."
                 , input, objectMap);
         if (!componentInstructions.isEmpty() || !typesMap.isEmpty()) {
-            gptRequest += "Some Additional instructions about some of the fields to be filled: ";
+            gptRequest += "\nAdditional instructions about some of the JSON fields to be filled: ";
             for (Map.Entry<String, String> entry : typesMap.entrySet()) {
-                gptRequest += " " + entry.getKey() + ": Format this field as " + entry.getValue() + ".";
+                gptRequest += "\n" + entry.getKey() + ": Format this JSON field as " + entry.getValue() + ".";
             }
             for (Map.Entry<Component, String> entry : componentInstructions.entrySet()) {
                 if (entry.getKey().getId().isPresent())
-                    gptRequest += " " + entry.getKey().getId().get() + ": " + entry.getValue() + ".";
+                    gptRequest += "\n" + entry.getKey().getId().get() + ": " + entry.getValue() + ".";
+            }
+            if (!contextInstructions.isEmpty()) {
+                gptRequest += "\nAdditional instructions about the context and desired JSON output response:  ";
+                for (String contextInstruction : contextInstructions) {
+                    gptRequest += " " + contextInstruction + ".";
+                }
             }
         }
         return gptRequest;

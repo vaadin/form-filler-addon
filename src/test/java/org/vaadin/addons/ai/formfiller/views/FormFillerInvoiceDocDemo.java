@@ -139,7 +139,7 @@ public class FormFillerInvoiceDocDemo extends Div {
         imageFile.setReceiver(fileBuffer);
 
         ComboBox<String> images = new ComboBox<>("Select Image");
-        images.setItems("Load my invoice...", "Invoice1", "Invoice2", "Invoice3", "Invoice4", "Invoice5");
+        images.setItems("Load my invoice...", "Invoice1", "Invoice2", "Invoice3", "Invoice4", "Invoice5", "Invoice_HU_1");
         images.setValue("Load my invoice...");
         images.setAllowCustomValue(false);
         images.addValueChangeListener(e -> {
@@ -193,7 +193,7 @@ public class FormFillerInvoiceDocDemo extends Div {
 
                     FormFiller formFiller = new FormFiller(invoiceForm, fieldsInstructions, contextInformation);
                     FormFillerResult result = formFiller.fill(input);
-                    debugTool.getDebugPrompt().setValue(result.getRequest());
+                    debugTool.getDebugPrompt().setValue(result.getRequest() + '\n');
                     debugTool.getDebugJsonTarget().setValue(String.format("%s", formFiller.getMapping().componentsJSONMap()));
                     debugTool.getDebugTypesTarget().setValue(String.format("%s", formFiller.getMapping().componentsTypesJSONMap()));
                     debugTool.getDebugResponse().setValue(result.getResponse());
@@ -225,6 +225,7 @@ public class FormFillerInvoiceDocDemo extends Div {
 
         extraInstructionsTool.setComponents(ComponentUtils.getComponentInfo(invoiceForm));
         extraInstructionsTool.setVisible(false);
+        extraInstructionsTool.setContextInstructions(0,  "Translate all values from the user input to English");
         Button extraInstructionsButton = new Button("Show/Hide extra instructions");
         extraInstructionsButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
         extraInstructionsButton.addClickListener(e -> {

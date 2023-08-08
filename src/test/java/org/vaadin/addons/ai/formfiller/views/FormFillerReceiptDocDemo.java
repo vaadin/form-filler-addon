@@ -120,7 +120,7 @@ public class FormFillerReceiptDocDemo extends Div {
         imageFile.setReceiver(fileBuffer);
 
         ComboBox<String> images = new ComboBox<>("Select Image");
-        images.setItems("Load my receipt...", "Receipt1", "Receipt2", "Receipt3", "Receipt4", "Receipt5", "Receipt6", "Receipt7", "Receipt8");
+        images.setItems("Load my receipt...", "Receipt1", "Receipt2", "Receipt3", "Receipt4", "Receipt5", "Receipt6", "Receipt7", "Receipt8", "Receipt_HU_1");
         images.setValue("Load my receipt...");
         images.setAllowCustomValue(false);
         images.addValueChangeListener(e -> {

@@ -100,11 +100,6 @@
             <artifactId>service</artifactId>
             <version>0.14.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10.1</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -130,7 +125,7 @@
                     <excludes>
                         <exclude>META-INF/VAADIN/config/flow-build-info.json</exclude>
                     </excludes>
-                </configuration>                     
+                </configuration>
             </plugin>
 
             <plugin>

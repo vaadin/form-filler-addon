@@ -21,7 +21,7 @@ public class ChatGPTChatCompletionService extends OpenAiService implements LLMSe
     /**
      * The maximum number of tokens to generate in the completion.
      */
-    private Integer MAX_TOKENS = 15000;
+    private Integer MAX_TOKENS = 12000;
 
     /**
      * What sampling temperature to use, between 0 and 2.

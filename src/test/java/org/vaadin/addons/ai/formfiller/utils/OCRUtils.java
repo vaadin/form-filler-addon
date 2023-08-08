@@ -86,15 +86,6 @@ public class OCRUtils {
 //            System.out.println("#########################");
 //            System.out.println(response.toString());
 
-//            JsonParser jsonParser = new JsonParser();
-//            JsonObject responseJson = jsonParser.parse(response.toString()).getAsJsonObject();
-//
-//// Extract the 'text' field from the JSON response
-//            JsonArray responsesArray = responseJson.getAsJsonArray("responses");
-//            JsonObject firstResponse = responsesArray.get(0).getAsJsonObject();
-//            JsonObject fullTextAnnotation = firstResponse.getAsJsonObject("fullTextAnnotation");
-//            String extractedText = fullTextAnnotation.get("text").getAsString();
-
             ObjectMapper objectMapper = new ObjectMapper();
             String extractedText = "";
 

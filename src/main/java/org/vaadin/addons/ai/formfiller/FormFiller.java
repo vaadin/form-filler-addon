@@ -2,7 +2,11 @@ package org.vaadin.addons.ai.formfiller;
 
 import com.googlecode.gentyref.TypeToken;
 import com.nimbusds.jose.shaded.gson.Gson;
+import com.vaadin.experimental.FeatureFlags;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.sidenav.ExperimentalFeatureException;
+import com.vaadin.flow.server.VaadinService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.addons.ai.formfiller.services.ChatGPTChatCompletionService;
@@ -84,6 +88,7 @@ public class FormFiller {
         this.target = target;
         this.componentInstructions = componentInstructions;
         this.contextInstructions = contextInstructions;
+        checkFeatureFlag();
     }
 
     public FormFiller(Component target, HashMap<Component, String> componentInstructions, ArrayList<String> contextInstructions) {
@@ -155,5 +160,33 @@ public class FormFiller {
 
     public ComponentUtils.ComponentsMapping getMapping() {
         return mapping;
+    }
+
+    /**
+     * Checks whether the FormFiller addon feature flag is active. Succeeds if
+     * the flag is enabled, and throws otherwise.
+     *
+     * @throws ExperimentalFeatureException
+     *             when the {@link FeatureFlags#FORM_FILLER_ADDON} feature is
+     *             not enabled
+     */
+    private void checkFeatureFlag() {
+        boolean enabled = getFeatureFlags()
+                .isEnabled(FeatureFlags.FORM_FILLER_ADDON);
+
+        if (!enabled) {
+            throw new ExperimentalFormFillerException();
+        }
+    }
+
+    /**
+     * Gets the feature flags for the current UI.
+     * <p>
+     * Extracted with protected visibility to support mocking
+     *
+     * @return the current set of feature flags
+     */
+    protected FeatureFlags getFeatureFlags() {
+        return FeatureFlags.get(VaadinService.getCurrent().getContext());
     }
 }

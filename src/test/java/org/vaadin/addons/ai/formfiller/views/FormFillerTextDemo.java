@@ -179,7 +179,7 @@ public class FormFillerTextDemo extends Div {
                 "Email: 'andrewjackson@gmail.com \n" +
                 "Due Date: 2023-05-05\n" +
                 "\n" +
-                "This order contains the products for the project 'Form filler AI Addon' that is part of the new development of Vaadin AI kit. \n" +
+                "This order contains the products for the project 'Form filler AI Add-on' that is part of the new development of Vaadin AI kit. \n" +
                 "\n" +
                 "Items list:\n" +
                 "Item Number     Items   Type    Cost    Date    Status\n" +
@@ -196,7 +196,7 @@ public class FormFillerTextDemo extends Div {
                 "Email: 'andrewjackson#gmail.com \n" +
                 "Due Date: 2023-05-05\n" +
                 "\n" +
-                "This order contains the products for the project 'Form filler AI Addon' that is part of the new development of Vaadin AI kit. \n" +
+                "This order contains the products for the project 'Form filler AI Add-on' that is part of the new development of Vaadin AI kit. \n" +
                 "\n" +
                 "Items list:\n" +
                 "Item Number     Items   Type    Cost    Date    Status\n" +

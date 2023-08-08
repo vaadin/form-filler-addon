@@ -222,3 +222,9 @@ This behaviour is always disabled when running the tests in debug mode in the ID
 or when running maven with the `-Dmaven.failsafe.debug` sytem property.
 On normal execution, headless mode can be deactivated using the `-Dtest.headless=false` system property.
 
+## References
+
+- [Auto Form Filler](https://vaadin.com/directory/component/auto-form-filler) add-on created by Armando Perea
+- [ChatGPT Java API](https://github.com/TheoKanning/openai-java) created by Theo Kanning
+
+

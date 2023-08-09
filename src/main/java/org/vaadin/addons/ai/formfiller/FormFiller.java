@@ -1,5 +1,6 @@
 package org.vaadin.addons.ai.formfiller;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.Component;
@@ -131,6 +132,7 @@ public class FormFiller {
      */
     private Map<String, Object> promptJsonToMapHierarchyValues(String response) {
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
         Map<String, Object> contentMap = new HashMap<>();
         try {
             contentMap = objectMapper.readValue(response.trim(), new TypeReference<>() {

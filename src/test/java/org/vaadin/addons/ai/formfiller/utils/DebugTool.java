@@ -54,7 +54,7 @@ public class DebugTool extends FormLayout {
     }
 
     public void hideDebugTool() {
-        debugInput.setVisible(false);
+//        debugInput.setVisible(false);
         debugJsonTarget.setVisible(false);
         debugTypesTarget.setVisible(false);
         debugPrompt.setVisible(false);

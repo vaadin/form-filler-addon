@@ -36,34 +36,11 @@ public class FormFillerDxTest extends Div {
         phoneField.setId("phone");
         formLayout.add(phoneField);
 
-        // 0. Implement the fillButton.addClickListener() method, this button will trigger the autofilling of the form:
-        // - check the documentation what you need to do exactly
-
-        // 1. Add a simple component and autofill it:
-        // - e.g. e-mail field to form and try to fill it with the preset text
-
-        // 2. Add some more complex components and autofill them:
-        // - e.g. like a Checkbox, or RadioButton or even Grid if you feel the power to the form
-
-        // 3. Fine tune your results:
-        // - Try adding extra general/contexts instructions to make the fillings better, try to uppercase some values, try to translate it to some other languages, change some formats, etc.
-        // - Try adding extra field instructions (not general just specific to some field e.g. Make uppercase the first letter of the name)
-
-        // 4. Try some fancy:
-        // - e.g. add some of your own text or translate the text to different language and try to fill the form in English as well!!
-
-        // +1. Implement a new LLMService:
-        // - Copy+paste an existing service from ChatGPTChatCompletionService (new model) or ChatGPTService (old model),
-        // - Try to change the model to something else (OpenAI documentation or we can help to give you more model names),
-        // - Try to change the underlying prompt,
-        // - Try to change Temperature, or other parameters
-
         formLayout.setResponsiveSteps(
                 // Use one column by default
                 new FormLayout.ResponsiveStep("0", 1),
                 // Use two columns, if layout's width exceeds 500px
                 new FormLayout.ResponsiveStep("500px", 2));
-        // Stretch the username field over 2 columns
 
         add(formLayout);
 
@@ -86,7 +63,7 @@ public class FormFillerDxTest extends Div {
         Button fillButton = new Button("Fill Form From Input Text");
         fillButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         fillButton.addClickListener(event -> {
-            // 0. Implement the fillButton.addClickListener() method, this button will trigger the auto filling of the form:
+            // 1. Implement the fillButton.addClickListener() method, this button will trigger the auto filling of the form:
             // - check the documentation what you need to do exactly
         });
 

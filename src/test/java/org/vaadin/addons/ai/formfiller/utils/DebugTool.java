@@ -52,4 +52,20 @@ public class DebugTool extends FormLayout {
     public TextArea getDebugResponse() {
         return debugResponse;
     }
+
+    public void hideDebugTool() {
+        debugInput.setVisible(false);
+        debugJsonTarget.setVisible(false);
+        debugTypesTarget.setVisible(false);
+        debugPrompt.setVisible(false);
+        debugResponse.setVisible(false);
+    }
+
+    public void showDebugTool() {
+        debugInput.setVisible(true);
+        debugJsonTarget.setVisible(true);
+        debugTypesTarget.setVisible(true);
+        debugPrompt.setVisible(true);
+        debugResponse.setVisible(true);
+    }
 }

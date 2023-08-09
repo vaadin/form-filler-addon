@@ -1,7 +1,8 @@
 package org.vaadin.addons.ai.formfiller;
 
-import com.googlecode.gentyref.TypeToken;
-import com.nimbusds.jose.shaded.gson.Gson;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +10,6 @@ import org.vaadin.addons.ai.formfiller.services.ChatGPTChatCompletionService;
 import org.vaadin.addons.ai.formfiller.services.LLMService;
 import org.vaadin.addons.ai.formfiller.utils.ComponentUtils;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -131,14 +131,13 @@ public class FormFiller {
      * @return Map with components and values
      */
     private Map<String, Object> promptJsonToMapHierarchyValues(String response) {
-        Gson gson = new Gson();
-        Type type = new TypeToken<Map<String, Object>>() {
-        }.getType();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
         Map<String, Object> contentMap = new HashMap<>();
         try {
-            contentMap = gson.fromJson(response.trim(), type);
-        }
-        catch (Exception e) {
+            contentMap = objectMapper.readValue(response.trim(), new TypeReference<>() {
+            });
+        } catch (Exception e) {
             logger.error("Error parsing AI response to JSON Object: {}", e.getMessage());
         }
         return contentMap;

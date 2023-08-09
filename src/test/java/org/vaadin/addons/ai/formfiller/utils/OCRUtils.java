@@ -1,5 +1,7 @@
 package org.vaadin.addons.ai.formfiller.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,9 +14,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 public class OCRUtils {
     private static final Logger logger = LoggerFactory.getLogger(OCRUtils.class);
@@ -87,14 +86,18 @@ public class OCRUtils {
 //            System.out.println("#########################");
 //            System.out.println(response.toString());
 
-            JsonParser jsonParser = new JsonParser();
-            JsonObject responseJson = jsonParser.parse(response.toString()).getAsJsonObject();
+            ObjectMapper objectMapper = new ObjectMapper();
+            String extractedText = "";
 
-// Extract the 'text' field from the JSON response
-            JsonArray responsesArray = responseJson.getAsJsonArray("responses");
-            JsonObject firstResponse = responsesArray.get(0).getAsJsonObject();
-            JsonObject fullTextAnnotation = firstResponse.getAsJsonObject("fullTextAnnotation");
-            String extractedText = fullTextAnnotation.get("text").getAsString();
+            JsonNode responseJson = objectMapper.readTree(response.toString());
+            JsonNode responsesArray = responseJson.get("responses");
+            if (responsesArray != null && responsesArray.isArray() && !responsesArray.isEmpty()) {
+                JsonNode firstResponse = responsesArray.get(0);
+                JsonNode fullTextAnnotation = firstResponse.get("fullTextAnnotation");
+                if (fullTextAnnotation != null) {
+                    extractedText = fullTextAnnotation.get("text").asText();
+                }
+            }
 
             System.out.println("#########################");
             System.out.println("Extracted text:");
@@ -102,7 +105,7 @@ public class OCRUtils {
             System.out.println(extractedText);
             return extractedText;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error while reading image", e);
         }
         return "";
     }

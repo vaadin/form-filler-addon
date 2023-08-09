@@ -9,7 +9,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
-import org.vaadin.addons.ai.formfiller.utils.ComponentUtils;
 import org.vaadin.addons.ai.formfiller.utils.DebugTool;
 import org.vaadin.addons.ai.formfiller.utils.ExtraInstructionsTool;
 
@@ -72,6 +71,7 @@ public class FormFillerDxTest extends Div {
         debugLayout.setWidthFull();
 
         DebugTool debugTool = new DebugTool();
+        debugTool.hideDebugTool();
 
         ComboBox<String> texts = new ComboBox<>("Select a text or just type your own <br>in the debug Input Source field");
         texts.setItems("Text1", "Text2");
@@ -92,7 +92,7 @@ public class FormFillerDxTest extends Div {
 
 
         HorizontalLayout imagesLayout = new HorizontalLayout(texts);
-        VerticalLayout documentLayout = new VerticalLayout(extraInstructionsTool, imagesLayout);
+        VerticalLayout documentLayout = new VerticalLayout(fillButton, extraInstructionsTool, imagesLayout);
         debugLayout.add(documentLayout, debugTool);
         add(debugLayout);
     }

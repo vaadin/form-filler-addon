@@ -53,7 +53,7 @@ public class FormFillerDxTest extends Div {
         // - e.g. add some of your own text or translate the text to different language and try to fill the form in English as well!!
 
         // +1. Implement a new LLMService:
-        // - Copy+paste an existing service from ChatGPTChatCompletionService (new model) or ChatGPTService (old model),
+        // - Copy + paste an existing service from ChatGPTChatCompletionService (new model) or ChatGPTService (old model),
         // - Try to change the model to something else (OpenAI documentation or we can help to give you more model names),
         // - Try to change the underlying prompt,
         // - Try to change Temperature, or other parameters
@@ -72,6 +72,7 @@ public class FormFillerDxTest extends Div {
 
         DebugTool debugTool = new DebugTool();
         debugTool.hideDebugTool();
+        debugTool.getDebugInput().setVisible(true);
 
         ComboBox<String> texts = new ComboBox<>("Select a text or just type your own <br>in the debug Input Source field");
         texts.setItems("Text1", "Text2");
@@ -86,7 +87,7 @@ public class FormFillerDxTest extends Div {
         Button fillButton = new Button("Fill Form From Input Text");
         fillButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         fillButton.addClickListener(event -> {
-            // 0. Implement the fillButton.addClickListener() method, this button will trigger the auto filling of the form:
+            // 0. Implement the fillButton.addClickListener() method, this button will trigger the autofilling of the form:
             // - check the documentation what you need to do exactly
         });
 

@@ -1,18 +1,27 @@
 package org.vaadin.addons.ai.formfiller.views;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.vaadin.addons.ai.formfiller.FormFiller;
+import org.vaadin.addons.ai.formfiller.FormFillerResult;
+import org.vaadin.addons.ai.formfiller.data.OrderItem;
+import org.vaadin.addons.ai.formfiller.utils.DebugTool;
+import org.vaadin.addons.ai.formfiller.utils.ExtraInstructionsTool;
+
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
-import org.vaadin.addons.ai.formfiller.utils.DebugTool;
-import org.vaadin.addons.ai.formfiller.utils.ExtraInstructionsTool;
-
-import java.util.HashMap;
 
 @Route("dx")
 public class FormFillerDxTest extends Div {
@@ -35,18 +44,37 @@ public class FormFillerDxTest extends Div {
         TextField phoneField = new TextField("Phone");
         phoneField.setId("phone");
         formLayout.add(phoneField);
+        
+        TextField emailField = new TextField("E-mail");
+        emailField.setId("email");
+        formLayout.add(emailField);
+        
+        DatePicker dueDate = new DatePicker("Due Date");
+		dueDate.setId("dueDate");
+        formLayout.add(dueDate);
 
+        DatePicker currentDate = new DatePicker("Current Date");
+        currentDate.setId("currentDate");
+        formLayout.add(currentDate);
+        
+        Checkbox isDueDatePassed = new Checkbox("Is Due Date Passed");
+        isDueDatePassed.setId("isDueDatePassed");
+        formLayout.add(isDueDatePassed);
+        
+        Grid<OrderItem> orderItemsGrid = new Grid<>(OrderItem.class);
+        orderItemsGrid.removeAllColumns();
+        orderItemsGrid.addColumn(OrderItem::getItemName).setHeader("Item Name").setKey("itemName").setId("itemName");
+        orderItemsGrid.addColumn(OrderItem::getOrderDate).setHeader("Order Date").setKey("orderDate").setId("orderDate");
+        orderItemsGrid.addColumn(OrderItem::getOrderStatus).setHeader("Order Status").setKey("orderStatus").setId("orderStatus");
+        orderItemsGrid.setId("orders");
+        
         formLayout.setResponsiveSteps(
                 // Use one column by default
                 new FormLayout.ResponsiveStep("0", 1),
                 // Use two columns, if layout's width exceeds 500px
                 new FormLayout.ResponsiveStep("500px", 2));
 
-        // 1. Implement the fillButton.addClickListener() method, this button will trigger the autofilling of the form:
-        // - check the documentation what you need to do exactly
-
-        // 2. Add a simple component and autofill it:
-        // - e.g. e-mail field to form and try to fill it with the preset text
+        
 
         // 3. Add some more complex components and autofill them:
         // - e.g. like a Checkbox, or RadioButton
@@ -67,13 +95,14 @@ public class FormFillerDxTest extends Div {
         // - Try to change the underlying prompt,
         // - Try to change Temperature, or other parameters
 
-        add(formLayout);
+        VerticalLayout wrapper = new VerticalLayout(formLayout, orderItemsGrid);
+        add(wrapper);
 
         VerticalLayout debugLayout = new VerticalLayout();
         debugLayout.setWidthFull();
 
         DebugTool debugTool = new DebugTool();
-        debugTool.hideDebugTool();
+//        debugTool.hideDebugTool();
 
         ComboBox<String> texts = new ComboBox<>("Select a text or just type your own <br>in the debug Input Source field");
         texts.setItems("Text1", "Text2");
@@ -88,8 +117,14 @@ public class FormFillerDxTest extends Div {
         Button fillButton = new Button("Fill Form From Input Text");
         fillButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         fillButton.addClickListener(event -> {
-            // 1. Implement the fillButton.addClickListener() method, this button will trigger the auto filling of the form:
-            // - check the documentation what you need to do exactly
+        	HashMap<Component, String> componentInstructions = new HashMap<>();
+        	ArrayList<String> contextInstructions = new ArrayList<>();
+        	contextInstructions.add("Current date is 11 august 2023");
+        	componentInstructions.put(isDueDatePassed, "isDueDatePassed is true if the due date is before the current date, and false if the due date is after the current date");
+            FormFiller filler = new FormFiller(wrapper, componentInstructions, contextInstructions);
+            FormFillerResult result = filler.fill(debugTool.getDebugInput().getValue());
+            debugTool.getDebugResponse().setValue(result.getResponse());
+            debugTool.getDebugPrompt().setValue(result.getRequest());
         });
 
 

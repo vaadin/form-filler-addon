@@ -3,15 +3,25 @@ package org.vaadin.addons.ai.formfiller.views;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
+
+import org.junit.Test;
+import org.vaadin.addons.ai.formfiller.FormFiller;
+import org.vaadin.addons.ai.formfiller.FormFillerResult;
 import org.vaadin.addons.ai.formfiller.utils.DebugTool;
 import org.vaadin.addons.ai.formfiller.utils.ExtraInstructionsTool;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 
 @Route("dx")
@@ -24,17 +34,31 @@ public class FormFillerDxTest extends Div {
     public FormFillerDxTest() {
         formLayout = new FormLayout();
 
-        TextField nameField = new TextField("Name");
-        nameField.setId("name");
-        formLayout.add(nameField);
+        TextField IBAN = new TextField("IBAN");
+        IBAN.setId("IBAN");
+        formLayout.add(IBAN);
 
-        TextField addressField = new TextField("Address");
-        addressField.setId("address");
-        formLayout.add(addressField);
+        TextField bic = new TextField("BIC");
+        bic.setId("BIC");
+        formLayout.add(bic);
 
-        TextField phoneField = new TextField("Phone");
-        phoneField.setId("phone");
-        formLayout.add(phoneField);
+        TextField payer = new TextField("payer");
+        payer.setId("payer");
+        formLayout.add(payer);
+
+        DatePicker date = new DatePicker("date");
+        date.setId("date");
+        formLayout.add(date);
+
+        TextArea provider = new TextArea("Provider");
+        provider.setId("provider");
+        formLayout.add(provider);
+
+        TextField refNumber = new TextField("reference number");
+        refNumber.setId("reference number");
+        formLayout.add(refNumber);
+
+
 
         formLayout.setResponsiveSteps(
                 // Use one column by default
@@ -53,6 +77,15 @@ public class FormFillerDxTest extends Div {
 
         // 4. Add the most complex component and autofill them:
         // - Grid
+
+
+        Grid<BankInfo> grid = new Grid<>(BankInfo.class);
+        grid.setId("Bank Info");
+        grid.removeAllColumns();
+        grid.addColumn(BankInfo::getIBAN).setHeader("IBAN").setKey("IBAN").setId("IBAN");
+        grid.addColumn(BankInfo::getPayer).setHeader("payer").setKey("payer").setId("payer");
+//        grid.addColumn(BankInfo::getDate).setHeader("Date").setKey("date").setId("date");
+        formLayout.add(grid);
 
         // 5. Fine tune your results:
         // - Try adding extra general/contexts instructions to make the fillings better, try to uppercase some values, try to translate it to some other languages, change some formats, etc.
@@ -73,7 +106,7 @@ public class FormFillerDxTest extends Div {
         debugLayout.setWidthFull();
 
         DebugTool debugTool = new DebugTool();
-        debugTool.hideDebugTool();
+//        debugTool.hideDebugTool();
 
         ComboBox<String> texts = new ComboBox<>("Select a text or just type your own <br>in the debug Input Source field");
         texts.setItems("Text1", "Text2");
@@ -90,6 +123,12 @@ public class FormFillerDxTest extends Div {
         fillButton.addClickListener(event -> {
             // 1. Implement the fillButton.addClickListener() method, this button will trigger the auto filling of the form:
             // - check the documentation what you need to do exactly
+
+            FormFiller formFiller = new FormFiller(formLayout);
+            FormFillerResult fill = formFiller.fill(debugTool.getDebugInput().getValue());
+
+            TextArea debugResponse = debugTool.getDebugResponse();
+            debugResponse.setValue(fill.getResponse());
         });
 
 
@@ -99,6 +138,41 @@ public class FormFillerDxTest extends Div {
         add(debugLayout);
     }
 
+    public static class BankInfo {
+        String IBAN;
+        String payer;
+        LocalDate date;
+
+        public String getIBAN() {
+            return IBAN;
+        }
+
+        public void setIBAN(String IBAN) {
+            this.IBAN = IBAN;
+        }
+
+        public String getPayer() {
+            return payer;
+        }
+
+        public void setPayer(String payer) {
+            this.payer = payer;
+        }
+
+        public LocalDate getDate() {
+            return date;
+        }
+
+        public void setDate(LocalDate date) {
+            this.date = date;
+        }
+
+        public BankInfo(String IBAN, String payer, LocalDate date) {
+            this.IBAN = IBAN;
+            this.payer = payer;
+            this.date = date;
+        }
+    }
     public HashMap<String, String> getExampleTexts() {
         HashMap<String, String> texts = new HashMap<>();
         texts.put("Text1", "Order sent by the customer Andrew Jackson on '2023-04-05 12:13:00'\n" +

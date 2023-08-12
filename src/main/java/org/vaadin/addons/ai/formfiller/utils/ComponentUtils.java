@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -141,10 +142,16 @@ public class ComponentUtils {
         for (ComponentInfo componentInfo : componentInfoList) {
             try {
                 if ((componentInfo.component instanceof TextField)
-                        || (componentInfo.component instanceof TextArea)) {
+                        || (componentInfo.component instanceof TextArea)
+                        || (componentInfo.component instanceof EmailField)
+                        || (componentInfo.component instanceof PasswordField)) {
                     inputFieldMap.put(componentInfo.id, "a String");
                 } else if ((componentInfo.component instanceof NumberField)) {
                     inputFieldMap.put(componentInfo.id, "a Number");
+                } else if ((componentInfo.component instanceof IntegerField)) {
+                    inputFieldMap.put(componentInfo.id, "a Integer");
+                } else if ((componentInfo.component instanceof BigDecimalField)) {
+                    inputFieldMap.put(componentInfo.id, "a Double");
                 } else if ((componentInfo.component instanceof DatePicker)) {
                     inputFieldMap.put(componentInfo.id, "a date using format 'yyyy-MM-dd'");
                 } else if ((componentInfo.component instanceof TimePicker)) {
@@ -245,12 +252,14 @@ public class ComponentUtils {
                         textArea.setValue(responseValue.toString());
                     } else if (componentInfo.component instanceof NumberField numberField) {
                         numberField.setValue(Double.valueOf(responseValue.toString()));
+                    } else if (componentInfo.component instanceof BigDecimalField bdField) {
+                        bdField.setValue(BigDecimal.valueOf(Double.valueOf(responseValue.toString())));
                     } else if (componentInfo.component instanceof IntegerField integerField) {
                         integerField.setValue(Integer.valueOf(responseValue.toString()));
                     } else if (componentInfo.component instanceof EmailField emailField) {
                         emailField.setValue(responseValue.toString());
                     } else if (componentInfo.component instanceof PasswordField passwordField) {
-                      passwordField.setValue(responseValue.toString());
+                        passwordField.setValue(responseValue.toString());
                     } else if (componentInfo.component instanceof DatePicker datePicker) {
                         datePicker.setValue(LocalDate.parse(responseValue.toString()));
                     } else if (componentInfo.component instanceof TimePicker timePicker) {

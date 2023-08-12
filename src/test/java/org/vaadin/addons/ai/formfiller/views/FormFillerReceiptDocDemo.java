@@ -164,7 +164,7 @@ public class FormFillerReceiptDocDemo extends Div {
                         if (extraInstructionsTool.getExtraInstructions().get(c).getValue() != null && !extraInstructionsTool.getExtraInstructions().get(c).getValue().isEmpty())
                             fieldsInstructions.put(c, extraInstructionsTool.getExtraInstructions().get(c).getValue());
                     }
-
+                    clearForm();
                     FormFiller formFiller = new FormFiller(receiptForm, fieldsInstructions);
                     FormFillerResult result = formFiller.fill(input);
                     debugTool.getDebugPrompt().setValue(result.getRequest());

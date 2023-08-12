@@ -1,6 +1,7 @@
 package org.vaadin.addons.ai.formfiller.views;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -14,7 +15,11 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.textfield.BigDecimalField;
+import com.vaadin.flow.component.textfield.EmailField;
+import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
@@ -50,9 +55,17 @@ public class FormFillerTextDemo extends Div {
         phoneField.setId("phone");
         formLayout.add(phoneField);
 
-        TextField emailField = new TextField("Email");
+        IntegerField age = new IntegerField("age");
+        age.setId("age");
+        formLayout.add(age);
+
+        EmailField emailField = new EmailField("Email");
         emailField.setId("email");
         formLayout.add(emailField);
+
+        PasswordField clientId = new PasswordField("Client Id");
+        clientId.setId("clientId");
+        formLayout.add(clientId);
 
         DateTimePicker dateCreationField = new DateTimePicker("Creation Date");
         dateCreationField.setId("creationDate");
@@ -70,6 +83,10 @@ public class FormFillerTextDemo extends Div {
         NumberField orderTotal = new NumberField("Order Total");
         orderTotal.setId("orderTotal");
         formLayout.add(orderTotal);
+
+        BigDecimalField orderTaxes = new BigDecimalField("Order Taxes");
+        orderTaxes.setId("orderTaxes");
+        formLayout.add(orderTaxes);
 
         TextArea orderDescription = new TextArea("Order Description");
         orderDescription.setId("orderDescription");
@@ -116,7 +133,7 @@ public class FormFillerTextDemo extends Div {
         DebugTool debugTool = new DebugTool();
 
         ComboBox<String> texts = new ComboBox<>("Select a text or just type your own <br>in the debug Input Source field");
-        texts.setItems("Text1", "Text2");
+        texts.setItems("Text1", "Text2", "Text3");
         texts.setValue("Text1");
         texts.setAllowCustomValue(false);
         debugTool.getDebugInput().setValue(getExampleTexts().get("Text1"));
@@ -143,6 +160,7 @@ public class FormFillerTextDemo extends Div {
                     if (!c.getValue().isEmpty())
                         contextInformation.add(c.getValue());
                 }
+                clearForm();
                 FormFiller formFiller = new FormFiller(formLayout, fieldsInstructions, contextInformation);
                 FormFillerResult result = formFiller.fill(input);
                 debugTool.getDebugPrompt().setValue(result.getRequest());
@@ -171,11 +189,23 @@ public class FormFillerTextDemo extends Div {
 
     }
 
+    private void clearForm() {
+        formLayout.getChildren().forEach(component -> {
+            if (component instanceof HasValue<?, ?>) {
+                ((HasValue) component).clear();
+            } else if (component instanceof Grid) {
+                ((Grid) component).setItems(new ArrayList<>());
+            }
+        });
+    }
+
     public HashMap<String, String> getExampleTexts() {
         HashMap<String, String> texts = new HashMap<>();
         texts.put("Text1", "Order sent by the customer Andrew Jackson on '2023-04-05 12:13:00'\n" +
                 "Address: Ruukinkatu 2-4, FI-20540 Turku, Finland \n" +
                 "Phone Number: 555-1234 \n" +
+                "Age: 43 \n" +
+                "Client ID: 45XXD6543 \n" +
                 "Email: 'andrewjackson@gmail.com \n" +
                 "Due Date: 2023-05-05\n" +
                 "\n" +
@@ -189,10 +219,14 @@ public class FormFillerTextDemo extends Div {
                 "1004    1 Headphones    Hardware    $999    '2023-01-01'    In Transit\n" +
                 "1005    1 Windows License    Software    $1500    '2023-02-01'    Delivered\n" +
                 "\n" +
+                "Taxes: 25,6€ \n" +
+                "Total: 15000€ \n" +
                 "Payment Method: Cash\n");
         texts.put("Text2", "Order sent by the customer Andrew Jackson on '2023-04-05 12:13:00'\n" +
                 "Address: 1234 Elm Street, Springfield, USA \n" +
                 "Phone Number: 555-1234 \n" +
+                "Age: 37 \n" +
+                "Client ID: 45XXD6543 \n" +
                 "Email: 'andrewjackson#gmail.com \n" +
                 "Due Date: 2023-05-05\n" +
                 "\n" +
@@ -205,10 +239,12 @@ public class FormFillerTextDemo extends Div {
                 "1003    5 Wireless Headphones   Hardware    $500    '2023-03-20'    Cancelled\n" +
                 "1004    1 Headphones    Hardware    $999    '2023-01-01'    In Transit\n" +
                 "\n" +
+                "Taxes: 35,6€ \n" +
+                "Total: 10000€ \n" +
                 "Payment Method: Credit Card");
         texts.put("Text3", "This is an invoice of an order for the project 'Vaadin AI Form Filler'" +
-                " providing some hardware and sent by the customer Andrew Jackson who lives at " +
-                "Ruukinkatu 2-4, FI-20540 Turku (Finland) and can be reached at phone number 555-1234 " +
+                " providing some hardware and sent by the customer Andrew Jackson with client id 45XXD6543, who lives at " +
+                "Ruukinkatu 2-4, FI-20540 Turku (Finland), he is 45 years old and can be reached at phone number 555-1234 " +
                 "and at email 'andrewjackson@gmail.com. Andrew has placed five items: number 1001 " +
                 "contains two items of smartphone for a total of $1,000 placed on 2023 January " +
                 "the 10th with a status of deliberate; number 1002 includes one item of laptop " +
@@ -216,7 +252,7 @@ public class FormFillerTextDemo extends Div {
                 "number 1003 consists of five items of wireless headphones for a total of $500 placed " +
                 "on 2023 March the 20th with a status of cancelled; number 1004 is for 'Headphones' " +
                 "with a cost of $999 and placed on '2023-01-01' with status In transit. The invoice " +
-                "was paid using a Paypal account.");
+                "was paid using a Paypal account. The taxes included in the invoice are 40,6€ and Total is 20000€");
         return texts;
     }
 }

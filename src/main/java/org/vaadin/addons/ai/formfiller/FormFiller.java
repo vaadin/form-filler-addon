@@ -21,7 +21,11 @@ import java.util.Map;
  * Components supported:
  * <ul>
  *     <li>TextField</li>
+ *     <li>EmailField</li>
+ *     <li>PasswordField</li>
  *     <li>NumberField</li>
+ *     <li>IntegerField</li>
+ *     <li>BigDecimalField</li>
  *     <li>DatePicker</li>
  *     <li>TimePicker (WIP)</li>
  *     <li>DateTimePicker</li>

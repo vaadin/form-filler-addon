@@ -187,7 +187,7 @@ public class FormFillerInvoiceDocDemo extends Div {
                         if (!c.getValue().isEmpty())
                             contextInformation.add(c.getValue());
                     }
-
+                    clearForm();
                     FormFiller formFiller = new FormFiller(invoiceForm, fieldsInstructions, contextInformation);
                     FormFillerResult result = formFiller.fill(input);
                     debugTool.getDebugPrompt().setValue(result.getRequest() + '\n');

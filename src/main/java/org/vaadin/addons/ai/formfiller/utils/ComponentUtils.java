@@ -1,6 +1,8 @@
 package org.vaadin.addons.ai.formfiller.utils;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasComponents;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -10,14 +12,13 @@ import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
-import com.vaadin.flow.component.textfield.NumberField;
-import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -141,10 +142,16 @@ public class ComponentUtils {
         for (ComponentInfo componentInfo : componentInfoList) {
             try {
                 if ((componentInfo.component instanceof TextField)
-                        || (componentInfo.component instanceof TextArea)) {
+                        || (componentInfo.component instanceof TextArea)
+                        || (componentInfo.component instanceof EmailField)
+                        || (componentInfo.component instanceof PasswordField)) {
                     inputFieldMap.put(componentInfo.id, "a String");
                 } else if ((componentInfo.component instanceof NumberField)) {
                     inputFieldMap.put(componentInfo.id, "a Number");
+                } else if ((componentInfo.component instanceof IntegerField)) {
+                    inputFieldMap.put(componentInfo.id, "a Integer");
+                } else if ((componentInfo.component instanceof BigDecimalField)) {
+                    inputFieldMap.put(componentInfo.id, "a Double");
                 } else if ((componentInfo.component instanceof DatePicker)) {
                     inputFieldMap.put(componentInfo.id, "a date using format 'yyyy-MM-dd'");
                 } else if ((componentInfo.component instanceof TimePicker)) {
@@ -239,34 +246,34 @@ public class ComponentUtils {
                         } catch (Exception e) {
                             logger.error("Error while updating grid with wildcards", e.getMessage());
                         }
-                    } else if (componentInfo.component instanceof TextField) {
-                        TextField textField = (TextField) componentInfo.component;
+                    } else if (componentInfo.component instanceof TextField textField) {
                         textField.setValue(responseValue.toString());
-                    } else if (componentInfo.component instanceof TextArea) {
-                        TextArea textArea = (TextArea) componentInfo.component;
+                    } else if (componentInfo.component instanceof TextArea textArea) {
                         textArea.setValue(responseValue.toString());
-                    } else if (componentInfo.component instanceof NumberField) {
-                        NumberField numberField = (NumberField) componentInfo.component;
+                    } else if (componentInfo.component instanceof NumberField numberField) {
                         numberField.setValue(Double.valueOf(responseValue.toString()));
-                    } else if (componentInfo.component instanceof DatePicker) {
-                        DatePicker datePicker = (DatePicker) componentInfo.component;
+                    } else if (componentInfo.component instanceof BigDecimalField bdField) {
+                        bdField.setValue(BigDecimal.valueOf(Double.valueOf(responseValue.toString())));
+                    } else if (componentInfo.component instanceof IntegerField integerField) {
+                        integerField.setValue(Integer.valueOf(responseValue.toString()));
+                    } else if (componentInfo.component instanceof EmailField emailField) {
+                        emailField.setValue(responseValue.toString());
+                    } else if (componentInfo.component instanceof PasswordField passwordField) {
+                        passwordField.setValue(responseValue.toString());
+                    } else if (componentInfo.component instanceof DatePicker datePicker) {
                         datePicker.setValue(LocalDate.parse(responseValue.toString()));
-                    } else if (componentInfo.component instanceof TimePicker) {
-                        TimePicker timePicker = (TimePicker) componentInfo.component;
+                    } else if (componentInfo.component instanceof TimePicker timePicker) {
                         timePicker.setValue(LocalTime.parse(responseValue.toString()));
-                    } else if (componentInfo.component instanceof DateTimePicker) {
-                        DateTimePicker datetimePicker = (DateTimePicker) componentInfo.component;
+                    } else if (componentInfo.component instanceof DateTimePicker datetimePicker) {
                         datetimePicker.setValue(LocalDateTime.parse(responseValue.toString()));
-                    } else if (componentInfo.component instanceof ComboBox) {
-                        ComboBox comboBox = (ComboBox) componentInfo.component;
+                    } else if (componentInfo.component instanceof ComboBox comboBox) {
                         comboBox.setValue(responseValue);
-                    } else if (componentInfo.component instanceof MultiSelectComboBox) {
-                        MultiSelectComboBox multiSelectComboBox = (MultiSelectComboBox) componentInfo.component;
+                    } else if (componentInfo.component instanceof MultiSelectComboBox multiSelectComboBox) {
                         multiSelectComboBox.setValue(responseValue);
                     } else if (componentInfo.component instanceof Checkbox) {
                         Checkbox checkbox = (Checkbox) componentInfo.component;
                         checkbox.setValue((Boolean) responseValue);
-                    }  else if (componentInfo.component instanceof CheckboxGroup<?>) {
+                    } else if (componentInfo.component instanceof CheckboxGroup<?>) {
                         CheckboxGroup<String> checkboxgroup = (CheckboxGroup<String>) componentInfo.component;
                         try {
                             ArrayList<String> list = (ArrayList<String>) responseValue;
@@ -276,12 +283,15 @@ public class ComponentUtils {
                             logger.error("Error while updating checkboxgroup with id: {}", id, e);
                         }
                     } else if (componentInfo.component instanceof RadioButtonGroup<?>) {
-                        RadioButtonGroup radioButtonGroup = (RadioButtonGroup) componentInfo.component;
+                        RadioButtonGroup<String> radioButtonGroup = (RadioButtonGroup<String>) componentInfo.component;
                         radioButtonGroup.setValue(responseValue.toString());
                     } else if (componentInfo.component instanceof Grid.Column<?>) {
                         // Nothing to do as it is managed in Grid
-                    }
-
+                    } else if (componentInfo.component instanceof HasValue<?,?>) {
+                        // Fallback to work even if it is not handled here but has Hasvalue.
+                        HasValue<?, String> hasValue = (HasValue<?, String>) componentInfo.component;
+                        hasValue.setValue(responseValue.toString());
+                    }  else logger.warn("Component type not supported: {}", componentInfo.component.getClass().getSimpleName());
                 }
             } catch (Exception e) {
                 logger.error("Error while updating component with id: {} Cause: {}", id, e.getMessage());

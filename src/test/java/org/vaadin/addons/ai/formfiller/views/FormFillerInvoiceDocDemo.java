@@ -142,13 +142,10 @@ public class FormFillerInvoiceDocDemo extends Div {
         images.setItems("Load my invoice...", "Invoice1", "Invoice2", "Invoice3", "Invoice4", "Invoice5", "Invoice_HU_1");
         images.setValue("Load my invoice...");
         images.setAllowCustomValue(false);
+        enableFileUpload();
         images.addValueChangeListener(e -> {
             if (e.getValue().equalsIgnoreCase("Load my invoice...")) {
-                imageFile.setVisible(true);
-                preview.setSrc("");
-                imageFile.clearFileList();
-                fileBuffer = new FileBuffer();
-                imageFile.setReceiver(fileBuffer);
+                enableFileUpload();
             } else {
                 imageFile.setVisible(false);
                 StreamResource imageResource = new StreamResource(e.getValue()+".png",
@@ -190,7 +187,7 @@ public class FormFillerInvoiceDocDemo extends Div {
                         if (!c.getValue().isEmpty())
                             contextInformation.add(c.getValue());
                     }
-
+                    clearForm();
                     FormFiller formFiller = new FormFiller(invoiceForm, fieldsInstructions, contextInformation);
                     FormFillerResult result = formFiller.fill(input);
                     debugTool.getDebugPrompt().setValue(result.getRequest() + '\n');
@@ -203,7 +200,6 @@ public class FormFillerInvoiceDocDemo extends Div {
             }
         });
 
-        imageFile.setVisible(false);
         imageFile.addStartedListener(e ->
                 fillDocumentButton.setEnabled(false));
 
@@ -236,7 +232,14 @@ public class FormFillerInvoiceDocDemo extends Div {
         VerticalLayout documentLayout = new VerticalLayout(fillDocumentButton,  extraInstructionsButton, extraInstructionsTool, imagesLayout);
         debugLayout.add(documentLayout, debugTool);
         add(debugLayout);
+    }
 
+    private void enableFileUpload() {
+        imageFile.setVisible(true);
+        preview.setSrc("");
+        imageFile.clearFileList();
+        fileBuffer = new FileBuffer();
+        imageFile.setReceiver(fileBuffer);
     }
 
     private void clearForm() {

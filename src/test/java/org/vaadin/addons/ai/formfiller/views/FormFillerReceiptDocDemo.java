@@ -123,13 +123,10 @@ public class FormFillerReceiptDocDemo extends Div {
         images.setItems("Load my receipt...", "Receipt1", "Receipt2", "Receipt3", "Receipt4", "Receipt5", "Receipt6", "Receipt7", "Receipt8", "Receipt_HU_1");
         images.setValue("Load my receipt...");
         images.setAllowCustomValue(false);
+        enableFileUpload();
         images.addValueChangeListener(e -> {
             if (e.getValue().equalsIgnoreCase("Load my receipt...")) {
-                imageFile.setVisible(true);
-                preview.setSrc("");
-                imageFile.clearFileList();
-                fileBuffer = new FileBuffer();
-                imageFile.setReceiver(fileBuffer);
+                enableFileUpload();
             } else {
                 imageFile.setVisible(false);
                 StreamResource imageResource = new StreamResource(e.getValue()+".png",
@@ -167,7 +164,7 @@ public class FormFillerReceiptDocDemo extends Div {
                         if (extraInstructionsTool.getExtraInstructions().get(c).getValue() != null && !extraInstructionsTool.getExtraInstructions().get(c).getValue().isEmpty())
                             fieldsInstructions.put(c, extraInstructionsTool.getExtraInstructions().get(c).getValue());
                     }
-
+                    clearForm();
                     FormFiller formFiller = new FormFiller(receiptForm, fieldsInstructions);
                     FormFillerResult result = formFiller.fill(input);
                     debugTool.getDebugPrompt().setValue(result.getRequest());
@@ -180,7 +177,6 @@ public class FormFillerReceiptDocDemo extends Div {
             }
         });
 
-        imageFile.setVisible(false);
         imageFile.addStartedListener(e ->
                 fillDocumentButton.setEnabled(false));
 
@@ -216,6 +212,14 @@ public class FormFillerReceiptDocDemo extends Div {
         debugLayout.add(documentLayout, debugTool);
         add(debugLayout);
 
+    }
+
+    private void enableFileUpload() {
+        imageFile.setVisible(true);
+        preview.setSrc("");
+        imageFile.clearFileList();
+        fileBuffer = new FileBuffer();
+        imageFile.setReceiver(fileBuffer);
     }
 
     private void clearForm() {

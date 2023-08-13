@@ -167,6 +167,9 @@ public class FormFillerDxTest extends Div {
             this.date = date;
         }
 
+        public BankInfo() {
+        }
+
         public BankInfo(String IBAN, String payer, LocalDate date) {
             this.IBAN = IBAN;
             this.payer = payer;

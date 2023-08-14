@@ -110,16 +110,16 @@ public class ComponentUtils {
                     HashMap<String, Object> columns = new HashMap<>();
                     if (componentInfo.component instanceof Grid) {
                         Grid<?> grid = (Grid<?>) componentInfo.component;
-                        grid.getColumns().forEach(c -> {
-                            if (!c.getId().isPresent()) {
-                                logger.error("Grid column {} has no id defined and will be skipped ", c.getKey());
-                            } else {
-                                columns.put(c.getId().get(), "");
+                        if (grid.getBeanType() == null) {
+                            logger.error("Grid with id {} must define a Bean Type to be used with FormFiller", grid.getId());
+                        } else {
+                            for (Field f : grid.getBeanType().getDeclaredFields()) {
+                                columns.put(f.getName(), "");
                             }
-                        });
-                        ArrayList<HashMap<String, Object>> listColumns = new ArrayList<>();
-                        listColumns.add(columns);
-                        json.put(id, listColumns);
+                            ArrayList<HashMap<String, Object>> listColumns = new ArrayList<>();
+                            listColumns.add(columns);
+                            json.put(id, listColumns);
+                        }
                     } else {
                         json.put(id, new ArrayList<>());
                     }

@@ -116,11 +116,11 @@ public class FormFillerTextDemo extends Div {
 
         // Grid columns headers and Ids for the FormFiller. The IDs have to be
         // equals to the name of the related field of the Bean class.
-        orderGrid.getColumnByKey("orderId").setHeader("Id").setId("orderId");
-        orderGrid.getColumnByKey("itemName").setHeader("Name").setId("itemName");
-        orderGrid.getColumnByKey("orderDate").setHeader("Date").setId("orderDate");
-        orderGrid.getColumnByKey("orderStatus").setHeader("Status").setId("orderStatus");
-        orderGrid.getColumnByKey("orderTotal").setHeader("Cost").setId("orderCost");
+        orderGrid.getColumnByKey("orderId").setHeader("Id");
+        orderGrid.getColumnByKey("itemName").setHeader("Name");
+        orderGrid.getColumnByKey("orderDate").setHeader("Date");
+        orderGrid.getColumnByKey("orderStatus").setHeader("Status");
+        orderGrid.getColumnByKey("orderTotal").setHeader("Cost");
 
         // Example of editor with FormFiller just as any regular editor of Flow Grid
         Editor<OrderItem> editor = orderGrid.getEditor();

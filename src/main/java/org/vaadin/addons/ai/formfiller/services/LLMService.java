@@ -14,8 +14,14 @@ import java.util.Map;
  */
 public interface LLMService {
 
+    /**
+     * Generates a prompt based on the input, the target objectMap and extra instructions.
+     */
     public String getPromptTemplate(String input, Map<String, Object> objectMap, Map<String, String> typesMap, HashMap<Component, String> componentInstructions, ArrayList<String> contextInstructions);
 
+    /**
+     * Generates a response based on the input prompt from the AI module.
+     */
     public String getGeneratedResponse(String prompt);
 
 }

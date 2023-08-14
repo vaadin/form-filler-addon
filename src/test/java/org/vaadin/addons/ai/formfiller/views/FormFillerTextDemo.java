@@ -11,6 +11,7 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -22,10 +23,12 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.Route;
 import org.vaadin.addons.ai.formfiller.FormFiller;
 import org.vaadin.addons.ai.formfiller.FormFillerResult;
 import org.vaadin.addons.ai.formfiller.data.OrderItem;
+import org.vaadin.addons.ai.formfiller.services.ChatGPTService;
 import org.vaadin.addons.ai.formfiller.utils.ComponentUtils;
 import org.vaadin.addons.ai.formfiller.utils.DebugTool;
 import org.vaadin.addons.ai.formfiller.utils.ExtraInstructionsTool;
@@ -106,14 +109,67 @@ public class FormFillerTextDemo extends Div {
         typeService.setId("typeService");
         formLayout.add(typeService);
 
+        // To make the grid supported by FormFiller it is necessary to set an ID
+        // and a Bean class to the Grid.
         Grid<OrderItem> orderGrid = new Grid<>(OrderItem.class);
-        orderGrid.removeAllColumns();
-        orderGrid.addColumn(OrderItem::getOrderId).setHeader("Order Id").setKey("orderId").setId("orderId");
-        orderGrid.addColumn(OrderItem::getItemName).setHeader("Item Name").setKey("itemName").setId("itemName");
-        orderGrid.addColumn(OrderItem::getOrderDate).setHeader("Order Date").setKey("orderDate").setId("orderDate");
-        orderGrid.addColumn(OrderItem::getOrderStatus).setHeader("Order Status").setKey("orderStatus").setId("orderStatus");
-        orderGrid.addColumn(OrderItem::getOrderTotal).setHeader("Order Cost").setKey("orderCost").setId("orderCost");
         orderGrid.setId("orders");
+
+        // Grid columns headers and Ids for the FormFiller. The IDs have to be
+        // equals to the name of the related field of the Bean class.
+        orderGrid.getColumnByKey("orderId").setHeader("Id").setId("orderId");
+        orderGrid.getColumnByKey("itemName").setHeader("Name").setId("itemName");
+        orderGrid.getColumnByKey("orderDate").setHeader("Date").setId("orderDate");
+        orderGrid.getColumnByKey("orderStatus").setHeader("Status").setId("orderStatus");
+        orderGrid.getColumnByKey("orderTotal").setHeader("Cost").setId("orderCost");
+
+        // Example of editor with FormFiller just as any regular editor of Flow Grid
+        Editor<OrderItem> editor = orderGrid.getEditor();
+        Grid.Column<OrderItem> editColumn = orderGrid.addComponentColumn(order -> {
+            Button editButton = new Button("Edit");
+            editButton.addClickListener(e -> {
+                if (editor.isOpen())
+                    editor.cancel();
+                orderGrid.getEditor().editItem(order);
+            });
+            return editButton;
+        }).setWidth("150px").setFlexGrow(0).setKey("editor");
+
+        Binder<OrderItem> binder = new Binder<>(OrderItem.class);
+        editor.setBinder(binder);
+        editor.setBuffered(true);
+
+        TextField edOrderIdField = new TextField();
+        edOrderIdField.setWidthFull();
+        binder.forField(edOrderIdField).bind(OrderItem::getOrderId, OrderItem::setOrderId);
+        orderGrid.getColumnByKey("orderId").setEditorComponent(edOrderIdField);
+
+        TextField edNItemNameField = new TextField();
+        edNItemNameField.setWidthFull();
+        binder.forField(edNItemNameField).bind(OrderItem::getItemName, OrderItem::setItemName);
+        orderGrid.getColumnByKey("itemName").setEditorComponent(edNItemNameField);
+
+        NumberField edCostField = new NumberField();
+        edCostField.setWidthFull();
+        binder.forField(edCostField).bind(OrderItem::getOrderTotal, OrderItem::setOrderTotal);
+        orderGrid.getColumnByKey("orderTotal").setEditorComponent(edCostField);
+
+        DatePicker edDateField = new DatePicker();
+        edDateField.setWidthFull();
+        binder.forField(edDateField).bind(OrderItem::getOrderDate,
+                OrderItem::setOrderDate);
+        orderGrid.getColumnByKey("orderDate").setEditorComponent(edDateField);
+
+        TextField edStatusItemField = new TextField();
+        edStatusItemField.setWidthFull();
+        binder.forField(edStatusItemField).bind(OrderItem::getOrderStatus, OrderItem::setOrderStatus);
+        orderGrid.getColumnByKey("orderStatus").setEditorComponent(edStatusItemField);
+
+        Button saveButton = new Button("Save", e -> editor.save());
+        Button cancelButton = new Button("Close", e -> editor.cancel());
+        cancelButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_ERROR);
+        HorizontalLayout actions = new HorizontalLayout(saveButton, cancelButton);
+        actions.setPadding(false);
+        editColumn.setEditorComponent(actions);
 
         formLayout.add(orderGrid);
 
@@ -161,7 +217,7 @@ public class FormFillerTextDemo extends Div {
                         contextInformation.add(c.getValue());
                 }
                 clearForm();
-                FormFiller formFiller = new FormFiller(formLayout, fieldsInstructions, contextInformation);
+                FormFiller formFiller = new FormFiller(formLayout, fieldsInstructions, contextInformation, new ChatGPTService());
                 FormFillerResult result = formFiller.fill(input);
                 debugTool.getDebugPrompt().setValue(result.getRequest());
                 debugTool.getDebugJsonTarget().setValue(String.format("%s", formFiller.getMapping().componentsJSONMap()));

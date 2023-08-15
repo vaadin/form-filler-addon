@@ -119,6 +119,7 @@ public class FormFillerTextDemo extends Div {
         orderGrid.getColumnByKey("orderId").setHeader("Id");
         orderGrid.getColumnByKey("itemName").setHeader("Name");
         orderGrid.getColumnByKey("orderDate").setHeader("Date");
+        orderGrid.getColumnByKey("deliveryDate").setHeader("Delivery Date");
         orderGrid.getColumnByKey("orderStatus").setHeader("Status");
         orderGrid.getColumnByKey("orderTotal").setHeader("Cost");
 
@@ -268,12 +269,12 @@ public class FormFillerTextDemo extends Div {
                 "This order contains the products for the project 'Form filler AI Addon' that is part of the new development of Vaadin AI kit. \n" +
                 "\n" +
                 "Items list:\n" +
-                "Item Number     Items   Type    Cost    Date    Status\n" +
-                "1001    2 Smartphones   Hardware    $1000   '2023-01-10' Delivered\n" +
-                "1002    1 Laptop    Hardware    $1500   '2023-02-15'    In Transit\n" +
-                "1003    5 Wireless Headphones   Hardware    $500    '2023-03-20'    Cancelled\n" +
-                "1004    1 Headphones    Hardware    $999    '2023-01-01'    In Transit\n" +
-                "1005    1 Windows License    Software    $1500    '2023-02-01'    Delivered\n" +
+                "Item Number     Items   Type    Cost    Date    Delivery Date    Status\n" +
+                "1001    2 Smartphones   Hardware    $1000   '2023-01-10'    '2023-01-13'    Delivered\n" +
+                "1002    1 Laptop    Hardware    $1500   '2023-02-15'    '2023-01-15'    In Transit\n" +
+                "1003    5 Wireless Headphones   Hardware    $500    '2023-03-20'    '2023-01-14'    Cancelled\n" +
+                "1004    1 Headphones    Hardware    $999    '2023-01-01'    '2023-01-15'    In Transit\n" +
+                "1005    1 Windows License    Software    $1500    '2023-02-01'    '2023-01-16'    Delivered\n" +
                 "\n" +
                 "Taxes: 25,6€ \n" +
                 "Total: 15000€ \n" +

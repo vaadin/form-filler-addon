@@ -19,17 +19,12 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -349,6 +344,8 @@ public class ComponentUtils {
                         field.set(item, LocalTime.parse(propValue.toString(), DateTimeFormatter.ofPattern("HH:mm:ss")));
                     else if (field.getType().equals(LocalDateTime.class))
                         field.set(item, LocalDateTime.parse(propValue.toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
+                    else if (field.getType().equals(Date.class))
+                        field.set(item, new SimpleDateFormat("yyyy-MM-dd").parse(propValue.toString()));
                     else if (field.getType().equals(Double.class))
                         field.set(item, Double.valueOf(propValue.toString()));
                     else if (field.getType().equals(Integer.class))

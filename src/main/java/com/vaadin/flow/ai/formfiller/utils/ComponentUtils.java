@@ -16,6 +16,7 @@ import com.vaadin.flow.component.timepicker.TimePicker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -50,7 +51,7 @@ public class ComponentUtils {
      * @param componentsTypesJSONMap the components' value types
      */
     public record ComponentsMapping(List<ComponentInfo> components, Map<String, Object> componentsJSONMap,
-                                    Map<String, String> componentsTypesJSONMap) {
+                                    Map<String, String> componentsTypesJSONMap) implements Serializable {
     }
 
     /**
@@ -60,7 +61,7 @@ public class ComponentUtils {
      * @param type      the component type
      * @param component the component
      */
-    public record ComponentInfo(String id, String type, Component component) {
+    public record ComponentInfo(String id, String type, Component component) implements Serializable {
     }
 
     /**

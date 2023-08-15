@@ -244,14 +244,13 @@ public class ComponentUtils {
                         continue;
                     }
 
-                    if (componentInfo.component instanceof Grid) {
+                    if (componentInfo.component instanceof Grid<?> grid) {
+                        Class<?> beanType = grid.getBeanType();
                         try {
                             List<Map<String, Object>> items = (List<Map<String, Object>>) responseValue;
-                            Grid<?> grid = (Grid<?>) componentInfo.component;
-                            Class<?> beanType = grid.getBeanType();
                             fillGridWithWildcards(grid, items, beanType);
                         } catch (Exception e) {
-                            logger.error("Error while updating grid with wildcards", e.getMessage());
+                            logger.error("Error while updating grid with wildcards for bean {} because {}", beanType.getSimpleName(), e.getMessage());
                         }
                     } else if (componentInfo.component instanceof TextField textField) {
                         textField.setValue(responseValue.toString());
@@ -260,7 +259,7 @@ public class ComponentUtils {
                     } else if (componentInfo.component instanceof NumberField numberField) {
                         numberField.setValue(Double.valueOf(responseValue.toString()));
                     } else if (componentInfo.component instanceof BigDecimalField bdField) {
-                        bdField.setValue(BigDecimal.valueOf(Double.valueOf(responseValue.toString())));
+                        bdField.setValue(BigDecimal.valueOf(Double.parseDouble(responseValue.toString())));
                     } else if (componentInfo.component instanceof IntegerField integerField) {
                         integerField.setValue(Integer.valueOf(responseValue.toString()));
                     } else if (componentInfo.component instanceof EmailField emailField) {
@@ -322,7 +321,9 @@ public class ComponentUtils {
             try {
                 item = itemClass.getDeclaredConstructor().newInstance();
             } catch (Exception e) {
-                throw new IllegalStateException("Failed to create a new instance of the item class", e);
+                throw new IllegalStateException("Failed to create a new instance of the Bean class." +
+                        " Please be sure that the Bean has an empty constructor if any non empty" +
+                        " constructor is defined.", e);
             }
 
             for (Map.Entry<String, Object> entry : itemMap.entrySet()) {

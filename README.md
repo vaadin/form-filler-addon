@@ -1,9 +1,9 @@
 # FormFiller Add-on project
 
-The Form Filler Addon is an experimental feature that provides an easy way for Flow users to create forms filled automatically from natural language input sources using GPT technologies. 
+The Form Filler Add-on is an experimental feature that provides an easy way for Flow users to create forms filled automatically from natural language input sources using GPT technologies.
 
 ## Add-on structure
-The addon includes the FormFiller addon and some demos to check its capabilities. 
+The Add-on includes the FormFiller Add-on and some demos to check its capabilities.
 
 ## API Review
 ### Constructors
@@ -13,9 +13,9 @@ These parameters are:
 
 __target:__ the target component or group of components (layout) to fill. This is the only mandatory parameter without default value. 
 
-__componentInstructions:__ additional instructions for the AI module (i.e.: field format, field explanation, etc...). Use these instructions to provide additional information to the AI module about a specific field when the response of the form filler is not accurate enough. By default this structure is initialized empty.
+__componentInstructions:__ additional instructions for the AI module (i.e.: field format, field explanation, etc...). Use these instructions to provide additional information to the AI module about a specific field when the response of the form filler is not accurate enough. By default, this structure is initialized empty.
 
-__contextInstructions:__ additional instructions for the AI module (i.e.: target language, vocabulary explanation, etc..). Use these instructions to provide additional information to the AI module about the context of the input source in general. By default this structure is initialized empty.
+__contextInstructions:__ additional instructions for the AI module (i.e.: target language, vocabulary explanation, etc..). Use these instructions to provide additional information to the AI module about the context of the input source in general. By default, this structure is initialized empty.
 
 __llmService:__ the AI module service to use. By default, this service would use OpenAI ChatGPT.
  	
@@ -141,7 +141,7 @@ To make a set of components ready to be filled by the FormFiller the only requir
 
 ## Limitations
 
-- The size of the text that can be processed is related to the capacity of ChatGPT that for the model included as default in the addon is 16384 tokens (approx 16000 words including request and response).
+- The size of the text that can be processed is related to the capacity of ChatGPT that for the model included as default in the Add-on is 16384 tokens (approx 16000 words including request and response).
 - So far parametrized components such as checkboxes or radio buttons work with basic types not custom classes.
 - Grid must be defined using a Bean type.  
 

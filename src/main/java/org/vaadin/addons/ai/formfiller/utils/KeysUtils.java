@@ -10,15 +10,15 @@ public class KeysUtils {
 
     static {
         // read apiKey from -D param variable
-        OPEN_AI_KEY = System.getProperty("OPENAI_TOKEN");
+        OPEN_AI_KEY = System.getProperty("OPENAI_API_KEY");
         if (OPEN_AI_KEY == null) {
             // read apiKey from environment variable
-            OPEN_AI_KEY = System.getenv("OPENAI_TOKEN");
+            OPEN_AI_KEY = System.getenv("OPENAI_API_KEY");
         }
         if(OPEN_AI_KEY != null) {
-            logger.info("OPENAI_TOKEN was filled properly");
+            logger.info("OPENAI_API_KEY was filled properly");
         } else {
-            logger.error("OPENAI_TOKEN was not filled properly");
+            logger.error("OPENAI_API_KEY was not filled properly");
         }
 
     }

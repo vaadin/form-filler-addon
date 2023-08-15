@@ -1,10 +1,10 @@
 Order sent by the customer Andrew Jackson on '2023-04-05 12:13:00'
-Address: 1234 Elm Street, Springfield, USA 
-Phone Number: 555-1234 
-Email: 'andrewjackson#gmial.com 
+Address: 1234 Elm Street, Springfield, USA
+Phone Number: 555-1234
+Email: 'andrewjackson#gmial.com
 Due Date: 2023-05-05
 
-This order contains the products for the project 'Form filler AI Addon' that is part of the new development of Vaadin AI kit. 
+This order contains the products for the project 'Form filler AI Add-on' that is part of the new development of Vaadin AI kit.
 
 Items list:
 Item Number     Items   Type    Cost    Date    Status

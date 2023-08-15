@@ -176,19 +176,21 @@ public class ComponentUtils {
                 } else if ((componentInfo.component instanceof ComboBox<?>)) {
                     StringJoiner joiner = new StringJoiner("\" OR \"");
                     ((ComboBox<String>) componentInfo.component).getListDataView().getItems().forEach(joiner::add);
-                    inputFieldMap.put(componentInfo.id, "a String from one of these options \"" + joiner.toString() + "\"");
+                    inputFieldMap.put(componentInfo.id, "a String from one of these options \"" + joiner + "\"");
                 } else if (componentInfo.component instanceof MultiSelectComboBox) {
-                    inputFieldMap.put(componentInfo.id, "a String");
+                    StringJoiner joiner = new StringJoiner("\", \"");
+                    ((MultiSelectComboBox<String>) componentInfo.component).getListDataView().getItems().forEach(joiner::add);
+                    inputFieldMap.put(componentInfo.id, "a Set of Strings selecting none, one or more of these options  \"" + joiner + "\"");
                 } else if ((componentInfo.component instanceof Checkbox)) {
                     inputFieldMap.put(componentInfo.id, "a Boolean");
                 } else if ((componentInfo.component instanceof CheckboxGroup<?>)) {
                     StringJoiner joiner = new StringJoiner("\", \"");
                     ((CheckboxGroup<String>) componentInfo.component).getListDataView().getItems().forEach(joiner::add);
-                    inputFieldMap.put(componentInfo.id, "a Set of Strings selecting none, one or more of these options  \"" + joiner.toString() + "\"");
+                    inputFieldMap.put(componentInfo.id, "a Set of Strings selecting none, one or more of these options  \"" + joiner + "\"");
                 } else if ((componentInfo.component instanceof RadioButtonGroup<?>)) {
                     StringJoiner joiner = new StringJoiner("\" OR \"");
                     ((RadioButtonGroup<String>) componentInfo.component).getListDataView().getItems().forEach(joiner::add);
-                    inputFieldMap.put(componentInfo.id, "a String from one of these options \"" + joiner.toString() + "\"");
+                    inputFieldMap.put(componentInfo.id, "a String from one of these options \"" + joiner + "\"");
                 } else if (componentInfo.component instanceof Grid.Column<?>) {
                     // Nothing to do as columns are managed in the Grid case
                 } else if (componentInfo.component instanceof Grid<?>) {
@@ -282,8 +284,15 @@ public class ComponentUtils {
                         datetimePicker.setValue(LocalDateTime.parse(responseValue.toString()));
                     } else if (componentInfo.component instanceof ComboBox comboBox) {
                         comboBox.setValue(responseValue);
-                    } else if (componentInfo.component instanceof MultiSelectComboBox multiSelectComboBox) {
-                        multiSelectComboBox.setValue(responseValue);
+                    } else if (componentInfo.component instanceof MultiSelectComboBox<?>) {
+                        MultiSelectComboBox<String> multiSelectComboBox = (MultiSelectComboBox<String>) componentInfo.component;
+                        try {
+                            ArrayList<String> list = (ArrayList<String>) responseValue;
+                            Set<String> set = new HashSet<>(list);
+                            multiSelectComboBox.setValue(set);
+                        } catch (Exception e) {
+                            logger.error("Error while updating multiSelectComboBox with id: {}", id, e);
+                        }
                     } else if (componentInfo.component instanceof Checkbox) {
                         Checkbox checkbox = (Checkbox) componentInfo.component;
                         checkbox.setValue((Boolean) responseValue);
@@ -291,7 +300,7 @@ public class ComponentUtils {
                         CheckboxGroup<String> checkboxgroup = (CheckboxGroup<String>) componentInfo.component;
                         try {
                             ArrayList<String> list = (ArrayList<String>) responseValue;
-                            Set<String> set = new HashSet<String>(list);
+                            Set<String> set = new HashSet<>(list);
                             checkboxgroup.setValue(set);
                         } catch (Exception e) {
                             logger.error("Error while updating checkboxgroup with id: {}", id, e);

@@ -1,5 +1,7 @@
 package com.vaadin.flow.ai.formfiller;
 
+import java.io.Serializable;
+
 /**
  * FormFiller result after a {@link FormFiller#fill} call.
  * Provides information about the request for the AI module
@@ -7,7 +9,7 @@ package com.vaadin.flow.ai.formfiller;
  *
  * @author Vaadin Ltd.
  */
-public class FormFillerResult {
+public class FormFillerResult implements Serializable {
 
     /**
      * Prompt request to the AI module

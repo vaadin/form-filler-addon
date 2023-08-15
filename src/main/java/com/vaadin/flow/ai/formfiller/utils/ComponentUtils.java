@@ -389,8 +389,7 @@ public class ComponentUtils {
                 Checkbox.class,
                 CheckboxGroup.class,
                 RadioButtonGroup.class,
-                Grid.class,
-                Grid.Column.class
+                Grid.class
         );
     }
 }

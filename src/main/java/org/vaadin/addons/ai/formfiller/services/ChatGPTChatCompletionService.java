@@ -17,7 +17,7 @@ public class ChatGPTChatCompletionService extends OpenAiService implements LLMSe
     /**
      * ID of the model to use.
      */
-    private String MODEL = "gpt-3.5-turbo-16k";
+    private String MODEL = "gpt-3.5-turbo-16k-0613";
     /**
      * The maximum number of tokens to generate in the completion.
      */

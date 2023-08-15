@@ -105,6 +105,10 @@ public class FormFiller {
         this(target, new HashMap<>(), new ArrayList<>(), new ChatGPTChatCompletionService());
     }
 
+    public FormFiller(Component target, LLMService llmService) {
+        this(target, new HashMap<>(), new ArrayList<>(), llmService);
+    }
+
     /**
      * Fills automatically the target component analyzing the input source
      *

@@ -50,6 +50,7 @@ public class ChatGPTService extends OpenAiService implements LLMService {
                 "Based on the user input: '%s', " +
                         "generate a JSON object according to these instructions: " +
                         "Never include duplicate keys, in case of duplicate keys just keep the first occurrence in the response. " +
+                        "Generate the JSON object with all keys being double quoted." +
                         "Fill out null value in the JSON value if the user did not specify a value. " +
                         "Return the result as a JSON object in this format: '%s'. Perform any modification in the response to assure a valid JSON object."
                 , input, objectMap);

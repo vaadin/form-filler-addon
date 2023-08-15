@@ -52,11 +52,11 @@ public class FormFiller {
     /**
      * The target component to fill.
      */
-    private Component target;
+    private final Component target;
 
-    private HashMap<Component, String> componentInstructions = new HashMap<>();
+    private final HashMap<Component, String> componentInstructions;
 
-    private ArrayList<String> contextInstructions = new ArrayList<>();
+    private final ArrayList<String> contextInstructions;
 
     /*
      * The JSON representation of the target components to fill.
@@ -64,7 +64,7 @@ public class FormFiller {
      */
     ComponentUtils.ComponentsMapping mapping;
 
-    private LLMService llmService;
+    private final LLMService llmService;
 
     /**
      * Creates a FormFiller to fill the target component or
@@ -87,6 +87,7 @@ public class FormFiller {
         this.target = target;
         this.componentInstructions = componentInstructions;
         this.contextInstructions = contextInstructions;
+        reportUserStatistics();
     }
 
     public FormFiller(Component target, HashMap<Component, String> componentInstructions, ArrayList<String> contextInstructions) {
@@ -161,5 +162,21 @@ public class FormFiller {
 
     public ComponentUtils.ComponentsMapping getMapping() {
         return mapping;
+    }
+
+    /**
+     * Reports the usage statistics of the FormFiller component.
+     *
+     * The reporting of the usage statistics will only run once per JVM,
+     * when the FormFiller component is used for the first time.
+     */
+    private void reportUserStatistics() {
+        try {
+            // This will load the class if it exists, and so the static block will be executed and so the usage statistics will be reported.
+            // Nicer solution would have been if we could extend/overwrite the VaadinServiceInitListener somehow and execute the statistics there.
+            Class.forName("org.vaadin.addons.ai.formfiller.services.FormFillerStats");
+        } catch (ClassNotFoundException e) {
+            logger.error("Loading FormFillerStats failed, and so reporting the usage statistics will not be possible.");
+        }
     }
 }

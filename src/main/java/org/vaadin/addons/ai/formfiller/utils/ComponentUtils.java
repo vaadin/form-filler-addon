@@ -93,6 +93,8 @@ public class ComponentUtils {
 
     private static void findChildComponents(Component component, List<ComponentInfo> componentInfoList) {
         component.getChildren().forEach(childComponent -> {
+
+
             String componentType = childComponent.getClass().getSimpleName();
             String id = childComponent.getId().orElse(null);
 
@@ -100,6 +102,11 @@ public class ComponentUtils {
                 ComponentInfo info = new ComponentInfo(id, componentType, childComponent);
                 componentInfoList.add(info);
             }
+            else if (isSupportedComponent(childComponent)) {
+                logger.warn("Component of type {} has no id. Remember to add a meaningful" +
+                        " id to the component if you want to fill it with the FromFiller", componentType);
+            }
+
             findChildComponents(childComponent, componentInfoList);
         });
     }
@@ -241,14 +248,13 @@ public class ComponentUtils {
                         continue;
                     }
 
-                    if (componentInfo.component instanceof Grid) {
+                    if (componentInfo.component instanceof Grid<?> grid) {
+                        Class<?> beanType = grid.getBeanType();
                         try {
                             List<Map<String, Object>> items = (List<Map<String, Object>>) responseValue;
-                            Grid<?> grid = (Grid<?>) componentInfo.component;
-                            Class<?> beanType = grid.getBeanType();
                             fillGridWithWildcards(grid, items, beanType);
                         } catch (Exception e) {
-                            logger.error("Error while updating grid with wildcards", e.getMessage());
+                            logger.error("Error while updating grid with wildcards for bean {} because {}", beanType.getSimpleName(), e.getMessage());
                         }
                     } else if (componentInfo.component instanceof TextField textField) {
                         textField.setValue(responseValue.toString());
@@ -257,7 +263,7 @@ public class ComponentUtils {
                     } else if (componentInfo.component instanceof NumberField numberField) {
                         numberField.setValue(Double.valueOf(responseValue.toString()));
                     } else if (componentInfo.component instanceof BigDecimalField bdField) {
-                        bdField.setValue(BigDecimal.valueOf(Double.valueOf(responseValue.toString())));
+                        bdField.setValue(BigDecimal.valueOf(Double.parseDouble(responseValue.toString())));
                     } else if (componentInfo.component instanceof IntegerField integerField) {
                         integerField.setValue(Integer.valueOf(responseValue.toString()));
                     } else if (componentInfo.component instanceof EmailField emailField) {
@@ -319,7 +325,9 @@ public class ComponentUtils {
             try {
                 item = itemClass.getDeclaredConstructor().newInstance();
             } catch (Exception e) {
-                throw new IllegalStateException("Failed to create a new instance of the item class", e);
+                throw new IllegalStateException("Failed to create a new instance of the Bean class." +
+                        " Please be sure that the Bean has an empty constructor if any non empty" +
+                        " constructor is defined.", e);
             }
 
             for (Map.Entry<String, Object> entry : itemMap.entrySet()) {
@@ -361,5 +369,30 @@ public class ComponentUtils {
         }).collect(Collectors.toList());
 
         grid.setItems(gridItems);
+    }
+
+    public static boolean isSupportedComponent(Component component) {
+        return supportedComponentStream().anyMatch(c -> c.equals(component.getClass()));
+    }
+
+    private static Stream<Class<? extends Component>> supportedComponentStream() {
+        return Stream.of(
+                TextField.class,
+                TextArea.class,
+                NumberField.class,
+                BigDecimalField.class,
+                IntegerField.class,
+                EmailField.class,
+                PasswordField.class,
+                DatePicker.class,
+                TimePicker.class,
+                DateTimePicker.class,
+                ComboBox.class,
+                Checkbox.class,
+                CheckboxGroup.class,
+                RadioButtonGroup.class,
+                Grid.class,
+                Grid.Column.class
+        );
     }
 }

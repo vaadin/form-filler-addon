@@ -50,7 +50,8 @@ public class ComponentUtils {
      *                               described in a map
      * @param componentsTypesJSONMap the components' value types
      */
-    public record ComponentsMapping(List<ComponentInfo> components, Map<String, Object> componentsJSONMap, Map<String, String> componentsTypesJSONMap) {
+    public record ComponentsMapping(List<ComponentInfo> components, Map<String, Object> componentsJSONMap,
+                                    Map<String, String> componentsTypesJSONMap) {
     }
 
     /**
@@ -83,6 +84,7 @@ public class ComponentUtils {
         findChildComponents(component, componentInfoList);
         return componentInfoList;
     }
+
     private static void findChildComponents(Component component, List<ComponentInfo> componentInfoList) {
         component.getChildren().forEach(childComponent -> {
 
@@ -115,10 +117,16 @@ public class ComponentUtils {
                     HashMap<String, Object> columns = new HashMap<>();
                     if (componentInfo.component instanceof Grid) {
                         Grid<?> grid = (Grid<?>) componentInfo.component;
-                        grid.getColumns().forEach(c -> columns.put(c.getId().get(), ""));
-                        ArrayList<HashMap<String, Object>> listColumns = new ArrayList<>();
-                        listColumns.add(columns);
-                        json.put(id, listColumns);
+                        if (grid.getBeanType() == null) {
+                            logger.error("Grid with id {} must define a Bean Type to be used with FormFiller", grid.getId());
+                        } else {
+                            for (Field f : grid.getBeanType().getDeclaredFields()) {
+                                columns.put(f.getName(), "");
+                            }
+                            ArrayList<HashMap<String, Object>> listColumns = new ArrayList<>();
+                            listColumns.add(columns);
+                            json.put(id, listColumns);
+                        }
                     } else {
                         json.put(id, new ArrayList<>());
                     }
@@ -136,7 +144,7 @@ public class ComponentUtils {
      * understandable by the LLM, we are not talking about any specific
      * coding language type or class. This type helps the LLM to format
      * the value inside the response JSON.
-     *
+     * <p>
      * TODO: Research about custom class values like for ComboBox. Is it
      * better to ask always for String or is it better to ask for the specific
      * custom class if it has a meaningful name?
@@ -168,7 +176,7 @@ public class ComponentUtils {
                 } else if ((componentInfo.component instanceof ComboBox<?>)) {
                     StringJoiner joiner = new StringJoiner("\" OR \"");
                     ((ComboBox<String>) componentInfo.component).getListDataView().getItems().forEach(joiner::add);
-                    inputFieldMap.put(componentInfo.id, "a String from one of these options \"" + joiner.toString()+"\"");
+                    inputFieldMap.put(componentInfo.id, "a String from one of these options \"" + joiner.toString() + "\"");
                 } else if (componentInfo.component instanceof MultiSelectComboBox) {
                     inputFieldMap.put(componentInfo.id, "a String");
                 } else if ((componentInfo.component instanceof Checkbox)) {
@@ -176,18 +184,18 @@ public class ComponentUtils {
                 } else if ((componentInfo.component instanceof CheckboxGroup<?>)) {
                     StringJoiner joiner = new StringJoiner("\", \"");
                     ((CheckboxGroup<String>) componentInfo.component).getListDataView().getItems().forEach(joiner::add);
-                    inputFieldMap.put(componentInfo.id, "a Set of Strings selecting none, one or more of these options  \"" + joiner.toString()+"\"");
+                    inputFieldMap.put(componentInfo.id, "a Set of Strings selecting none, one or more of these options  \"" + joiner.toString() + "\"");
                 } else if ((componentInfo.component instanceof RadioButtonGroup<?>)) {
                     StringJoiner joiner = new StringJoiner("\" OR \"");
                     ((RadioButtonGroup<String>) componentInfo.component).getListDataView().getItems().forEach(joiner::add);
-                    inputFieldMap.put(componentInfo.id, "a String from one of these options \"" + joiner.toString()+"\"");
+                    inputFieldMap.put(componentInfo.id, "a String from one of these options \"" + joiner.toString() + "\"");
                 } else if (componentInfo.component instanceof Grid.Column<?>) {
                     // Nothing to do as columns are managed in the Grid case
                 } else if (componentInfo.component instanceof Grid<?>) {
                     Grid inspectedComponent = (Grid) componentInfo.component;
                     for (Field f : inspectedComponent.getBeanType().getDeclaredFields()) {
                         if (f.getType().getSimpleName().equalsIgnoreCase("Date") || f.getType().getSimpleName().equalsIgnoreCase("LocalDate"))
-                        inputFieldMap.put(f.getName(), "a date using format 'yyyy-MM-dd'");
+                            inputFieldMap.put(f.getName(), "a date using format 'yyyy-MM-dd'");
                         else if (f.getType().getSimpleName().equalsIgnoreCase("Time") || f.getType().getSimpleName().equalsIgnoreCase("LocalTime"))
                             inputFieldMap.put(f.getName(), "a time using format 'HH:mm:ss'");
                         else if (f.getType().getSimpleName().equalsIgnoreCase("DateTime") || f.getType().getSimpleName().equalsIgnoreCase("LocalDateTime"))
@@ -195,7 +203,7 @@ public class ComponentUtils {
                         else if (f.getType().getSimpleName().equalsIgnoreCase("Boolean"))
                             inputFieldMap.put(f.getName(), "a Boolean");
                         else if (f.getType().getSimpleName().equalsIgnoreCase("Integer") || f.getType().getSimpleName().equalsIgnoreCase("Long")
-                                || f.getType().getSimpleName().equalsIgnoreCase("Double")|| f.getType().getSimpleName().equalsIgnoreCase("Float"))
+                                || f.getType().getSimpleName().equalsIgnoreCase("Double") || f.getType().getSimpleName().equalsIgnoreCase("Float"))
                             inputFieldMap.put(f.getName(), "a Number");
                         else
                             inputFieldMap.put(f.getName(), "a String");
@@ -293,11 +301,12 @@ public class ComponentUtils {
                         radioButtonGroup.setValue(responseValue.toString());
                     } else if (componentInfo.component instanceof Grid.Column<?>) {
                         // Nothing to do as it is managed in Grid
-                    } else if (componentInfo.component instanceof HasValue<?,?>) {
+                    } else if (componentInfo.component instanceof HasValue<?, ?>) {
                         // Fallback to work even if it is not handled here but has Hasvalue.
                         HasValue<?, String> hasValue = (HasValue<?, String>) componentInfo.component;
                         hasValue.setValue(responseValue.toString());
-                    }  else logger.warn("Component type not supported: {}", componentInfo.component.getClass().getSimpleName());
+                    } else
+                        logger.warn("Component type not supported: {}", componentInfo.component.getClass().getSimpleName());
                 }
             } catch (Exception e) {
                 logger.error("Error while updating component with id: {} Cause: {}", id, e.getMessage());
@@ -329,10 +338,6 @@ public class ComponentUtils {
             for (Map.Entry<String, Object> entry : itemMap.entrySet()) {
                 String propName = entry.getKey();
                 Object propValue = entry.getValue();
-                Grid.Column<T> column = grid.getColumnByKey(propName);
-                if (column != null && column.getEditorComponent() != null) {
-                    column.getEditorComponent().getElement().setProperty("value", propValue.toString());
-                }
 
                 try {
 
@@ -355,7 +360,7 @@ public class ComponentUtils {
                     else if (field.getType().equals(Boolean.class))
                         field.set(item, Boolean.valueOf(propValue.toString()));
                     else
-                    field.set(item, propValue);
+                        field.set(item, propValue);
 
                 } catch (Exception e) {
                     logger.error("Failed to set field value for '{}': {}", propName, e.getMessage());

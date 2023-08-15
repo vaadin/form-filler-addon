@@ -5,7 +5,6 @@ import java.time.LocalDate;
 public class OrderItem {
     private String orderId;
     private String itemName;
-    private String entity;
     private LocalDate orderDate;
     private String orderStatus;
     private Double orderCost;
@@ -46,7 +45,4 @@ public class OrderItem {
 
     public void setOrderId(String orderId) { this.orderId = orderId; }
 
-    public String getEntity() { return entity; }
-
-    public void setEntity(String entity) { this.entity = entity; }
 }

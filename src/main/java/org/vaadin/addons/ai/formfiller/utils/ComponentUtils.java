@@ -85,6 +85,8 @@ public class ComponentUtils {
     }
     private static void findChildComponents(Component component, List<ComponentInfo> componentInfoList) {
         component.getChildren().forEach(childComponent -> {
+
+
             String componentType = childComponent.getClass().getSimpleName();
             String id = childComponent.getId().orElse(null);
 
@@ -92,6 +94,11 @@ public class ComponentUtils {
                 ComponentInfo info = new ComponentInfo(id, componentType, childComponent);
                 componentInfoList.add(info);
             }
+            else if (isSupportedComponent(childComponent)) {
+                logger.warn("Component of type {} has no id. Remember to add a meaningful" +
+                        " id to the component if you want to fill it with the FromFiller", componentType);
+            }
+
             findChildComponents(childComponent, componentInfoList);
         });
     }
@@ -357,5 +364,30 @@ public class ComponentUtils {
         }).collect(Collectors.toList());
 
         grid.setItems(gridItems);
+    }
+
+    public static boolean isSupportedComponent(Component component) {
+        return supportedComponentStream().anyMatch(c -> c.equals(component.getClass()));
+    }
+
+    private static Stream<Class<? extends Component>> supportedComponentStream() {
+        return Stream.of(
+                TextField.class,
+                TextArea.class,
+                NumberField.class,
+                BigDecimalField.class,
+                IntegerField.class,
+                EmailField.class,
+                PasswordField.class,
+                DatePicker.class,
+                TimePicker.class,
+                DateTimePicker.class,
+                ComboBox.class,
+                Checkbox.class,
+                CheckboxGroup.class,
+                RadioButtonGroup.class,
+                Grid.class,
+                Grid.Column.class
+        );
     }
 }

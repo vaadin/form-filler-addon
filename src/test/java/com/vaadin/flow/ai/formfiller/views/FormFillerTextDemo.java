@@ -1,5 +1,6 @@
 package com.vaadin.flow.ai.formfiller.views;
 
+import com.vaadin.flow.ai.formfiller.utils.Converters;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
@@ -13,6 +14,7 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
@@ -24,6 +26,8 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.ai.formfiller.FormFiller;
 import com.vaadin.flow.ai.formfiller.FormFillerResult;
@@ -33,7 +37,10 @@ import com.vaadin.flow.ai.formfiller.utils.ComponentUtils;
 import com.vaadin.flow.ai.formfiller.utils.DebugTool;
 import com.vaadin.flow.ai.formfiller.utils.ExtraInstructionsTool;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 @Route("")
@@ -119,7 +126,12 @@ public class FormFillerTextDemo extends Div {
         orderGrid.getColumnByKey("orderId").setHeader("Id");
         orderGrid.getColumnByKey("itemName").setHeader("Name");
         orderGrid.getColumnByKey("orderDate").setHeader("Date");
-        orderGrid.getColumnByKey("deliveryDate").setHeader("Delivery Date");
+        orderGrid.getColumnByKey("deliveryDate").setHeader("Delivery Date")
+                .setRenderer(new ComponentRenderer<>(orderItem -> {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    // Format the date using the SimpleDateFormat
+                    return new Span(dateFormat.format(orderItem.getDeliveryDate()));
+                }));
         orderGrid.getColumnByKey("orderStatus").setHeader("Status");
         orderGrid.getColumnByKey("orderTotal").setHeader("Cost");
 
@@ -159,6 +171,13 @@ public class FormFillerTextDemo extends Div {
         binder.forField(edDateField).bind(OrderItem::getOrderDate,
                 OrderItem::setOrderDate);
         orderGrid.getColumnByKey("orderDate").setEditorComponent(edDateField);
+
+        DatePicker edDeliveryDateField = new DatePicker();
+        edDeliveryDateField.setWidthFull();
+        binder.forField(edDeliveryDateField)
+                .withConverter(Converters.localDateToDate(), Converters.dateToLocalDate())
+                .bind(OrderItem::getDeliveryDate, OrderItem::setDeliveryDate);
+        orderGrid.getColumnByKey("deliveryDate").setEditorComponent(edDeliveryDateField);
 
         TextField edStatusItemField = new TextField();
         edStatusItemField.setWidthFull();

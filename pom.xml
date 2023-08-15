@@ -13,6 +13,7 @@
     <properties>
         <vaadin.version>24.1.5</vaadin.version>
 
+        <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -113,7 +114,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>${maven.jar.plugin.version}</version>
                 <configuration>
                     <archive>
                         <index>true</index>
@@ -258,7 +259,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
-                        <version>3.3.0</version>
+                        <version>${maven.jar.plugin.version}</version>
                         <configuration>
                             <!-- Generated file that shouldn't be included in add-ons -->
                             <excludes>

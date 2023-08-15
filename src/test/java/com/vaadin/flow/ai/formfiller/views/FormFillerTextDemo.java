@@ -230,7 +230,8 @@ public class FormFillerTextDemo extends Div {
         extraInstructionsTool.setVisible(false);
         extraInstructionsTool.setExtraInstructions(nameField, "Format this field in Uppercase");
         extraInstructionsTool.setExtraInstructions(emailField, "Format this field as a correct email");
-        extraInstructionsTool.setContextInstructions(0,"Translate item names to Spanish");
+        extraInstructionsTool.setExtraInstructions(typeService, "This field describes the type of the items of the order");
+        extraInstructionsTool.setContextInstructions(0,"Translate item names of the order to Spanish");
 
         Button extraInstructionsButton = new Button("Show/Hide extra instructions");
         extraInstructionsButton.addThemeVariants(ButtonVariant.LUMO_ERROR);

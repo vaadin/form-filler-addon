@@ -31,8 +31,8 @@ import java.util.Properties;
 public class FormFillerStats {
 
     // Use these values as fallbacks only:
-    private static final String PRODUCT_NAME = "vaadin-form-filler-addon";
-    private static final String PRODUCT_VERSION = "1.0.0-SNAPSHOT";
+    private static final String PRODUCT_NAME = "flow/form-filler-addon";
+    private static final String PRODUCT_VERSION = "0.1.0";
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(FormFillerStats.class);

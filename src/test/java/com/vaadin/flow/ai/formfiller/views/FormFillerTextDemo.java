@@ -1,5 +1,6 @@
 package com.vaadin.flow.ai.formfiller.views;
 
+import com.vaadin.flow.ai.formfiller.utils.Converters;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
@@ -13,6 +14,7 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
@@ -24,6 +26,8 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.ai.formfiller.FormFiller;
 import com.vaadin.flow.ai.formfiller.FormFillerResult;
@@ -33,7 +37,10 @@ import com.vaadin.flow.ai.formfiller.utils.ComponentUtils;
 import com.vaadin.flow.ai.formfiller.utils.DebugTool;
 import com.vaadin.flow.ai.formfiller.utils.ExtraInstructionsTool;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 @Route("")
@@ -119,6 +126,12 @@ public class FormFillerTextDemo extends Div {
         orderGrid.getColumnByKey("orderId").setHeader("Id");
         orderGrid.getColumnByKey("itemName").setHeader("Name");
         orderGrid.getColumnByKey("orderDate").setHeader("Date");
+        orderGrid.getColumnByKey("deliveryDate").setHeader("Delivery Date")
+                .setRenderer(new ComponentRenderer<>(orderItem -> {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    // Format the date using the SimpleDateFormat
+                    return new Span(dateFormat.format(orderItem.getDeliveryDate()));
+                }));
         orderGrid.getColumnByKey("orderStatus").setHeader("Status");
         orderGrid.getColumnByKey("orderTotal").setHeader("Cost");
 
@@ -158,6 +171,13 @@ public class FormFillerTextDemo extends Div {
         binder.forField(edDateField).bind(OrderItem::getOrderDate,
                 OrderItem::setOrderDate);
         orderGrid.getColumnByKey("orderDate").setEditorComponent(edDateField);
+
+        DatePicker edDeliveryDateField = new DatePicker();
+        edDeliveryDateField.setWidthFull();
+        binder.forField(edDeliveryDateField)
+                .withConverter(Converters.localDateToDate(), Converters.dateToLocalDate())
+                .bind(OrderItem::getDeliveryDate, OrderItem::setDeliveryDate);
+        orderGrid.getColumnByKey("deliveryDate").setEditorComponent(edDeliveryDateField);
 
         TextField edStatusItemField = new TextField();
         edStatusItemField.setWidthFull();
@@ -269,12 +289,12 @@ public class FormFillerTextDemo extends Div {
                 "This order contains the products for the project 'Form filler AI Addon' that is part of the new development of Vaadin AI kit. \n" +
                 "\n" +
                 "Items list:\n" +
-                "Item Number     Items   Type    Cost    Date    Status\n" +
-                "1001    2 Smartphones   Hardware    $1000   '2023-01-10' Delivered\n" +
-                "1002    1 Laptop    Hardware    $1500   '2023-02-15'    In Transit\n" +
-                "1003    5 Wireless Headphones   Hardware    $500    '2023-03-20'    Cancelled\n" +
-                "1004    1 Headphones    Hardware    $999    '2023-01-01'    In Transit\n" +
-                "1005    1 Windows License    Software    $1500    '2023-02-01'    Delivered\n" +
+                "Item Number     Items   Type    Cost    Date    Delivery Date    Status\n" +
+                "1001    2 Smartphones   Hardware    $1000   '2023-01-10'    '2023-01-13'    Delivered\n" +
+                "1002    1 Laptop    Hardware    $1500   '2023-02-15'    '2023-01-15'    In Transit\n" +
+                "1003    5 Wireless Headphones   Hardware    $500    '2023-03-20'    '2023-01-14'    Cancelled\n" +
+                "1004    1 Headphones    Hardware    $999    '2023-01-01'    '2023-01-15'    In Transit\n" +
+                "1005    1 Windows License    Software    $1500    '2023-02-01'    '2023-01-16'    Delivered\n" +
                 "\n" +
                 "Taxes: 25,6€ \n" +
                 "Total: 15000€ \n" +

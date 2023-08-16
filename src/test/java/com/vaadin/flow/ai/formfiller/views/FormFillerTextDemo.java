@@ -8,6 +8,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -115,6 +116,11 @@ public class FormFillerTextDemo extends Div {
         typeService.setItems("Software", "Hardware", "Consultancy");
         typeService.setId("typeService");
         formLayout.add(typeService);
+
+        MultiSelectComboBox<String> typeServiceMulti = new MultiSelectComboBox<>("Type of Service");
+        typeServiceMulti.setItems("Software", "Hardware", "Consultancy");
+        typeServiceMulti.setId("typeServiceMs");
+        formLayout.add(typeServiceMulti);
 
         // To make the grid supported by FormFiller it is necessary to set an ID
         // and a Bean class to the Grid.
@@ -251,6 +257,7 @@ public class FormFillerTextDemo extends Div {
         extraInstructionsTool.setExtraInstructions(nameField, "Format this field in Uppercase");
         extraInstructionsTool.setExtraInstructions(emailField, "Format this field as a correct email");
         extraInstructionsTool.setExtraInstructions(typeService, "This field describes the type of the items of the order");
+        extraInstructionsTool.setExtraInstructions(typeServiceMulti, "This field describes the type of the items of the order");
         extraInstructionsTool.setContextInstructions(0,"Translate item names of the order to Spanish");
 
         Button extraInstructionsButton = new Button("Show/Hide extra instructions");

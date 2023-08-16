@@ -4,9 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-parent</artifactId>
+        <version>2.1.0</version>
+    </parent>
+
     <groupId>com.vaadin.flow.ai</groupId>
     <artifactId>form-filler-addon</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
     <name>AI Form Filler Addon</name>
     <description>AI Form Filler is a Flow Addon that can automatically fill forms from natural language sources</description>
 

@@ -1,11 +1,13 @@
 package com.vaadin.flow.ai.formfiller.data;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 public class OrderItem {
     private String orderId;
     private String itemName;
     private LocalDate orderDate;
+    private Date deliveryDate;
     private String orderStatus;
     private Double orderCost;
 
@@ -31,6 +33,14 @@ public class OrderItem {
 
     public void setOrderStatus(String orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public void setDeliveryDate(Date deliveryDate) {
+        this.deliveryDate = deliveryDate;
+    }
+
+    public Date getDeliveryDate() {
+        return deliveryDate;
     }
 
     public Double getOrderTotal() {

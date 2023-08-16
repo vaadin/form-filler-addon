@@ -34,6 +34,7 @@ import java.util.Map;
  *     <li>CheckboxGroup</li>
  *     <li>RadioButtonGroup</li>
  *     <li>ComboBox</li>
+ *     <li>MultiSelectComboBox</li>
  *     <li>Grid</li>
  * </ul>
  *
@@ -44,11 +45,15 @@ import java.util.Map;
  * <code>
  *     TextField textField = new TextField();<br>
  *     textField.setId("name");<br>
- *     FormFiller formFiller = new FormFiller(textField);<br>
+ *     <br>
+ *     FormLayout fl = new FormLayout();<br>
+ *     fl.add(textField);<br>
+ *     <br>
+ *     FormFiller formFiller = new FormFiller(fl);<br>
  *     formFiller.fill("My name is John");<br>
  * </code>
  * <br>
- * The text field will be filled with "John".
+ * The text field will be filled with "John".<br>
  *
  * @author Vaadin Ltd.
  */
@@ -142,13 +147,17 @@ public class FormFiller {
     }
 
     /**
-     * Creates a FormFiller with default llmService, empty context instructions and empty context instructions.
+     * Creates a FormFiller with default llmService, empty field instructions and empty context instructions.
      * Check {@link #FormFiller(Component, HashMap, ArrayList, LLMService) FormFiller} for more information.
      */
     public FormFiller(Component target) {
         this(target, new HashMap<>(), new ArrayList<>(), new ChatGPTChatCompletionService());
     }
 
+    /**
+     * Creates a FormFiller with empty context instructions and empty context instructions with the given llmService.
+     * Check {@link #FormFiller(Component, HashMap, ArrayList, LLMService) FormFiller} for more information.
+     */
     public FormFiller(Component target, LLMService llmService) {
         this(target, new HashMap<>(), new ArrayList<>(), llmService);
     }

@@ -148,7 +148,7 @@ public class ComponentUtils {
      * the value inside the response JSON.
      *
      * @param componentInfoList a list of components
-     * @return the list of expected types.
+     * @return the map of expected types per target component.
      */
     private static Map<String, String> buildTypes(List<ComponentInfo> componentInfoList) {
         Map<String, String> inputFieldMap = new HashMap<>();

@@ -401,7 +401,8 @@ public class ComponentUtils {
                 Checkbox.class,
                 CheckboxGroup.class,
                 RadioButtonGroup.class,
-                Grid.class
+                Grid.class,
+                MultiSelectComboBox.class
         );
     }
 }

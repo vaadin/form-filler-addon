@@ -31,7 +31,17 @@ public class FormTest extends Div {
 ___This is an experimental feature and it may be removed, altered, or limited to commercial subscribers in future releases.___
 
 ## Requirements ##
-To use the Form Filler Addon you will need a valid ChatGPT API key. To use the addon in your own application you don't need anymore but to run OCR-Image demos you also will need a Google Vision API key. Check [Views - Image Input section](#views) 
+
+Add maven dependency to your project:
+```xml
+        <dependency>
+            <groupId>com.vaadin.flow.ai</groupId>
+            <artifactId>form-filler-addon</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+```
+
+To use the Form Filler Addon you will need a valid ChatGPT API key. To use the addon in your own application or to test the main demo (Route "/") you don't need anymore but to run OCR-Image demos you also will need a Google Vision API key. Check [Views - Image Input section](#views) 
 
 These keys can be set as environment variables or specified from command line with the '-D' flag.
 
@@ -41,8 +51,6 @@ export OPENAI_TOKEN="THE KEY"
 export GOOGLE_VISION_API_KEY="THE KEY"
 ```
 - Windows: TODO
-
-
 
 ## Add-on structure
 The addon includes the FormFiller addon and some demos to check its capabilities.

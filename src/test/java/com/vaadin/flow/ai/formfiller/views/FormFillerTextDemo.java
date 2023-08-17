@@ -285,7 +285,7 @@ public class FormFillerTextDemo extends Div {
 
     public HashMap<String, String> getExampleTexts() {
         HashMap<String, String> texts = new HashMap<>();
-        texts.put("Text1", "Order sent by the customer Andrew Jackson on '2023-04-05 12:13:00'\n" +
+        texts.put("Text1", "Order sent by the customer Andrew Jackson on '2023-01-01 12:13:00'\n" +
                 "Address: Ruukinkatu 2-4, FI-20540 Turku, Finland \n" +
                 "Phone Number: 555-1234 \n" +
                 "Age: 43 \n" +
@@ -298,15 +298,15 @@ public class FormFillerTextDemo extends Div {
                 "Items list:\n" +
                 "Item Number     Items   Type    Cost    Date    Delivery Date    Status\n" +
                 "1001    2 Smartphones   Hardware    $1000   '2023-01-10'    '2023-01-13'    Delivered\n" +
-                "1002    1 Laptop    Hardware    $1500   '2023-02-15'    '2023-01-15'    In Transit\n" +
-                "1003    5 Wireless Headphones   Hardware    $500    '2023-03-20'    '2023-01-14'    Cancelled\n" +
-                "1004    1 Headphones    Hardware    $999    '2023-01-01'    '2023-01-15'    In Transit\n" +
-                "1005    1 Windows License    Software    $1500    '2023-02-01'    '2023-01-16'    Delivered\n" +
+                "1002    1 Laptop    Hardware    $1500   '2023-02-15'    '2023-03-15'    In Transit\n" +
+                "1003    5 Wireless Headphones   Hardware    $500    '2023-03-20'    '2023-04-14'    Cancelled\n" +
+                "1004    1 Headphones    Hardware    $999    '2023-01-01'    '2023-03-15'    In Transit\n" +
+                "1005    1 Windows License    Software    $1500    '2023-02-01'    '2023-03-16'    Delivered\n" +
                 "\n" +
                 "Taxes: 25,6€ \n" +
                 "Total: 15000€ \n" +
                 "Payment Method: Cash\n");
-        texts.put("Text2", "Order sent by the customer Andrew Jackson on '2023-04-05 12:13:00'\n" +
+        texts.put("Text2", "Order sent by the customer Andrew Jackson on '2023-01-01 12:13:00'\n" +
                 "Address: 1234 Elm Street, Springfield, USA \n" +
                 "Phone Number: 555-1234 \n" +
                 "Age: 37 \n" +
@@ -317,11 +317,11 @@ public class FormFillerTextDemo extends Div {
                 "This order contains the products for the project 'Form filler AI Addon' that is part of the new development of Vaadin AI kit. \n" +
                 "\n" +
                 "Items list:\n" +
-                "Item Number     Items   Type    Cost    Date    Status\n" +
-                "1001    2 Smartphones   Hardware    $1000   '2023-01-10' Delivered\n" +
-                "1002    1 Laptop    Hardware    $1500   '2023-02-15'    In Transit\n" +
-                "1003    5 Wireless Headphones   Hardware    $500    '2023-03-20'    Cancelled\n" +
-                "1004    1 Headphones    Hardware    $999    '2023-01-01'    In Transit\n" +
+                "Item Number     Items   Type    Cost    Date    Delivery Date      Status\n" +
+                "1001    2 Smartphones   Hardware    $1000   '2023-01-10'    '2023-01-13'    Delivered\n" +
+                "1002    1 Laptop    Hardware    $1500   '2023-02-15'    '2023-03-15'    In Transit\n" +
+                "1003    5 Wireless Headphones   Hardware    $500    '2023-03-20'    '2023-04-14'    Cancelled\n" +
+                "1004    1 Headphones    Hardware    $999    '2023-01-01'    '2023-01-15'    In Transit\n" +
                 "\n" +
                 "Taxes: 35,6€ \n" +
                 "Total: 10000€ \n" +
@@ -331,11 +331,12 @@ public class FormFillerTextDemo extends Div {
                 "Ruukinkatu 2-4, FI-20540 Turku (Finland), he is 45 years old and can be reached at phone number 555-1234 " +
                 "and at email 'andrewjackson@gmail.com. Andrew has placed five items: number 1001 " +
                 "contains two items of smartphone for a total of $1,000 placed on 2023 January " +
-                "the 10th with a status of deliberate; number 1002 includes one item of laptop " +
-                "with a total of $1,500 placed on 2023 February the 15th with a status of in transit; " +
+                "the 10th with a status of delivered and delivered the 2023 January the 20th; number 1002 includes one item of laptop " +
+                "with a total of $1,500 placed on 2023 February the 15th with a status of in transit and delivery date of 2023-03-03; " +
                 "number 1003 consists of five items of wireless headphones for a total of $500 placed " +
-                "on 2023 March the 20th with a status of cancelled; number 1004 is for 'Headphones' " +
-                "with a cost of $999 and placed on '2023-01-01' with status In transit. The invoice " +
+                "on 2023 March the 20th with a status of cancelled with delivery date preview to 2023 April the 4th;" +
+                " number 1004 is for 'Headphones' " +
+                "with a cost of $999 and placed on '2023-01-01' with status In transit adn delivery date of '2023-02-02'. The invoice " +
                 "was paid using a Paypal account. The taxes included in the invoice are 40,6€ and Total is 20000€");
         return texts;
     }

@@ -37,11 +37,6 @@ public class FormFillerStats {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(FormFillerStats.class);
 
-
-    static {
-        report();
-    }
-
     private static Optional<String> getVaadinFormVersion() {
         try (final InputStream pomProperties = Thread.currentThread()
                 .getContextClassLoader().getResourceAsStream(

@@ -27,21 +27,33 @@ import java.util.Map;
  *     <li>IntegerField</li>
  *     <li>BigDecimalField</li>
  *     <li>DatePicker</li>
- *     <li>TimePicker (WIP)</li>
+ *     <li>TimePicker</li>
  *     <li>DateTimePicker</li>
- *
  *     <li>TextArea</li>
  *     <li>Checkbox</li>
  *     <li>CheckboxGroup</li>
  *     <li>RadioButtonGroup</li>
- *
  *     <li>ComboBox</li>
- *     <li>MultiSelectComboBox (WIP)</li>
- *     <li>ListBox (WIP)</li>
- *     <li>MultiSelectListBox (WIP)</li>
- *
+ *     <li>MultiSelectComboBox</li>
  *     <li>Grid</li>
  * </ul>
+ *
+ * To make a component available for the FormFiller, the component
+ * must have an id, and it should be meaningful to be understood by
+ * the AI module.<br>
+ * <br>
+ * <code>
+ *     TextField textField = new TextField();<br>
+ *     textField.setId("name");<br>
+ *     <br>
+ *     FormLayout fl = new FormLayout();<br>
+ *     fl.add(textField);<br>
+ *     <br>
+ *     FormFiller formFiller = new FormFiller(fl);<br>
+ *     formFiller.fill("My name is John");<br>
+ * </code>
+ * <br>
+ * The text field will be filled with "John".<br>
  *
  * @author Vaadin Ltd.
  */
@@ -54,16 +66,36 @@ public class FormFiller {
      */
     private final Component target;
 
+    /**
+     * Additional instructions for the AI module (i.e.: field format,
+     * field context, etc...).
+     * Use these instructions to provide additional information to the AI module about a specific field
+     * when the response of the form filler is not accurate enough.
+     *
+     * Use the target component as key and the instruction as value.
+     */
     private final HashMap<Component, String> componentInstructions;
 
+    /**
+     * Additional instructions for the AI module (i.e.: target language, vocabulary explanation, etc..).
+     * Use these instructions to provide additional information to the AI module about the context of the
+     * input source in general.<br>
+     * Be careful to add inconsistent instructions, as the AI module will try to find a response that
+     * matches all the instructions.
+     *
+     * Use the instruction as value.
+     */
     private final ArrayList<String> contextInstructions;
 
-    /*
+    /**
      * The JSON representation of the target components to fill.
      * Includes hierarchy map and value types of the components
      */
     ComponentUtils.ComponentsMapping mapping;
 
+    /**
+     * The AI module service to use.
+     */
     private final LLMService llmService;
 
     /**
@@ -90,22 +122,42 @@ public class FormFiller {
         reportUserStatistics();
     }
 
+    /**
+     * Creates a FormFiller with default llmService.
+     * Check {@link #FormFiller(Component, HashMap, ArrayList, LLMService) FormFiller} for more information.
+     */
     public FormFiller(Component target, HashMap<Component, String> componentInstructions, ArrayList<String> contextInstructions) {
         this(target, componentInstructions, contextInstructions, new ChatGPTChatCompletionService());
     }
 
+    /**
+     * Creates a FormFiller with default llmService and empty context instructions.
+     * Check {@link #FormFiller(Component, HashMap, ArrayList, LLMService) FormFiller} for more information.
+     */
     public FormFiller(Component target, HashMap<Component, String> componentInstructions) {
         this(target, componentInstructions, new ArrayList<>(), new ChatGPTChatCompletionService());
     }
 
+    /**
+     * Creates a FormFiller with default llmService and empty field instructions.
+     * Check {@link #FormFiller(Component, HashMap, ArrayList, LLMService) FormFiller} for more information.
+     */
     public FormFiller(Component target, ArrayList<String> contextInstructions) {
         this(target, new HashMap<>(), contextInstructions, new ChatGPTChatCompletionService());
     }
 
+    /**
+     * Creates a FormFiller with default llmService, empty field instructions and empty context instructions.
+     * Check {@link #FormFiller(Component, HashMap, ArrayList, LLMService) FormFiller} for more information.
+     */
     public FormFiller(Component target) {
         this(target, new HashMap<>(), new ArrayList<>(), new ChatGPTChatCompletionService());
     }
 
+    /**
+     * Creates a FormFiller with empty context instructions and empty context instructions with the given llmService.
+     * Check {@link #FormFiller(Component, HashMap, ArrayList, LLMService) FormFiller} for more information.
+     */
     public FormFiller(Component target, LLMService llmService) {
         this(target, new HashMap<>(), new ArrayList<>(), llmService);
     }

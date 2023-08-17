@@ -74,6 +74,13 @@ public class ComponentUtils {
         return mapping;
     }
 
+    /**
+     * Get all the components detailed information from a parent component.
+     * {@link ComponentInfo} includes the component id, type and the component itself.
+     *
+     * @param component target
+     * @return List of all component children information
+     */
     public static List<ComponentInfo> getComponentInfo(Component component) {
         List<ComponentInfo> componentInfoList = new ArrayList<>();
         findChildComponents(component, componentInfoList);
@@ -139,13 +146,9 @@ public class ComponentUtils {
      * understandable by the LLM, we are not talking about any specific
      * coding language type or class. This type helps the LLM to format
      * the value inside the response JSON.
-     * <p>
-     * TODO: Research about custom class values like for ComboBox. Is it
-     * better to ask always for String or is it better to ask for the specific
-     * custom class if it has a meaningful name?
      *
      * @param componentInfoList a list of components
-     * @return the list of expected types.
+     * @return the map of expected types per target component.
      */
     private static Map<String, String> buildTypes(List<ComponentInfo> componentInfoList) {
         Map<String, String> inputFieldMap = new HashMap<>();

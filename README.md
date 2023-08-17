@@ -50,7 +50,7 @@ These keys can be set as environment variables or specified from command line wi
 export OPENAI_TOKEN="THE KEY"
 export GOOGLE_VISION_API_KEY="THE KEY"
 ```
-- Windows: TODO
+- Windows: Use "System -> Advanced Settings -> Set Environment Variables" to set OPENAI_TOKEN and GOOGLE_VISION_API_KEY
 
 ## Add-on structure
 The addon includes the FormFiller addon and some demos to check its capabilities.

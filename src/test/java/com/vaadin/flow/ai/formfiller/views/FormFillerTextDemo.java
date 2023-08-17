@@ -328,7 +328,7 @@ public class FormFillerTextDemo extends Div {
                 "Ruukinkatu 2-4, FI-20540 Turku (Finland), he is 45 years old and can be reached at phone number 555-1234 " +
                 "and at email 'andrewjackson@gmail.com. Andrew has placed five items: number 1001 " +
                 "contains two items of smartphone for a total of $1,000 placed on 2023 January " +
-                "the 10th with a status of delivered and delivered the 2023 January the 20th; number 1002 includes one item of laptop " +
+                "the 10th with a status of delivered and it was delivered on the 20th of January, 2023; number 1002 includes one item of laptop " +
                 "with a total of $1,500 placed on 2023 February the 15th with a status of in transit and delivery date of 2023-03-03; " +
                 "number 1003 consists of five items of wireless headphones for a total of $500 placed " +
                 "on 2023 March the 20th with a status of cancelled with delivery date preview to 2023 April the 4th;" +

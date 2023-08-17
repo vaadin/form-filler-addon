@@ -28,7 +28,6 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.ai.formfiller.FormFiller;
 import com.vaadin.flow.ai.formfiller.FormFillerResult;
@@ -39,9 +38,7 @@ import com.vaadin.flow.ai.formfiller.utils.DebugTool;
 import com.vaadin.flow.ai.formfiller.utils.ExtraInstructionsTool;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 @Route("")

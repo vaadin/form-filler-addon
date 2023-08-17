@@ -3,6 +3,7 @@ package com.vaadin.flow.ai.formfiller;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vaadin.flow.ai.formfiller.services.FormFillerStats;
 import com.vaadin.flow.component.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +59,17 @@ import java.util.Map;
  * @author Vaadin Ltd.
  */
 public class FormFiller {
+
+    /**
+     * Reports the usage statistics of the FormFiller component.
+     *
+     * The reporting of the usage statistics will only run once per JVM,
+     * as the UsageStatistics taking care of duplicate reports.
+     */
+    static {
+        FormFillerStats.report();
+    }
+
 
     private static final Logger logger = LoggerFactory.getLogger(FormFiller.class);
 
@@ -119,7 +131,6 @@ public class FormFiller {
         this.target = target;
         this.componentInstructions = componentInstructions;
         this.contextInstructions = contextInstructions;
-        reportUserStatistics();
     }
 
     /**
@@ -214,21 +225,5 @@ public class FormFiller {
 
     public ComponentUtils.ComponentsMapping getMapping() {
         return mapping;
-    }
-
-    /**
-     * Reports the usage statistics of the FormFiller component.
-     *
-     * The reporting of the usage statistics will only run once per JVM,
-     * when the FormFiller component is used for the first time.
-     */
-    private void reportUserStatistics() {
-        try {
-            // This will load the class if it exists, and so the static block will be executed and so the usage statistics will be reported.
-            // Nicer solution would have been if we could extend/overwrite the VaadinServiceInitListener somehow and execute the statistics there.
-            Class.forName("com.vaadin.flow.ai.formfiller.services.FormFillerStats");
-        } catch (ClassNotFoundException e) {
-            logger.error("Loading FormFillerStats failed, and so reporting the usage statistics will not be possible.");
-        }
     }
 }

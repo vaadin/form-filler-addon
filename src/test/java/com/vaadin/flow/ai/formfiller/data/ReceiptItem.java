@@ -1,6 +1,5 @@
 package com.vaadin.flow.ai.formfiller.data;
 
-import java.time.LocalDate;
 
 public class ReceiptItem {
     private String itemQuantity;

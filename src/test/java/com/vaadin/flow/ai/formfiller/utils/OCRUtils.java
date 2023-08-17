@@ -87,6 +87,7 @@ public class OCRUtils {
 //            System.out.println(response.toString());
 
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
             String extractedText = "";
 
             JsonNode responseJson = objectMapper.readTree(response.toString());

@@ -116,15 +116,15 @@ public class ComponentUtils {
             if (id != null && !id.isEmpty()) {
                 if (componentInfo.component instanceof Grid
                         || componentInfo.component instanceof MultiSelectListBox) {
-                    HashMap<String, Object> columns = new HashMap<>();
                     if (componentInfo.component instanceof Grid) {
                         Grid<?> grid = (Grid<?>) componentInfo.component;
                         if (grid.getBeanType() == null) {
                             logger.error("Grid with id {} must define a Bean Type to be used with FormFiller", grid.getId());
                         } else {
-                            for (Field f : grid.getBeanType().getDeclaredFields()) {
-                                columns.put(f.getName(), "");
-                            }
+                            HashMap<String, Object> columns = new HashMap<>(Arrays
+                                    .stream(grid.getBeanType().getDeclaredFields())
+                                    .collect(Collectors.toMap(Field::getName, f -> "")));
+
                             ArrayList<HashMap<String, Object>> listColumns = new ArrayList<>();
                             listColumns.add(columns);
                             json.put(id, listColumns);
@@ -323,7 +323,7 @@ public class ComponentUtils {
 
     @SuppressWarnings("unchecked")
     private static <T> void fillGridWithWildcards(Grid<T> grid, List<Map<String, Object>> items, Class<?> beanType) {
-        fillGrid((Grid<T>) grid, items, (Class<T>) beanType);
+        fillGrid(grid, items, (Class<T>) beanType);
     }
 
     private static <T> void fillGrid(Grid<T> grid, List<Map<String, Object>> items, Class<T> itemClass) {

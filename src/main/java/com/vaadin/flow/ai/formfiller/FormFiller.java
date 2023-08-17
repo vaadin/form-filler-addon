@@ -61,6 +61,11 @@ public class FormFiller {
 
     private static final Logger logger = LoggerFactory.getLogger(FormFiller.class);
 
+    static {
+        logger.warn("The Form Filler Add-on is an experimental feature and it may be removed, " +
+                "altered, or limited to commercial subscribers in future releases.");
+    }
+
     /**
      * The target component to fill.
      */

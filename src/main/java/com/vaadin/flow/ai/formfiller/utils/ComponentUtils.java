@@ -68,9 +68,9 @@ public class ComponentUtils {
      * @return the mapped structures with the information
      */
     public static ComponentsMapping createMapping(Component component) {
-        List<ComponentInfo> componentInfoList = new ArrayList<>();
-        findChildComponents(component, componentInfoList);
-        ComponentsMapping mapping = new ComponentsMapping(componentInfoList, buildHierarchy(componentInfoList), buildTypes(componentInfoList));
+        List<ComponentInfo> componentInfoList = getComponentInfo(component);
+        ComponentsMapping mapping = new ComponentsMapping(componentInfoList,
+                buildHierarchy(componentInfoList), buildTypes(componentInfoList));
         return mapping;
     }
 
@@ -83,6 +83,12 @@ public class ComponentUtils {
      */
     public static List<ComponentInfo> getComponentInfo(Component component) {
         List<ComponentInfo> componentInfoList = new ArrayList<>();
+
+        // Check root component
+        if (isSupportedAndAccepted(component))
+            componentInfoList.add(new ComponentInfo(component.getId().orElse(null), component.getClass().getSimpleName(), component));
+
+        // Check all descendants
         findChildComponents(component, componentInfoList);
         return componentInfoList;
     }
@@ -90,18 +96,8 @@ public class ComponentUtils {
     private static void findChildComponents(Component component, List<ComponentInfo> componentInfoList) {
         component.getChildren().forEach(childComponent -> {
 
-
-            String componentType = childComponent.getClass().getSimpleName();
-            String id = childComponent.getId().orElse(null);
-
-            if (id != null) {
-                ComponentInfo info = new ComponentInfo(id, componentType, childComponent);
-                componentInfoList.add(info);
-            }
-            else if (isSupportedComponent(childComponent)) {
-                logger.warn("Component of type {} has no id. Remember to add a meaningful" +
-                        " id to the component if you want to fill it with the FromFiller", componentType);
-            }
+            if (isSupportedAndAccepted(childComponent))
+                componentInfoList.add(new ComponentInfo(childComponent.getId().orElse(null), childComponent.getClass().getSimpleName(), childComponent));
 
             findChildComponents(childComponent, componentInfoList);
         });
@@ -404,5 +400,17 @@ public class ComponentUtils {
                 Grid.class,
                 MultiSelectComboBox.class
         );
+    }
+
+    private static boolean isSupportedAndAccepted(Component component) {
+
+        if (!isSupportedComponent(component))
+            return false;
+        else if (!component.getId().isPresent()) {
+            logger.warn("Component of type {} has no id. Remember to add a meaningful" +
+                    " id to the component if you want to fill it with the FromFiller", component.getClass().getSimpleName());
+            return false;
+        }
+        return true;
     }
 }

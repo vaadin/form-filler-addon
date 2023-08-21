@@ -112,6 +112,18 @@
             <artifactId>service</artifactId>
             <version>0.15.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.4.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-testbench-core-junit5</artifactId>
+            <version>9.0.5</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -31,9 +30,11 @@ public class ComponentUtilsTest {
         textField.setId("name");
         formLayout.add(textField);
         ComponentUtils.ComponentsMapping componentsMapping = ComponentUtils.createMapping(formLayout);
-        assertFalse(componentsMapping.components().isEmpty());
-        assertFalse(componentsMapping.componentsJSONMap().isEmpty());
-        assertFalse(componentsMapping.componentsTypesJSONMap().isEmpty());
+        assertEquals(componentsMapping.components().get(0).type(), TextField.class.getSimpleName());
+        assertEquals(componentsMapping.components().get(0).id(), "name");
+        assertEquals(componentsMapping.components().get(0).component(), textField);
+        assertTrue(componentsMapping.componentsJSONMap().containsKey("name"));
+        assertTrue(componentsMapping.componentsTypesJSONMap().containsKey("name"));
     }
 
     @Test
@@ -41,9 +42,11 @@ public class ComponentUtilsTest {
         TextField textField = new TextField();
         textField.setId("name");
         ComponentUtils.ComponentsMapping componentsMapping = ComponentUtils.createMapping(textField);
-        assertFalse(componentsMapping.components().isEmpty());
-        assertFalse(componentsMapping.componentsJSONMap().isEmpty());
-        assertFalse(componentsMapping.componentsTypesJSONMap().isEmpty());
+        assertEquals(componentsMapping.components().get(0).type(), TextField.class.getSimpleName());
+        assertEquals(componentsMapping.components().get(0).id(), "name");
+        assertEquals(componentsMapping.components().get(0).component(), textField);
+        assertTrue(componentsMapping.componentsJSONMap().containsKey("name"));
+        assertTrue(componentsMapping.componentsTypesJSONMap().containsKey("name"));
     }
 
     @Test
@@ -108,9 +111,7 @@ public class ComponentUtilsTest {
                 new MultiSelectComboBox()
         );
 
-
         supportedComponents.forEach(supportedComponent -> assertTrue(ComponentUtils.isSupportedComponent(supportedComponent)));
-
     }
 
     // TODO: add further potentially fillComponents test as well.

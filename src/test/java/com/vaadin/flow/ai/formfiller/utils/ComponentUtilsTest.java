@@ -12,7 +12,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.component.timepicker.TimePicker;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -38,7 +37,6 @@ public class ComponentUtilsTest {
     }
 
     @Test
-    @Ignore
     public void testCreateMappingWorksForSingleComponent() {
         TextField textField = new TextField();
         textField.setId("name");

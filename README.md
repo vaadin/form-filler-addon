@@ -203,7 +203,7 @@ better than
         FormFillerResult result = formFiller.fill(input);
 ```
 
-This extra instructions can be used not only for understanding but also for formatting or error fixes i.e.:
+These extra instructions can be used not only for understanding but also for formatting or error fixes i.e.:
 
 ```java
         HashMap<Component,String> fieldInstructions = new HashMap<>();

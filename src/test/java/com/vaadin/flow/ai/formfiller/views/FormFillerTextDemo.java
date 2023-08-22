@@ -255,7 +255,7 @@ public class FormFillerTextDemo extends Div {
         extraInstructionsTool.setExtraInstructions(emailField, "Format this field as a correct email");
         extraInstructionsTool.setExtraInstructions(typeService, "This field describes the type of the items of the order");
         extraInstructionsTool.setExtraInstructions(typeServiceMulti, "This field describes the type of the items of the order");
-        extraInstructionsTool.setContextInstructions(0,"Translate item names of the order to Spanish");
+        extraInstructionsTool.setExtraInstructions(orderGrid,"Translate itemName of the items of the order to Spanish");
 
         Button extraInstructionsButton = new Button("Show/Hide extra instructions");
         extraInstructionsButton.addThemeVariants(ButtonVariant.LUMO_ERROR);

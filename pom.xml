@@ -176,7 +176,7 @@
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
-                        <phase>verify</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>jar</goal>
                         </goals>

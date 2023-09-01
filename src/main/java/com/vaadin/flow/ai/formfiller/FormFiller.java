@@ -133,6 +133,9 @@ public class FormFiller {
      *                            Use these instructions to provide additional information to the AI module about the context of the
      *                            input source in general.
      * @param llmService the AI module service to use. By default, this service would use OpenAI ChatGPT.
+     * @throws ExperimentalFeatureException
+     *             when the {@link FeatureFlags#FORM_FILLER_ADDON} feature is
+     *             not enabled
      */
     public FormFiller(Component target, HashMap<Component, String> componentInstructions, ArrayList<String> contextInstructions, LLMService llmService) {
         if (!FeatureFlags.get(VaadinService.getCurrent().getContext())

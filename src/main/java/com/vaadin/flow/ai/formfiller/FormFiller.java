@@ -3,6 +3,8 @@ package com.vaadin.flow.ai.formfiller;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.vaadin.experimental.FeatureFlags;
 import com.vaadin.flow.ai.formfiller.services.FormFillerStats;
 import com.vaadin.flow.component.Component;
 import org.slf4j.Logger;
@@ -10,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.vaadin.flow.ai.formfiller.services.ChatGPTChatCompletionService;
 import com.vaadin.flow.ai.formfiller.services.LLMService;
 import com.vaadin.flow.ai.formfiller.utils.ComponentUtils;
+import com.vaadin.flow.server.VaadinService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -132,6 +135,10 @@ public class FormFiller {
      * @param llmService the AI module service to use. By default, this service would use OpenAI ChatGPT.
      */
     public FormFiller(Component target, HashMap<Component, String> componentInstructions, ArrayList<String> contextInstructions, LLMService llmService) {
+        if (!FeatureFlags.get(VaadinService.getCurrent().getContext())
+                .isEnabled(FeatureFlags.FORM_FILLER_ADDON)) {
+            throw new ExperimentalFeatureException();
+        }
         this.llmService = llmService;
         this.target = target;
         this.componentInstructions = componentInstructions;

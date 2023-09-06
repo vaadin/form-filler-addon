@@ -30,6 +30,7 @@ import com.vaadin.flow.ai.formfiller.data.ReceiptItem;
 import com.vaadin.flow.ai.formfiller.utils.ComponentUtils;
 import com.vaadin.flow.ai.formfiller.utils.DebugTool;
 import com.vaadin.flow.ai.formfiller.utils.OCRUtils;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -50,6 +51,7 @@ public class FormFillerReceiptDocDemo extends Div {
     ExtraInstructionsTool extraInstructionsTool = new ExtraInstructionsTool();
 
     public FormFillerReceiptDocDemo() {
+        addClassNames(LumoUtility.Display.FLEX, LumoUtility.FlexDirection.COLUMN, LumoUtility.Padding.LARGE);
         imageNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
         imageNotification.setDuration(2000);
         imageNotification.setPosition(Notification.Position.MIDDLE);

@@ -33,6 +33,7 @@ import com.vaadin.flow.ai.formfiller.FormFillerResult;
 import com.vaadin.flow.ai.formfiller.utils.ComponentUtils;
 import com.vaadin.flow.ai.formfiller.utils.DebugTool;
 import com.vaadin.flow.ai.formfiller.utils.OCRUtils;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -58,6 +59,7 @@ public class FormFillerInvoiceDocDemo extends Div {
         imageNotification.setPosition(Notification.Position.MIDDLE);
 
         invoiceForm = new FormLayout();
+        addClassNames(LumoUtility.Display.FLEX, LumoUtility.FlexDirection.COLUMN, LumoUtility.Padding.LARGE);
 
         TextField nameField = new TextField("Name");
         nameField.setId("name");

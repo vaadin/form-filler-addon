@@ -36,6 +36,7 @@ import com.vaadin.flow.ai.formfiller.services.ChatGPTService;
 import com.vaadin.flow.ai.formfiller.utils.ComponentUtils;
 import com.vaadin.flow.ai.formfiller.utils.DebugTool;
 import com.vaadin.flow.ai.formfiller.utils.ExtraInstructionsTool;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ public class FormFillerTextDemo extends Div {
     ExtraInstructionsTool extraInstructionsTool = new ExtraInstructionsTool();
 
     public FormFillerTextDemo() {
+        addClassNames(LumoUtility.Display.FLEX, LumoUtility.FlexDirection.COLUMN, LumoUtility.Padding.LARGE);
         formLayout = new FormLayout();
 
         TextField nameField = new TextField("Name");

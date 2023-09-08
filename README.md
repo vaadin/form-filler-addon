@@ -316,8 +316,10 @@ In these examples we use snapshots from 1 page documents to get the text. In bot
 
 Starting the test/demo server:
 ```
-mvn jetty:run
+ mvn jetty:run -Pdevelopment
 ```
+
+Hint: you need to use the development profile, because it will include the vaadin-server and so the below URL-s will be reachable. Otherwise, the dependency will be provided and Vaadin URL-s will not be loaded.
 
 This deploys demos at http://localhost:8080, http://localhost:8080/receipt and http://localhost:8080/invoice
  

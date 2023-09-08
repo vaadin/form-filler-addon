@@ -213,7 +213,7 @@ public class ComponentUtils {
     }
 
     /**
-     * Get all children from a parent component
+     * Get all children and itself from a parent component
      *
      * @param component target
      * @return Stream of all component children

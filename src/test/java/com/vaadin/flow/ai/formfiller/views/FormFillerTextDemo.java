@@ -119,6 +119,7 @@ public class FormFillerTextDemo extends Div {
         MultiSelectComboBox<String> typeServiceMulti = new MultiSelectComboBox<>("Type of Service");
         typeServiceMulti.setItems("Software", "Hardware", "Consultancy");
         typeServiceMulti.setId("typeServiceMs");
+        System.out.println("type service multi is allowing custom value" + typeServiceMulti.isAllowCustomValue());
         formLayout.add(typeServiceMulti);
 
         // To make the grid supported by FormFiller it is necessary to set an ID

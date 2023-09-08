@@ -200,7 +200,7 @@ public class FormFiller {
         prompt = llmService.getPromptTemplate(input, mapping.componentsJSONMap(), mapping.componentsTypesJSONMap(), componentInstructions, contextInstructions);
 
         String aiResponse = llmService.getGeneratedResponse(prompt);
-        ComponentUtils.fillComponents(mapping.components(), promptJsonToMapHierarchyValues(aiResponse));
+        ComponentUtils.fillComponents(mapping.componentInfoList(), promptJsonToMapHierarchyValues(aiResponse));
 
         logger.debug("Generated Prompt: {}", prompt);
         logger.debug("Generated Components Hierarchy JSON: {}", mapping.componentsJSONMap());

@@ -88,6 +88,7 @@ public class FormFillerTextDemo extends Div {
         ComboBox<String> orderEntity = new ComboBox<>("Order Entity");
         orderEntity.setId("orderEntity");
         orderEntity.setItems("Person", "Company");
+        orderEntity.setAllowCustomValue(false);
         formLayout.add(orderEntity);
 
         NumberField orderTotal = new NumberField("Order Total");
@@ -117,6 +118,7 @@ public class FormFillerTextDemo extends Div {
         formLayout.add(typeService);
 
         MultiSelectComboBox<String> typeServiceMulti = new MultiSelectComboBox<>("Type of Service");
+        typeServiceMulti.setAllowCustomValue(false);
         typeServiceMulti.setItems("Software", "Hardware", "Consultancy");
         typeServiceMulti.setId("typeServiceMs");
         formLayout.add(typeServiceMulti);
@@ -216,11 +218,8 @@ public class FormFillerTextDemo extends Div {
         ComboBox<String> texts = new ComboBox<>("Select a text or just type your own <br>in the debug Input Source field");
         texts.setItems("Text1", "Text2", "Text3");
         texts.setValue("Text1");
-        texts.setAllowCustomValue(false);
         debugTool.getDebugInput().setValue(getExampleTexts().get("Text1"));
-        texts.addValueChangeListener(e -> {
-            debugTool.getDebugInput().setValue(getExampleTexts().get(texts.getValue()));
-        });
+        texts.addValueChangeListener(e -> debugTool.getDebugInput().setValue(getExampleTexts().get(texts.getValue())));
 
         Button fillButton = new Button("Fill Form From Input Text");
         fillButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);

@@ -295,8 +295,10 @@ public class ComponentUtils {
                             if (multiSelectComboBox.isAllowCustomValue()) {
                                 multiSelectComboBox.setValue(set);
                             } else {
-                                multiSelectComboBox.setValue(set.stream().filter(multiSelectComboBox.getListDataView().getItems().toList()::contains).collect(Collectors.toSet()));
-                                multiSelectComboBox.setValue(set);
+                                multiSelectComboBox.setValue(set
+                                        .stream()
+                                        .filter(multiSelectComboBox.getListDataView().getItems().toList()::contains)
+                                        .collect(Collectors.toSet()));
                             }
                         } catch (Exception e) {
                             logger.error("Error while updating multiSelectComboBox with id: {}", id, e);

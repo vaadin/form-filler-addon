@@ -319,7 +319,7 @@ Starting the test/demo server:
  mvn jetty:run -Pdevelopment
 ```
 
-Hint: you need to use the development profile, because it will include the vaadin-server and so the below URL-s will be reachable. Otherwise, the dependency will be provided and Vaadin URL-s will not be loaded.
+Hint: Ensure you activate the development profile. This includes the vaadin-server, making the URLs below accessible. Without this profile, the dependency remains in the provided scope, and the Vaadin demo URL paths won't load or be reachable.
 
 This deploys demos at http://localhost:8080, http://localhost:8080/receipt and http://localhost:8080/invoice
  

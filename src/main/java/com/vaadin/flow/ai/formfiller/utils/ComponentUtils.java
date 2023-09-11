@@ -281,7 +281,7 @@ public class ComponentUtils {
                         if (comboBox.isAllowCustomValue()) {
                             comboBox.setValue(responseValue);
                         } else {
-                            Stream items = comboBox.getListDataView().getItems();
+                            Stream items = comboBox.getGenericDataView().getItems();
                             if (items.toList().contains(responseValue)) {
                                 comboBox.setValue(responseValue);
                             }
@@ -297,7 +297,7 @@ public class ComponentUtils {
                             } else {
                                 multiSelectComboBox.setValue(set
                                         .stream()
-                                        .filter(multiSelectComboBox.getListDataView().getItems().toList()::contains)
+                                        .filter(multiSelectComboBox.getGenericDataView().getItems().toList()::contains)
                                         .collect(Collectors.toSet()));
                             }
                         } catch (Exception e) {

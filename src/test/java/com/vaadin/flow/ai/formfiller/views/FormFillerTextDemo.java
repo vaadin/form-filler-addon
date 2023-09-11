@@ -216,8 +216,8 @@ public class FormFillerTextDemo extends Div {
         ComboBox<String> texts = new ComboBox<>("Select a text or just type your own <br>in the debug Input Source field");
         texts.setItems("Text1", "Text2", "Text3");
         texts.setValue("Text1");
-        debugTool.getDebugInput().setValue(getExampleTexts().get("Text1"));
         texts.setAllowCustomValue(false);
+        debugTool.getDebugInput().setValue(getExampleTexts().get("Text1"));
         texts.addValueChangeListener(e -> {
             debugTool.getDebugInput().setValue(getExampleTexts().get(texts.getValue()));
         });

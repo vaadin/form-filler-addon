@@ -244,7 +244,7 @@ public class ComponentUtils {
                 continue;
             }
             if (!isSupportedComponent(componentInfo.component)) {
-                logger.error("Component type is not supported, this should have been discarded, " +
+                logger.warn("Component type is not supported, this should have been discarded, " +
                                 "while building the types/id-s componentInfo in the getComponentInfo() method, but somehow still got JSON value: {}"
                         , componentInfo.component.getClass().getSimpleName());
                 continue;

@@ -1,6 +1,7 @@
 package com.vaadin.flow.ai.formfiller.utils;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
@@ -13,6 +14,7 @@ import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.component.timepicker.TimePicker;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,11 +43,13 @@ public class ComponentUtils {
      * Record with information of the hierarchy of the components to be filled and
      * the value types of each one of them.
      *
+     * @param componentInfoList      the components' information
+     *
      * @param componentsJSONMap      the components' hierarchy where parent and children are
      *                               described in a map
      * @param componentsTypesJSONMap the components' value types
      */
-    public record ComponentsMapping(List<ComponentInfo> components, Map<String, Object> componentsJSONMap,
+    public record ComponentsMapping(List<ComponentInfo> componentInfoList, Map<String, Object> componentsJSONMap,
                                     Map<String, String> componentsTypesJSONMap) implements Serializable {
     }
 
@@ -70,7 +74,8 @@ public class ComponentUtils {
     public static ComponentsMapping createMapping(Component component) {
         List<ComponentInfo> componentInfoList = getComponentInfo(component);
         ComponentsMapping mapping = new ComponentsMapping(componentInfoList,
-                buildHierarchy(componentInfoList), buildTypes(componentInfoList));
+                buildHierarchy(componentInfoList),
+                buildTypes(componentInfoList));
         return mapping;
     }
 
@@ -239,6 +244,12 @@ public class ComponentUtils {
                 logger.warn("Component has no id so it will be skipped: {}", componentInfo.component);
                 continue;
             }
+            if (!isSupportedComponent(componentInfo.component)) {
+                logger.warn("Component type is not supported, this should have been discarded, " +
+                                "while building the types/id-s componentInfo in the getComponentInfo() method, but somehow still got JSON value: {}"
+                        , componentInfo.component.getClass().getSimpleName());
+                continue;
+            }
             String id = componentInfo.component.getId().orElse(null);
             try {
                 if (id != null) {
@@ -277,13 +288,28 @@ public class ComponentUtils {
                     } else if (componentInfo.component instanceof DateTimePicker datetimePicker) {
                         datetimePicker.setValue(LocalDateTime.parse(responseValue.toString()));
                     } else if (componentInfo.component instanceof ComboBox comboBox) {
-                        comboBox.setValue(responseValue);
+                        if (comboBox.isAllowCustomValue()) {
+                            comboBox.setValue(responseValue);
+                        } else {
+                            Stream items = comboBox.getGenericDataView().getItems();
+                            if (items.toList().contains(responseValue)) {
+                                comboBox.setValue(responseValue);
+                            }
+                        }
+
                     } else if (componentInfo.component instanceof MultiSelectComboBox<?>) {
                         MultiSelectComboBox<String> multiSelectComboBox = (MultiSelectComboBox<String>) componentInfo.component;
                         try {
                             ArrayList<String> list = (ArrayList<String>) responseValue;
                             Set<String> set = new HashSet<>(list);
-                            multiSelectComboBox.setValue(set);
+                            if (multiSelectComboBox.isAllowCustomValue()) {
+                                multiSelectComboBox.setValue(set);
+                            } else {
+                                multiSelectComboBox.setValue(set
+                                        .stream()
+                                        .filter(multiSelectComboBox.getGenericDataView().getItems().toList()::contains)
+                                        .collect(Collectors.toSet()));
+                            }
                         } catch (Exception e) {
                             logger.error("Error while updating multiSelectComboBox with id: {}", id, e);
                         }
@@ -402,11 +428,26 @@ public class ComponentUtils {
         );
     }
 
-    private static boolean isSupportedAndAccepted(Component component) {
+    private static boolean isReadOnly(Component component) {
+        if (component instanceof HasValue<?, ?>) {
+            return ((HasValue<?, ?>) component).isReadOnly();
+        }
+        return component.getElement().getProperty("readonly", false);
+    }
 
-        if (!isSupportedComponent(component))
+    private static boolean isSupportedAndAccepted(Component component) {
+        if (!component.isVisible()) {
             return false;
-        else if (!component.getId().isPresent()) {
+        }
+        if (component instanceof HasEnabled && !((HasEnabled) component).isEnabled()) {
+            return false;
+        }
+        if (isReadOnly(component)) {
+            return false;
+        }
+        if (!isSupportedComponent(component)) {
+            return false;
+        } else if (component.getId().isEmpty()) {
             logger.warn("Component of type {} has no id. Remember to add a meaningful" +
                     " id to the component if you want to fill it with the FromFiller", component.getClass().getSimpleName());
             return false;

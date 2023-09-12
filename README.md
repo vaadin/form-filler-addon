@@ -332,6 +332,71 @@ This behaviour is always disabled when running the tests in debug mode in the ID
 or when running maven with the `-Dmaven.failsafe.debug` sytem property.
 On normal execution, headless mode can be deactivated using the `-Dtest.headless=false` system property.
 
+
+### Google Vision API Setup Guide
+
+Note: _(Draft version, for every key creation or change it could be different and update would be nice to have_
+As of 2023, September 12 this seems coherent with Google Cloud documentation.
+
+#### Initial Setup
+
+1. **Sign Up or Sign In**:
+    - Make sure you are signed into your Google account.
+
+2. **Apply for Free Credits**:
+    - If you're new to Google Cloud, you may apply for free credits or start a trial.
+
+#### Project Creation
+
+3. **Navigate to API Dashboard**:
+    - Go to [Google API Dashboard](https://console.cloud.google.com/apis/dashboard).
+
+4. **Create a New Project**:
+    - Click on "Create a new project" and follow the steps. You can also create this project under your organization if you have one.
+
+#### Enable Vision API
+
+5. **Go to API Library**:
+    - Navigate to [API Library](https://console.cloud.google.com/apis/library).
+
+6. **Search and Enable Vision API**:
+    - In the search bar, type "Vision API" and select it. Click on "Enable" to activate the API for your project.
+
+#### API Key Setup
+
+7. **Credentials**:
+    - Go to [Credentials Page](https://console.cloud.google.com/apis/credentials).
+
+8. **Create a New API Key**:
+    - Click on "Create credentials" and select "API Key".
+
+9. **Copy and Use API Key**:
+    - After the key is generated, copy it. You can set it as an environment variable using the following command:
+      ```bash
+      export GOOGLE_VISION_API_KEY="YOUR_API_KEY"
+      ```
+    - Alternatively, use it with the `-D` flag in your application.
+
+#### Advanced Configuration (Optional)
+
+10. **Create a Service Account**:
+    - Back in the credentials page, opt to create a new service account.
+
+11. **Generate Key for Service Account**:
+    - Create a JSON or P12 key for the service account.
+
+12. **Assign Roles for Service Account**:
+    - Configure roles that the service account will need.
+
+13. **Roles for Project**:
+    - If necessary, you can also set specific roles for the entire project.
+
+14. **Wait for Activation**:
+    - Sometimes, it takes a few minutes for all changes to become active.
+
+You should now be set up to use Google's Vision API.
+
+
 ## References
 
 - [Auto Form Filler](https://vaadin.com/directory/component/auto-form-filler) add-on created by Armando Perea

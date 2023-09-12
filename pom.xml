@@ -18,6 +18,7 @@
 
     <properties>
         <vaadin.version>24.2-SNAPSHOT</vaadin.version>
+        <jetty.plugin.version>11.0.15</jetty.plugin.version>
 
         <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
         <maven.compiler.source>17</maven.compiler.source>
@@ -187,7 +188,7 @@
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>11.0.15</version>
+                <version>${jetty.plugin.version}}</version>
                 <configuration>
                     <scan>1</scan>
                     <!-- Use test scope because the UI/test classes are in
@@ -241,6 +242,9 @@
     <profiles>
         <profile>
             <id>development</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <dependencies>
                 <dependency>
                     <groupId>com.vaadin</groupId>
@@ -248,39 +252,26 @@
                     <artifactId>vaadin-core</artifactId>
                 </dependency>
             </dependencies>
-        </profile>
-
-        <profile>
-            <!-- Production mode is activated using -Pproduction -->
-            <id>production</id>
-            <properties>
-                <vaadin.productionMode>true</vaadin.productionMode>
-            </properties>
-
-            <dependencies>
-                <dependency>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>flow-server-production-mode</artifactId>
-                </dependency>
-            </dependencies>
 
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>com.vaadin</groupId>
-                        <artifactId>vaadin-maven-plugin</artifactId>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-maven-plugin</artifactId>
+                        <version>${jetty.plugin.version}</version>
                         <executions>
                             <execution>
+                                <phase>validate</phase>
                                 <goals>
-                                    <goal>build-frontend</goal>
+                                    <goal>run</goal>
                                 </goals>
-                                <phase>compile</phase>
                             </execution>
                         </executions>
                     </plugin>
                 </plugins>
             </build>
         </profile>
+
         <profile>
             <id>it</id>
             <build>

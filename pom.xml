@@ -240,6 +240,17 @@
 
     <profiles>
         <profile>
+            <id>development</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.vaadin</groupId>
+                    <!-- Consider limiting the dependencies to flow-server only something, but for most end users depending on vaadin-core is ok -->
+                    <artifactId>vaadin-core</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
             <!-- Production mode is activated using -Pproduction -->
             <id>production</id>
             <properties>

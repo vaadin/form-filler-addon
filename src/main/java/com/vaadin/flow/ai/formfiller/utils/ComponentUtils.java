@@ -13,6 +13,7 @@ import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.component.timepicker.TimePicker;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -277,13 +278,28 @@ public class ComponentUtils {
                     } else if (componentInfo.component instanceof DateTimePicker datetimePicker) {
                         datetimePicker.setValue(LocalDateTime.parse(responseValue.toString()));
                     } else if (componentInfo.component instanceof ComboBox comboBox) {
-                        comboBox.setValue(responseValue);
+                        if (comboBox.isAllowCustomValue()) {
+                            comboBox.setValue(responseValue);
+                        } else {
+                            Stream items = comboBox.getGenericDataView().getItems();
+                            if (items.toList().contains(responseValue)) {
+                                comboBox.setValue(responseValue);
+                            }
+                        }
+
                     } else if (componentInfo.component instanceof MultiSelectComboBox<?>) {
                         MultiSelectComboBox<String> multiSelectComboBox = (MultiSelectComboBox<String>) componentInfo.component;
                         try {
                             ArrayList<String> list = (ArrayList<String>) responseValue;
                             Set<String> set = new HashSet<>(list);
-                            multiSelectComboBox.setValue(set);
+                            if (multiSelectComboBox.isAllowCustomValue()) {
+                                multiSelectComboBox.setValue(set);
+                            } else {
+                                multiSelectComboBox.setValue(set
+                                        .stream()
+                                        .filter(multiSelectComboBox.getGenericDataView().getItems().toList()::contains)
+                                        .collect(Collectors.toSet()));
+                            }
                         } catch (Exception e) {
                             logger.error("Error while updating multiSelectComboBox with id: {}", id, e);
                         }

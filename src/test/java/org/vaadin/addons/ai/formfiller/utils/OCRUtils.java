@@ -1,7 +1,6 @@
 package org.vaadin.addons.ai.formfiller.utils;
 
 import com.google.cloud.vision.v1.*;
-import com.google.gson.Gson;
 import com.google.protobuf.ByteString;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -58,7 +57,7 @@ public class OCRUtils {
             // Convert the image data to Base64
             String base64Image = Base64.getEncoder().encodeToString(imageData);
 
-            AnnotateImageResponse annotateImageResponse = detectText(imageStream);
+//            AnnotateImageResponse annotateImageResponse = detectText(imageStream);
 
             URL url = new URL("https://vision.googleapis.com/v1/images:annotate?key=" + apikey);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -95,12 +94,6 @@ public class OCRUtils {
             JsonParser jsonParser = new JsonParser();
             JsonObject responseJson = jsonParser.parse(response.toString()).getAsJsonObject();
 
-//            JsonObject properJsonObject = responseJson.get("responses").getAsJsonArray().get(0).getAsJsonObject();
-//            AnnotateImageResponse annotateImageResponse = new Gson().fromJson(properJsonObject, AnnotateImageResponse.class);
-            GoogleVisionLineSegmentationParser googleVisionLineSegmentationParser = new GoogleVisionLineSegmentationParser();
-            googleVisionLineSegmentationParser.initLineSegmentation(annotateImageResponse);
-
-
             // Extract the 'text' field from the JSON response
             JsonArray responsesArray = responseJson.getAsJsonArray("responses");
             JsonObject firstResponse = responsesArray.get(0).getAsJsonObject();
@@ -111,6 +104,13 @@ public class OCRUtils {
             System.out.println("Extracted text:");
             System.out.println("#########################");
             System.out.println(extractedText);
+
+//            JsonObject properJsonObject = responseJson.get("responses").getAsJsonArray().get(0).getAsJsonObject();
+//            AnnotateImageResponse annotateImageResponse = new Gson().fromJson(properJsonObject, AnnotateImageResponse.class);
+              GoogleVisionLineSegmentationParser googleVisionLineSegmentationParser = new GoogleVisionLineSegmentationParser();
+             AnnotateImageResponse annotateImageResponse = JsonToAnnotateImageResponseConverter.convertToAnnotateImageResponse(responseJson);
+             List<String> results = googleVisionLineSegmentationParser.initLineSegmentation(annotateImageResponse);
+            System.out.println("line segmented results: " + results);
             return extractedText;
         } catch (IOException e) {
             e.printStackTrace();

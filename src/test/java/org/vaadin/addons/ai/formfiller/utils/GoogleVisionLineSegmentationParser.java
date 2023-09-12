@@ -41,7 +41,7 @@ public class GoogleVisionLineSegmentationParser {
         for (int index = 0; index < entityToMetadata.size(); index++) {
             Pair<EntityAnnotation, EntityMetadata> it = entityToMetadata.get(index);
             if (!it.getSecond().matched) {
-                if (it.getSecond().match.size() == 0) {
+                if (it.getSecond().match.isEmpty()) {
                     finalArray.add(it.getFirst().getDescription());
                 } else {
                     finalArray.add(arrangeWordsInOrder(entityToMetadata, index));

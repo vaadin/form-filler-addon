@@ -28,7 +28,7 @@ public class FormTest extends Div {
 ![Screenshot 2023-08-16 at 20 25 09](https://github.com/vaadin/form-filler-addon/assets/106953874/3b2fad67-a95e-424b-9bc5-8e240c1cd215)
 
 
-___This is an experimental feature and it may be removed, altered, or limited to commercial subscribers in future releases.___
+___This is an experimental feature, and it may be removed, altered, or limited to commercial subscribers in future releases.___
 
 ## Requirements ##
 
@@ -316,7 +316,7 @@ In these examples we use snapshots from 1 page documents to get the text. In bot
 
 Starting the test/demo server:
 ```
- mvn jetty:run -Pdevelopment
+ mvn
 ```
 
 Hint: Ensure you activate the development profile. This includes the vaadin-server, making the URLs below accessible. Without this profile, the dependency remains in the provided scope, and the Vaadin demo URL paths won't load or be reachable.

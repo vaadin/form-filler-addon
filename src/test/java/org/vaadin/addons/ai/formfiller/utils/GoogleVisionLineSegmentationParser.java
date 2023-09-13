@@ -240,7 +240,7 @@ public class GoogleVisionLineSegmentationParser {
         return new Gson().fromJson(serializedObj, AnnotateImageResponse.class);
     }
 
-    class Rectangle {
+    static class Rectangle {
         private int xMin;
         private int xMax;
         private double yMin;
@@ -286,10 +286,10 @@ public class GoogleVisionLineSegmentationParser {
         }
     }
 
-    class EntityMetadata {
-        private Polygon bigBB;
+    static class EntityMetadata {
+        private final Polygon bigBB;
         private int lineNum;
-        private List<Match> match;
+        private final List<Match> match;
         private boolean matched;
 
         public EntityMetadata(Polygon bigBB, int lineNum, List<Match> match, boolean matched) {
@@ -316,9 +316,9 @@ public class GoogleVisionLineSegmentationParser {
         }
     }
 
-    class Match {
-        private int matchCount;
-        private int matchLineNum;
+    static class Match {
+        private final int matchCount;
+        private final int matchLineNum;
 
         public Match(int matchCount, int matchLineNum) {
             this.matchCount = matchCount;

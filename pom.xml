@@ -241,10 +241,7 @@
 
     <profiles>
         <profile>
-            <id>development</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <id>dev</id>
             <dependencies>
                 <dependency>
                     <groupId>com.vaadin</groupId>

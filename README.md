@@ -316,7 +316,7 @@ In these examples we use snapshots from 1 page documents to get the text. In bot
 
 Starting the test/demo server:
 ```
- mvn
+ mvn -Pdev
 ```
 
 Hint: Ensure you activate the development profile. This includes the vaadin-server, making the URLs below accessible. Without this profile, the dependency remains in the provided scope, and the Vaadin demo URL paths won't load or be reachable.

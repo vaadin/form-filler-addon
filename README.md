@@ -335,7 +335,7 @@ On normal execution, headless mode can be deactivated using the `-Dtest.headless
 
 ### Google Vision API Setup Guide
 
-Note: _(Draft version, for every key creation or change it could be different and update would be nice to have_
+Note: _Draft version, for every key creation or change it could be different and update would be nice to have_
 As of 2023, September 12 this seems coherent with Google Cloud documentation.
 
 #### Initial Setup

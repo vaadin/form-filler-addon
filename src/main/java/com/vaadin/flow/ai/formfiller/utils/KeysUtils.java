@@ -11,11 +11,11 @@ public class KeysUtils {
     static {
         // read apiKey from -D param variable
         OPEN_AI_KEY = System.getProperty("OPENAI_TOKEN");
-        if (OPEN_AI_KEY == null) {
+        if (OPEN_AI_KEY == null || OPEN_AI_KEY.isBlank()) {
             // read apiKey from environment variable
             OPEN_AI_KEY = System.getenv("OPENAI_TOKEN");
         }
-        if(OPEN_AI_KEY != null) {
+        if (OPEN_AI_KEY != null && !OPEN_AI_KEY.isBlank()) {
             logger.info("OPENAI_TOKEN was filled properly");
         } else {
             logger.error("OPENAI_TOKEN was not filled properly");

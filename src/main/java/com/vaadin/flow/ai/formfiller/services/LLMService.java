@@ -1,10 +1,9 @@
 package com.vaadin.flow.ai.formfiller.services;
 
-import com.vaadin.flow.component.Component;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import com.vaadin.flow.component.Component;
 
 /**
  * A LLM service that generates a response based on a prompt.
@@ -31,7 +30,7 @@ public interface LLMService {
      *                            providing some information not present in the input
      * @return the generated prompt to be sent to the AI module
      */
-    public String getPromptTemplate(String input, Map<String, Object> objectMap, Map<String, String> typesMap, HashMap<Component, String> componentInstructions, ArrayList<String> contextInstructions);
+    public String getPromptTemplate(String input, Map<String, Object> objectMap, Map<String, String> typesMap, Map<Component, String> componentInstructions, List<String> contextInstructions);
 
     /**
      * Generates a response based on the input prompt from the AI module.

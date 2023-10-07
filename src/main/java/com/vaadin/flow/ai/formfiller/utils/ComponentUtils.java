@@ -14,7 +14,6 @@ import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.component.timepicker.TimePicker;
-import com.vaadin.flow.data.provider.ListDataProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

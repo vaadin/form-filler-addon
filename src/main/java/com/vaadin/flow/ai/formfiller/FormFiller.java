@@ -13,6 +13,7 @@ import com.vaadin.flow.ai.formfiller.utils.ComponentUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -91,7 +92,7 @@ public class FormFiller {
      *
      * Use the target component as key and the instruction as value.
      */
-    private final HashMap<Component, String> componentInstructions;
+    private final Map<Component, String> componentInstructions;
 
     /**
      * Additional instructions for the AI module (i.e.: target language, vocabulary explanation, etc..).
@@ -102,7 +103,7 @@ public class FormFiller {
      *
      * Use the instruction as value.
      */
-    private final ArrayList<String> contextInstructions;
+    private final List<String> contextInstructions;
 
     /**
      * The JSON representation of the target components to fill.
@@ -131,7 +132,7 @@ public class FormFiller {
      *                            input source in general.
      * @param llmService the AI module service to use. By default, this service would use OpenAI ChatGPT.
      */
-    public FormFiller(Component target, HashMap<Component, String> componentInstructions, ArrayList<String> contextInstructions, LLMService llmService) {
+    public FormFiller(Component target, Map<Component, String> componentInstructions, List<String> contextInstructions, LLMService llmService) {
         this.llmService = llmService;
         this.target = target;
         this.componentInstructions = componentInstructions;
@@ -140,31 +141,31 @@ public class FormFiller {
 
     /**
      * Creates a FormFiller with default llmService.
-     * Check {@link #FormFiller(Component, HashMap, ArrayList, LLMService) FormFiller} for more information.
+     * Check {@link #FormFiller(Component, Map, List, LLMService) FormFiller} for more information.
      */
-    public FormFiller(Component target, HashMap<Component, String> componentInstructions, ArrayList<String> contextInstructions) {
+    public FormFiller(Component target, Map<Component, String> componentInstructions, List<String> contextInstructions) {
         this(target, componentInstructions, contextInstructions, new ChatGPTChatCompletionService());
     }
 
     /**
      * Creates a FormFiller with default llmService and empty context instructions.
-     * Check {@link #FormFiller(Component, HashMap, ArrayList, LLMService) FormFiller} for more information.
+     * Check {@link #FormFiller(Component, Map, List, LLMService) FormFiller} for more information.
      */
-    public FormFiller(Component target, HashMap<Component, String> componentInstructions) {
+    public FormFiller(Component target, Map<Component, String> componentInstructions) {
         this(target, componentInstructions, new ArrayList<>(), new ChatGPTChatCompletionService());
     }
 
     /**
      * Creates a FormFiller with default llmService and empty field instructions.
-     * Check {@link #FormFiller(Component, HashMap, ArrayList, LLMService) FormFiller} for more information.
+     * Check {@link #FormFiller(Component, Map, List, LLMService) FormFiller} for more information.
      */
-    public FormFiller(Component target, ArrayList<String> contextInstructions) {
+    public FormFiller(Component target, List<String> contextInstructions) {
         this(target, new HashMap<>(), contextInstructions, new ChatGPTChatCompletionService());
     }
 
     /**
      * Creates a FormFiller with default llmService, empty field instructions and empty context instructions.
-     * Check {@link #FormFiller(Component, HashMap, ArrayList, LLMService) FormFiller} for more information.
+     * Check {@link #FormFiller(Component, Map, List, LLMService) FormFiller} for more information.
      */
     public FormFiller(Component target) {
         this(target, new HashMap<>(), new ArrayList<>(), new ChatGPTChatCompletionService());
@@ -172,7 +173,7 @@ public class FormFiller {
 
     /**
      * Creates a FormFiller with empty context instructions and empty context instructions with the given llmService.
-     * Check {@link #FormFiller(Component, HashMap, ArrayList, LLMService) FormFiller} for more information.
+     * Check {@link #FormFiller(Component, Map, List, LLMService) FormFiller} for more information.
      */
     public FormFiller(Component target, LLMService llmService) {
         this(target, new HashMap<>(), new ArrayList<>(), llmService);
@@ -220,11 +221,11 @@ public class FormFiller {
         return contentMap;
     }
 
-    public HashMap<Component, String> getComponentInstructions() {
+    public Map<Component, String> getComponentInstructions() {
         return componentInstructions;
     }
 
-    public ArrayList<String> getContextInstructions() {
+    public List<String> getContextInstructions() {
         return contextInstructions;
     }
 

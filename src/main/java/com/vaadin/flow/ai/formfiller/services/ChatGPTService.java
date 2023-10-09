@@ -1,15 +1,15 @@
 package com.vaadin.flow.ai.formfiller.services;
 
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+
 import com.theokanning.openai.completion.CompletionRequest;
 import com.theokanning.openai.completion.CompletionResult;
 import com.theokanning.openai.service.OpenAiService;
+
 import com.vaadin.flow.ai.formfiller.utils.KeysUtils;
 import com.vaadin.flow.component.Component;
-
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ChatGPTService extends OpenAiService implements LLMService {
 
@@ -45,7 +45,7 @@ public class ChatGPTService extends OpenAiService implements LLMService {
     }
 
     @Override
-    public String getPromptTemplate(String input, Map<String, Object> objectMap, Map<String, String> typesMap, HashMap<Component, String> componentInstructions, ArrayList<String> contextInstructions) {
+    public String getPromptTemplate(String input, Map<String, Object> objectMap, Map<String, String> typesMap, Map<Component, String> componentInstructions, List<String> contextInstructions) {
         String gptRequest = String.format(
                 "Based on the user input: '%s', " +
                         "generate a JSON object according to these instructions: " +

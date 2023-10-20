@@ -130,6 +130,14 @@ public class FormFillerCameraDemo extends Div {
         addressField.setId("storeAddress");
         receiptForm.add(addressField);
 
+        com.vaadin.flow.component.textfield.TextField phoneField = new com.vaadin.flow.component.textfield.TextField("Phone Number");
+        addressField.setId("phoneNumber");
+        receiptForm.add(phoneField);
+
+        com.vaadin.flow.component.textfield.TextField websiteOrEmailField = new com.vaadin.flow.component.textfield.TextField("Website or Email");
+        addressField.setId("websiteOrEmail");
+        receiptForm.add(websiteOrEmailField);
+
         DateTimePicker dateCreationField = new DateTimePicker("Receipt Date");
         dateCreationField.setId("receiptDate");
         receiptForm.add(dateCreationField);
@@ -180,6 +188,7 @@ public class FormFillerCameraDemo extends Div {
         fillDocumentButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         fillDocumentButton.addClickListener(event -> {
             try {
+                clearForm();
                 FileInputStream fileInputStream = null;
                 fileInputStream = new FileInputStream(fileBuffer.getFileData().getFile().getAbsolutePath());
 

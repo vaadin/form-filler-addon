@@ -312,6 +312,13 @@ In these examples we use snapshots from 1 page documents to get the text. In bot
 
 - “/receipt” - Example using receipt documents as input source. These documents usually are not well formatted and contain different formats and information. 
 
+
+#### Mobile Camera Input
+
+This example demonstrates how to use your mobile camera to capture text:
+
+/camera - Example using any picture (invoice/receipt) to test the mobile camera as an input source. When used on a desktop, it will open the operating system's file manager to upload an image file. On a mobile device, it allows you to take a photo and use it immediately as the input source.
+
 ## Deployment
 
 Starting the test/demo server:

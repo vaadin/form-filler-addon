@@ -1,5 +1,6 @@
 package com.vaadin.flow.ai.formfiller.views;
 
+import com.vaadin.flow.ai.formfiller.services.ChatGPTChatCompletionService;
 import com.vaadin.flow.ai.formfiller.utils.Converters;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
@@ -32,7 +33,6 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.ai.formfiller.FormFiller;
 import com.vaadin.flow.ai.formfiller.FormFillerResult;
 import com.vaadin.flow.ai.formfiller.data.OrderItem;
-import com.vaadin.flow.ai.formfiller.services.ChatGPTService;
 import com.vaadin.flow.ai.formfiller.utils.ComponentUtils;
 import com.vaadin.flow.ai.formfiller.utils.DebugTool;
 import com.vaadin.flow.ai.formfiller.utils.ExtraInstructionsTool;
@@ -241,7 +241,7 @@ public class FormFillerTextDemo extends Div {
                         contextInformation.add(c.getValue());
                 }
                 clearForm();
-                FormFiller formFiller = new FormFiller(formLayout, fieldsInstructions, contextInformation, new ChatGPTService());
+                FormFiller formFiller = new FormFiller(formLayout, fieldsInstructions, contextInformation, new ChatGPTChatCompletionService());
                 FormFillerResult result = formFiller.fill(input);
                 debugTool.getDebugPrompt().setValue(result.getRequest());
                 debugTool.getDebugJsonTarget().setValue(String.format("%s", formFiller.getMapping().componentsJSONMap()));

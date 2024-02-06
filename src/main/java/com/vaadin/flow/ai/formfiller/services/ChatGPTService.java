@@ -16,7 +16,7 @@ public class ChatGPTService extends OpenAiService implements LLMService {
     /**
      * ID of the model to use.
      */
-    private String MODEL = "text-davinci-003";
+    private String MODEL = "gpt-3.5-turbo-instruct";
 
     /**
      * The maximum number of tokens to generate in the completion.

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.vaadin.experimental.FeatureFlags;
+import com.vaadin.flow.ai.formfiller.services.AWSLLama2ChatService;
 import com.vaadin.flow.ai.formfiller.services.FormFillerStats;
 import com.vaadin.flow.component.Component;
 import org.slf4j.Logger;
@@ -154,7 +155,8 @@ public class FormFiller {
      * Check {@link #FormFiller(Component, Map, List, LLMService) FormFiller} for more information.
      */
     public FormFiller(Component target, Map<Component, String> componentInstructions, List<String> contextInstructions) {
-        this(target, componentInstructions, contextInstructions, new ChatGPTChatCompletionService());
+//        this(target, componentInstructions, contextInstructions, new ChatGPTChatCompletionService());
+        this(target, componentInstructions, contextInstructions, new AWSLLama2ChatService());
     }
 
     /**

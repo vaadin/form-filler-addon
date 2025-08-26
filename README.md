@@ -410,3 +410,64 @@ You should now be set up to use Google's Vision API.
 - [ChatGPT Java API](https://github.com/TheoKanning/openai-java) created by Theo Kanning
 
 
+### AWS related notes:
+
+1. Click on create instance SageMaker
+2. Click on notebook (Pytorch new version, Python 3, until ml.c5.large it is working)
+3. Service Quotas console (https://eu-north-1.console.aws.amazon.com/servicequotas/home/services/sagemaker/quotas)
+4. Enable higher services there
+- Open the Service Quotas console.
+- In the navigation pane, choose AWS services.
+- Search for SageMaker.
+- Choose the quota named Studio KernelGateway Apps running on ml.g4dn.xlarge instance.
+- Choose Request quota increase and follow the on-screen instructions.
+  It takes time:
+
+I am able to train a model on AWS and put the trained model into an S3 bucket...
+
+Things checked:
+- Cloudwatch (check what is the problem with instances)
+- Data wrangler (getting data)
+- Data labelling (Ground Truth)
+Experiments:
+Model registry:
+
+How to make a model endpoint live:
+From here:
+- https://www.youtube.com/watch?v=hLzEHsUSHq4
+- https://saturncloud.io/blog/how-to-invoke-sagemaker-endpoint-using-boto3-client-from-aws-lambda/#:~:text=To%20invoke%20the%20SageMaker%20endpoint,type%20of%20the%20input%20data.
+
+1. Create Sagemaker JumpStart model (LLama 7b)
+   1.A test if it is working with a low memory/perf instance (Python3, boto directory)
+
+2. Create a lambda
+New policy will be needed:
+```json
+{
+"Version": "2012-10-17",
+"Statement": [
+{
+"Sid": "Statement1",
+"Effect": "Allow",
+"Action": [
+"sagemaker:InvokeEndpoint"
+],
+"Resource": [
+"*"
+]
+}
+]
+}
+
+```
+
+2.A make the policy allive
+IAM -> Roles -> sagemaker-jumpstart-dft-meta-textgeneration-llama--role-z57coh12
+
+3. rewrite Lambda add timeout potentially for LLM-s it is needed:
+   Lambda -> Functions -> (your lambda function name) timeout to 30-60sec
+
+4. API Gateway
+   4.1 Create from scratch
+   4.2 Create resource (anyname this will be the somewhat root path for our REST methods)
+   4.3 Create GET for now for the LLama...

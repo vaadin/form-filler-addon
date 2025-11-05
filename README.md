@@ -1,3 +1,6 @@
+⚠️ Starting from Vaadin 25, form-filler experimental addon is not supported anymore. Please use any other AI solutions for parsing images and filling your forms.
+
+
 # Form Filler Add-on project
 
 The Form Filler Addon is an experimental feature that provides an easy way for Flow users to create forms filled automatically from natural language input sources using GPT technologies.
